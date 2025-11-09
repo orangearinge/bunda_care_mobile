@@ -40,6 +40,6 @@ flutter:
 
   # Daftar aset yang digunakan dalam aplikasi
   assets:
-    - assets/images/
+    - assets/images/logo_baru.png
 
     # Atau jika ingin load semua file di folder images, gunakan:
