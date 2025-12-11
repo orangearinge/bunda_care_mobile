@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'signup_page.dart';
-
-import 'registration_form_page.dart';
+import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import '../providers/auth_provider.dart';
 
 /// Halaman Login untuk autentikasi user
 /// Stateful widget yang mengelola form login dengan validasi
@@ -25,47 +25,51 @@ class _LoginPageState extends State<LoginPage> {
 
   /// Fungsi untuk memproses login user
   /// Melakukan validasi dan pengecekan kredensial
-  void _login() {
+  void _login(AuthProvider authProvider) async {
     // Validasi semua input field menggunakan validator
     if (_formKey.currentState!.validate()) {
       // Ambil nilai dari controller
       final email = _emailController.text;
       final password = _passwordController.text;
 
-      // Cek kredensial (hardcoded untuk demo)
-      // Dalam real app, ini harus menggunakan API/Database
-      if (email == 'abdel@gmail.com' && password == 'password123') {
-        // Login berhasil: Navigasi ke halaman RegistrationFormPage
-        // pushReplacement mengganti halaman sekarang (user tidak bisa back ke login)
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => RegistrationFormPage()),
-        );
-      } else {
-        // Login gagal: Tampilkan pesan error menggunakan SnackBar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Email atau Password salah!'),
-            backgroundColor: Colors.red[400],
-            behavior: SnackBarBehavior.floating, // SnackBar mengambang
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+      // Call auth provider to login
+      final success = await authProvider.login(
+        email: email,
+        password: password,
+      );
+
+       if (mounted) {
+         if (success) {
+           // Login berhasil - navigasi berdasarkan status user
+           if (authProvider.isUserComplete) {
+             context.go('/');
+           } else {
+             context.go('/role-selection');
+           }
+         } else {
+          // Login gagal: Tampilkan pesan error menggunakan SnackBar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(authProvider.errorMessage ?? 'Login failed'),
+              backgroundColor: Colors.red[400],
+              behavior: SnackBarBehavior.floating, // SnackBar mengambang
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Media Query untuk mendapatkan tinggi layar, berguna jika ingin menghitung tinggi header secara dinamis
-    // final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       backgroundColor: Colors.white,
       // SafeArea memastikan konten tidak tertutup status bar (di atas)
-      body: SafeArea(
+      body: Consumer<AuthProvider>(
+        builder: (context, authProvider, child) => SafeArea(
         // **HAPUS SingleChildScrollView** agar tidak scroll di awal.
         // Flutter otomatis menggeser layar saat keyboard muncul (resizeToAvoidBottomInset: true default)
         child: Padding(
@@ -256,7 +260,9 @@ class _LoginPageState extends State<LoginPage> {
                   width: double.infinity,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: _login,
+                    onPressed: authProvider.isLoading
+                        ? null
+                        : () => _login(authProvider),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.pink[200],
                       foregroundColor: Colors.white,
@@ -265,14 +271,23 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ),
-                    child: const Text(
-                      'LOGIN',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1,
-                      ),
-                    ),
+                    child: authProvider.isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text(
+                            'LOGIN',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
+                          ),
                   ),
                 ),
 
@@ -294,9 +309,9 @@ class _LoginPageState extends State<LoginPage> {
                     _socialLoginButton(
                       icon: Icons.g_mobiledata,
                       color: Colors.red,
-                      onPressed: () {
-                        // Handle Google login
-                      },
+                      onPressed: authProvider.isLoading
+                          ? null
+                          : () => _handleGoogleSignIn(authProvider),
                     ),
                     const SizedBox(width: 16),
 
@@ -334,12 +349,7 @@ class _LoginPageState extends State<LoginPage> {
                     // Tombol navigasi ke halaman Sign Up
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignUpPage(),
-                          ),
-                        );
+                        context.push('/register');
                       },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
@@ -363,15 +373,51 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
+        ),
       ),
     );
+  }
+
+  /// Handle Google Sign-In
+  Future<void> _handleGoogleSignIn(AuthProvider authProvider) async {
+    final success = await authProvider.signInWithGoogle();
+
+     if (mounted) {
+       if (success) {
+         // Add longer delay to ensure Google UI is fully dismissed before navigating
+         Future.delayed(const Duration(milliseconds: 3000), () {
+           if (mounted) {
+             // Set authenticated state after navigation to prevent router conflicts
+             authProvider.completeGoogleSignIn();
+
+             // Login berhasil - navigasi berdasarkan status user
+             if (authProvider.isUserComplete) {
+               context.go('/');
+             } else {
+               context.go('/role-selection');
+             }
+           }
+         });
+       } else if (authProvider.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.errorMessage!),
+            backgroundColor: Colors.red[400],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    }
   }
 
   /// Widget untuk membuat tombol social media login
   Widget _socialLoginButton({
     required IconData icon,
     required Color color,
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
   }) {
     return Container(
       decoration: BoxDecoration(

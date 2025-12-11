@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'multi_step_form_page.dart'; // Pastikan file ini ada!
+import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import '../providers/auth_provider.dart';
 
 class RegistrationFormPage extends StatelessWidget {
   RegistrationFormPage({Key? key}) : super(key: key);
@@ -85,17 +87,16 @@ class RegistrationFormPage extends StatelessWidget {
     required Color color,
   }) {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async {
         // Debug: Print untuk memastikan fungsi dipanggil
         print('Tombol $label ditekan!');
 
+        // Update user role in auth provider
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        await authProvider.updateUserRole(role);
+
         // Navigasi ke MultiStepFormPage
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MultiStepFormPage(userRole: role),
-          ),
-        );
+        context.go('/multi-step-form/$role');
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: color,

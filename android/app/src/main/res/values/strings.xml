@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 
+      TODO: Replace with your Web Client ID from Google Cloud Console 
+      It usually looks like: "123456789-abcdef...apps.googleusercontent.com"
+      Make sure it is the "Web client" ID, not the Android client ID.
+    -->
+    <string name="default_web_client_id">362532988128-bsnv1n5p21vo4k5jqkdi592qokjltma5.apps.googleusercontent.com</string>
+</resources>
