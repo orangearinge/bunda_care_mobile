@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dashboard_page.dart';
+import 'package:go_router/go_router.dart';
 
 class MultiStepFormPage extends StatefulWidget {
   final String userRole; // 'IbuHamil', 'IbuMenyusui', atau 'Batita'
@@ -392,7 +392,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         curve: Curves.easeIn,
       );
     } else {
-      Navigator.pop(context);
+      context.pop();
     }
   }
 
@@ -409,12 +409,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     String displayName =
         formData['nama'] ?? formData['nama_anak'] ?? widget.userRole;
 
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => DashboardPage(userName: displayName),
-      ),
-      (Route<dynamic> route) => false,
-    );
+    context.go('/', extra: {'userName': displayName});
   }
 
   @override

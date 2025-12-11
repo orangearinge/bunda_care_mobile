@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import 'rekomendasi_page.dart';
 import 'scan_page.dart';
 import 'chatbot_page.dart';
 import 'edukasi_page.dart';
 import 'profile_page.dart';
-import 'login_page.dart';
 
 class DashboardPage extends StatefulWidget {
-  final String userName;
-
-  const DashboardPage({super.key, this.userName = "Pengguna"});
+  const DashboardPage({super.key});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
@@ -20,45 +19,10 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   int _selectedIndex = 0;
 
-  void _logout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text(
-            "Konfirmasi Logout",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: const Text("Apakah Anda yakin ingin keluar?"),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Batal", style: TextStyle(color: Colors.grey[600])),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                  (Route<dynamic> route) => false,
-                );
-              },
-              child: Text(
-                "Ya, Keluar",
-                style: TextStyle(
-                  color: Colors.red[400],
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+  void _logout(BuildContext context) async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    await authProvider.logout();
+    // GoRouter will automatically redirect to login
   }
 
   void _onItemTapped(int index) {
@@ -100,6 +64,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+    final userName = authProvider.currentUser?.name ?? "Pengguna";
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
@@ -128,7 +94,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          widget.userName,
+                          userName,
                           style: GoogleFonts.poppins(
                             fontSize: 27,
                             fontWeight: FontWeight.bold,
@@ -140,7 +106,7 @@ class _DashboardPageState extends State<DashboardPage> {
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        shape: BoxShape.rectangle,
+                        shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
                             color: Colors.grey.withOpacity(0.2),
@@ -411,6 +377,7 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
       ),
+
     );
   }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'providers/auth_provider.dart';
+import 'router/app_router.dart';
 import 'pages/dashboard_page.dart';
-import 'pages/login_page.dart';
 import 'pages/rekomendasi_page.dart';
 import 'pages/scan_page.dart';
 import 'pages/chatbot_page.dart';
@@ -15,14 +17,47 @@ class BundaCareApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: const AppContent(),
+    );
+  }
+}
+
+class AppContent extends StatefulWidget {
+  const AppContent({super.key});
+
+  @override
+  State<AppContent> createState() => _AppContentState();
+}
+
+class _AppContentState extends State<AppContent> {
+  late final AppRouter _appRouter;
+
+  @override
+  void initState() {
+    super.initState();
+    final authProvider = context.read<AuthProvider>();
+    _appRouter = AppRouter(authProvider);
+
+    // Check authentication status when app starts
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      authProvider.checkAuthStatus();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Bunda Care',
       theme: ThemeData(
         useMaterial3: true,
         colorSchemeSeed: const Color(0xFF6CC4A1),
       ),
-      home: const LoginPage(),
+      routerConfig: _appRouter.router,
     );
   }
 }
@@ -35,50 +70,10 @@ class MainNavigation extends StatefulWidget {
 }
 
 class _MainNavigationState extends State<MainNavigation> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _pages = const [
-    DashboardPage(),
-    RekomendasiPage(mealType: 'lunch'),
-    ScanPage(),
-    ChatbotPage(),
-    EdukasiPage(),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            label: 'Beranda',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.restaurant_menu_outlined),
-            label: 'Rekomendasi',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.camera_alt_outlined),
-            label: 'Scan',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.chat_bubble_outline),
-            label: 'Chatbot',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.menu_book_outlined),
-            label: 'Edukasi',
-          ),
-        ],
-      ),
+    return const Scaffold(
+      body: DashboardPage(),
     );
   }
 }
