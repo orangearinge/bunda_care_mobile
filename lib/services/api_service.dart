@@ -50,7 +50,7 @@ class ApiService {
           // Log errors in debug mode
           if (ApiConstants.isDevelopment) {
             print('❌ Error: ${error.message}');
-            print('   Path: ${error.requestOptions.path}');
+            print('   URI: ${error.requestOptions.uri}');
             print('   Response: ${error.response?.data}');
           }
           return handler.next(error);
