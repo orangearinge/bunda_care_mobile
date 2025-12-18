@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../models/auth_response.dart';
 import '../models/api_error.dart';
@@ -11,12 +13,14 @@ import 'storage_service.dart';
 class AuthService {
   final ApiService _api = ApiService();
   final StorageService _storage = StorageService();
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
+  late final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
-    // TODO: Add your Google Cloud OAuth client ID here
-    // clientId: 'YOUR_GOOGLE_CLOUD_OAUTH_CLIENT_ID',
-    // Gunakan WEB Client ID (bukan Android Client ID) agar dapat ID Token
-    serverClientId: '362532988128-bsnv1n5p21vo4k5jqkdi592qokjltma5.apps.googleusercontent.com',
+    clientId: kIsWeb
+        ? '362532988128-bsnv1n5p21vo4k5jqkdi592qokjltma5.apps.googleusercontent.com'
+        : null,
+    serverClientId: !kIsWeb
+        ? '362532988128-bsnv1n5p21vo4k5jqkdi592qokjltma5.apps.googleusercontent.com'
+        : null,
   );
 
   // ==================== Email/Password Auth ====================
@@ -63,10 +67,7 @@ class AuthService {
     try {
       final response = await _api.post(
         ApiConstants.login,
-        data: {
-          'email': email.trim().toLowerCase(),
-          'password': password,
-        },
+        data: {'email': email.trim().toLowerCase(), 'password': password},
       );
 
       // Parse response
@@ -122,9 +123,7 @@ class AuthService {
       // Step 3: Send token to backend
       final response = await _api.post(
         ApiConstants.googleAuth,
-        data: {
-          'token': idToken,
-        },
+        data: {'token': idToken},
       );
 
       // Parse response
