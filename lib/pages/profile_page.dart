@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'chatbot_page.dart';
 import 'scan_page.dart';
 import 'edukasi_page.dart';
-import 'profile_detail_page.dart';
-import 'rekam_medis_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -97,112 +95,112 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 const SizedBox(height: 24),
 
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: const Text(
-                    'Akun',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 6),
-                _buildMenuItem('Profil Saya', onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ProfileDetailPage(),
-                    ),
-                  );
-                }),
-                _buildMenuItem('Rekam Medis', onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const RekamMedisPage(),
-                    ),
-                  );
-                }),
-                _buildMenuItem('Keluarga Saya'),
-                _buildMenuItem('Ubah Kata Sandi'),
-
-                const SizedBox(height: 18),
-
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: const Text(
-                    'Aplikasi mobile-KIA',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 6),
-                _buildMenuItem('Tentang Kami'),
-                _buildMenuItem('Privasi'),
-                _buildMenuItem('Syarat dan Ketentuan'),
-                _buildMenuItem('Hubungi Kami'),
-
-                const SizedBox(height: 18),
-                Center(
-                  child: Text(
-                    'versi 5.50-117',
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-
+                // Profil Saya Section
+                _buildSectionHeader('Profil Saya'),
                 const SizedBox(height: 12),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[300],
-                      foregroundColor: Colors.black87,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 14),
-                    ),
-                    child: const Text(
-                      'logout',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
+                    ],
+                    border: Border.all(color: Colors.grey[200]!),
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: const [
+                      _ProfileField(label: 'Tanggal Lahir', value: '07 November 1997'),
+                      Divider(height: 24),
+                      _ProfileField(label: 'Jenis Kelamin', value: 'Perempuan'),
+                      Divider(height: 24),
+                      _ProfileField(label: 'Kota/Kabupaten', value: 'Kabupaten Sleman'),
+                      Divider(height: 24),
+                      _ProfileField(label: 'Nomor KTP', value: '33050737548920002'),
+                      Divider(height: 24),
+                      _ProfileField(label: 'Alamat Sesuai KTP', value: 'Desa Sidobunder, Puring, Kebumen'),
+                    ],
                   ),
                 ),
+
+                const SizedBox(height: 24),
+
+                // Rekam Medis Section
+                _buildSectionHeader('Rekam Medis'),
+                const SizedBox(height: 12),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50]!,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.grey[200]!),
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          _StatPill(title: 'Tinggi\nBadan', value: '160 cm'),
+                          _StatPill(title: 'Berat\nBadan', value: '52 kg'),
+                          _StatPill(title: 'BMI', valueBold: '20.31'),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const _AllergyCard(
+                        title: 'Alergi Makanan',
+                        items: ['Telur', 'Ikan', 'Kacang tanah'],
+                      ),
+                      const SizedBox(height: 12),
+                      const _AllergyCard(
+                        title: 'Alergi Obat',
+                        items: ['Aspirin', 'Autoimun', 'Antikonvulsan'],
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                const SizedBox(height: 40),
+                Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        'versi 5.50-117',
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                          fontSize: 12,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[200],
+                          foregroundColor: Colors.black87,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
+                        ),
+                        child: const Text(
+                          'Logout',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -243,31 +241,20 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildMenuItem(String title, {VoidCallback? onTap}) {
+  Widget _buildSectionHeader(String title) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.15),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        color: Colors.teal.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
       ),
-      margin: const EdgeInsets.only(bottom: 10),
-      child: ListTile(
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          color: Colors.teal,
         ),
-        trailing: const Icon(Icons.chevron_right, color: Colors.black54),
-        onTap: onTap ?? () {},
       ),
     );
   }
@@ -319,3 +306,159 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+
+class _ProfileField extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _ProfileField({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatPill extends StatelessWidget {
+  final String title;
+  final String? value;
+  final String? valueBold;
+
+  const _StatPill({required this.title, this.value, this.valueBold});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 95,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: Colors.grey[100]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey[600], fontSize: 11),
+          ),
+          const SizedBox(height: 8),
+          if (value != null)
+            Text(
+              value!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          if (valueBold != null)
+            Text(
+              valueBold!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: Colors.teal,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AllergyCard extends StatelessWidget {
+  final String title;
+  final List<String> items;
+
+  const _AllergyCard({required this.title, required this.items});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: Colors.grey[100]!),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.teal[700],
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: items.map((item) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.red[50],
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.red[100]!),
+              ),
+              child: Text(
+                item,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.red[700],
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            )).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
