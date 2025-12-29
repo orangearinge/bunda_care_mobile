@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'rekomendasi_page.dart';
+import 'meal_log.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -156,8 +157,11 @@ class _ScanPageState extends State<ScanPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  const RekomendasiPage(mealType: 'lunch'),
+                              builder: (_) => MealLogPage(
+                                makanan: scannedItem,
+                                nutrisi: nutrisi,
+                                protein: protein,
+                              ),
                             ),
                           );
                         },

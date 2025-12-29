@@ -22,15 +22,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
 
   Map<String, dynamic> formData = {};
 
-  // Dropdown values
-  String? selectedUsiaKehamilan;
-  String? selectedUsiaBatita;
-  String? selectedFrekuensiMenyusui;
-
-  // --- WARNA TEMA BARU ---
   final Color primaryPink = Colors.pink[300]!;
   final Color secondaryBlue = Colors.blue[300]!;
-  // -------------------------
 
   @override
   void initState() {
@@ -42,7 +35,6 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     });
   }
 
-  // Fungsi untuk mendapatkan widget form berdasarkan role
   Widget _getFormStep(int step) {
     switch (widget.userRole) {
       case 'IbuHamil':
@@ -56,14 +48,14 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     }
   }
 
-  // Form untuk Ibu Hamil
+  // ===================== IBU HAMIL =====================
   Widget _buildIbuHamilForm(int step) {
     switch (step) {
       case 0:
         return _buildFormTemplate(
           step: step,
           title: "Langkah 1: Data Pribadi",
-          titleColor: primaryPink, // Diganti Pink
+          titleColor: primaryPink,
           fields: [
             _buildTextField("Nama Lengkap", "nama", TextInputType.name),
             _buildTextField("Usia", "usia", TextInputType.number),
@@ -82,15 +74,17 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: primaryPink, // Diganti Pink
+                  color: primaryPink,
                 ),
               ),
               const SizedBox(height: 24),
-              _buildDropdownField(
-                label: "Usia Kehamilan (minggu)",
-                keyName: "usia_kehamilan",
-                items: List.generate(42, (i) => "${i + 1} Minggu"),
+
+              // ✅ DIGANTI DATE PICKER (HPHT)
+              _buildDateField(
+                label: "HPHT (Tanggal Haid Terakhir)",
+                keyName: "hpht",
               ),
+
               _buildTextField(
                 "Berat Badan (kg)",
                 "berat_badan",
@@ -109,7 +103,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         return _buildFormTemplate(
           step: step,
           title: "Langkah 3: Informasi Bunda",
-          titleColor: primaryPink, // Diganti Pink
+          titleColor: primaryPink,
           fields: [
             _buildTextField(
               "Lingkar Perut (cm)",
@@ -129,14 +123,14 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     }
   }
 
-  // Form untuk Ibu Menyusui
+  // ===================== IBU MENYUSUI =====================
   Widget _buildIbuMenyusuiForm(int step) {
     switch (step) {
       case 0:
         return _buildFormTemplate(
           step: step,
           title: "Langkah 1: Data Pribadi",
-          titleColor: secondaryBlue, // Diganti Biru
+          titleColor: secondaryBlue,
           fields: [
             _buildTextField("Nama Lengkap", "nama", TextInputType.name),
             _buildTextField("Usia", "usia", TextInputType.number),
@@ -155,7 +149,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: secondaryBlue, // Diganti Biru
+                  color: secondaryBlue,
                 ),
               ),
               const SizedBox(height: 24),
@@ -169,7 +163,6 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
                   "5-7 kali/hari",
                 ],
               ),
-              // Idealnya ini menggunakan Dropdown/Radio Button, tapi mengikuti format yang ada:
               _buildTextField(
                 "ASI Eksklusif? (Ya/Tidak)",
                 "asi_eksklusif",
@@ -183,7 +176,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         return _buildFormTemplate(
           step: step,
           title: "Langkah 3: IMT Bunda",
-          titleColor: secondaryBlue, // Diganti Biru
+          titleColor: secondaryBlue,
           fields: [
             _buildTextField(
               "Tinggi Badan (cm)",
@@ -203,14 +196,14 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     }
   }
 
-  // Form untuk Batita
+  // ===================== BATITA =====================
   Widget _buildBatitaForm(int step) {
     switch (step) {
       case 0:
         return _buildFormTemplate(
           step: step,
           title: "Langkah 1: Data Pribadi",
-          titleColor: secondaryBlue, // Diganti Biru
+          titleColor: secondaryBlue,
           fields: [
             _buildTextField("Nama Lengkap", "nama", TextInputType.name),
             _buildTextField("Alamat", "alamat", TextInputType.streetAddress),
@@ -221,7 +214,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         return _buildFormTemplate(
           step: step,
           title: "Langkah 2: IMT Anak",
-          titleColor: secondaryBlue, // Diganti Biru
+          titleColor: secondaryBlue,
           fields: [
             _buildTextField(
               "Tinggi Badan (cm)",
@@ -235,7 +228,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         return _buildFormTemplate(
           step: step,
           title: "Langkah 3: Umur Anak",
-          titleColor: secondaryBlue, // Diganti Biru
+          titleColor: secondaryBlue,
           fields: [
             _buildDropdownField(
               label: "Umur Anak (bulan)",
@@ -250,11 +243,11 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     }
   }
 
-  // Template form umum
+  // ===================== TEMPLATE =====================
   Widget _buildFormTemplate({
     required int step,
     required String title,
-    required Color titleColor, // Ditambahkan parameter warna
+    required Color titleColor,
     required List<Widget> fields,
   }) {
     return Form(
@@ -267,7 +260,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: titleColor, // Menggunakan warna dari parameter
+              color: titleColor,
             ),
           ),
           const SizedBox(height: 24),
@@ -276,9 +269,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       ),
     );
   }
-  // ✅
 
-  // Widget TextField reusable
+  // ===================== TEXT FIELD =====================
   Widget _buildTextField(String label, String key, TextInputType inputType) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -288,29 +280,20 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           filled: true,
           fillColor: Colors.grey[50],
-          // --- PERUBAHAN WARNA BORDER FOCUS ---
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-              color: primaryPink,
-              width: 2,
-            ), // Menggunakan Pink
+            borderSide: BorderSide(color: primaryPink, width: 2),
           ),
-          // ------------------------------------
         ),
         keyboardType: inputType,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return '$label wajib diisi';
-          }
-          return null;
-        },
+        validator: (value) =>
+            value == null || value.isEmpty ? '$label wajib diisi' : null,
         onSaved: (value) => formData[key] = value,
       ),
     );
   }
 
-  // ✅ Widget Dropdown reusable
+  // ===================== DROPDOWN =====================
   Widget _buildDropdownField({
     required String label,
     required String keyName,
@@ -324,35 +307,57 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           filled: true,
           fillColor: Colors.grey[50],
-          // --- PERUBAHAN WARNA BORDER FOCUS ---
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-              color: primaryPink,
-              width: 2,
-            ), // Menggunakan Pink
-          ),
-          // ------------------------------------
         ),
         value: formData[keyName],
-        hint: Text("Pilih $label"),
         items: items
             .map(
               (item) =>
                   DropdownMenuItem<String>(value: item, child: Text(item)),
             )
             .toList(),
-        onChanged: (value) {
-          setState(() {
-            formData[keyName] = value;
-          });
-        },
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return '$label wajib dipilih';
+        onChanged: (value) => setState(() => formData[keyName] = value),
+        validator: (value) =>
+            value == null || value.isEmpty ? '$label wajib dipilih' : null,
+      ),
+    );
+  }
+
+  // ===================== DATE PICKER (HPHT) =====================
+  Widget _buildDateField({required String label, required String keyName}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: GestureDetector(
+        onTap: () async {
+          DateTime? pickedDate = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime.now(),
+          );
+
+          if (pickedDate != null) {
+            setState(() {
+              formData[keyName] =
+                  "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+            });
           }
-          return null;
         },
+        child: AbsorbPointer(
+          child: TextFormField(
+            decoration: InputDecoration(
+              labelText: label,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              filled: true,
+              fillColor: Colors.grey[50],
+              suffixIcon: const Icon(Icons.calendar_today),
+            ),
+            controller: TextEditingController(text: formData[keyName] ?? ""),
+            validator: (value) =>
+                value == null || value.isEmpty ? '$label wajib dipilih' : null,
+          ),
+        ),
       ),
     );
   }
@@ -369,7 +374,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     );
   }
 
-  // Navigasi antar halaman
+  // ===================== NAVIGASI =====================
   void _nextPage() {
     if (_formKeys[_currentPage].currentState!.validate()) {
       _formKeys[_currentPage].currentState!.save();
@@ -406,21 +411,19 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       ),
     );
 
-    String displayName =
-        formData['nama'] ?? formData['nama_anak'] ?? widget.userRole;
+    String displayName = formData['nama'] ?? widget.userRole;
 
     context.go('/', extra: {'userName': displayName});
   }
 
   @override
   Widget build(BuildContext context) {
-    // Menetapkan warna pink sebagai warna utama aplikasi (accentColor)
-    final Color accentColor = primaryPink; // Diubah ke primaryPink
+    final Color accentColor = primaryPink;
 
     return Scaffold(
       appBar: AppBar(
         title: Text("Langkah ${_currentPage + 1} dari $_totalSteps"),
-        backgroundColor: accentColor, // Menggunakan Pink
+        backgroundColor: accentColor,
         foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -434,12 +437,9 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
             child: LinearProgressIndicator(
               value: (_currentPage + 1) / _totalSteps,
               backgroundColor: Colors.grey.shade300,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                accentColor,
-              ), // Menggunakan Pink
+              valueColor: AlwaysStoppedAnimation<Color>(accentColor),
             ),
           ),
-
           Expanded(
             child: PageView.builder(
               controller: _pageController,
@@ -453,17 +453,13 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               },
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.fromLTRB(32, 10, 32, 32),
             child: ElevatedButton(
               onPressed: _nextPage,
               style: ElevatedButton.styleFrom(
-                backgroundColor: accentColor, // Menggunakan Pink
+                backgroundColor: accentColor,
                 minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
               ),
               child: Text(
                 _currentPage == _totalSteps - 1 ? 'Selesai & Masuk' : 'Lanjut',
