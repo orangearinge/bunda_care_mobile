@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
+import 'providers/user_preference_provider.dart';
 import 'router/app_router.dart';
 import 'pages/dashboard_page.dart';
 import 'pages/rekomendasi_page.dart';
@@ -20,6 +21,7 @@ class BundaCareApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => UserPreferenceProvider()),
       ],
       child: const AppContent(),
     );

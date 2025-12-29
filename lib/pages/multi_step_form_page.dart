@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../providers/user_preference_provider.dart';
+import '../providers/auth_provider.dart';
 
 class MultiStepFormPage extends StatefulWidget {
   final String userRole; // 'IbuHamil', 'IbuMenyusui', atau 'Batita'
@@ -164,6 +167,11 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
                 ],
               ),
               _buildTextField(
+                "Volume ASI per hari (ml)",
+                "lactation_ml",
+                TextInputType.number,
+              ),
+              _buildTextField(
                 "ASI Eksklusif? (Ya/Tidak)",
                 "asi_eksklusif",
                 TextInputType.text,
@@ -232,8 +240,18 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           fields: [
             _buildDropdownField(
               label: "Umur Anak (bulan)",
-              keyName: "umur_anak",
-              items: List<String>.generate(24, (index) => "${index + 1} bulan"),
+              keyName: "umur_anak_bulan",
+              items: List<String>.generate(24, (index) => "${index + 1}"),
+            ),
+            _buildTextField(
+              "Usia (tahun)",
+              "usia",
+              TextInputType.number,
+            ),
+            _buildTextField(
+              "Berat Badan (kg)",
+              "berat_badan",
+              TextInputType.number,
             ),
           ],
         );
@@ -338,7 +356,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           if (pickedDate != null) {
             setState(() {
               formData[keyName] =
-                  "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+                  "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
             });
           }
         },
@@ -401,19 +419,75 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     }
   }
 
-  void _submitForm() {
-    print("Data Lengkap ${widget.userRole}: $formData");
+  void _submitForm() async {
+    final preferenceProvider =
+        Provider.of<UserPreferenceProvider>(context, listen: false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Pendaftaran berhasil!'),
-        backgroundColor: Colors.green,
-      ),
+    // Map UI role to backend role
+    String backendRole = 'IBU_HAMIL';
+    if (widget.userRole == 'IbuMenyusui') {
+      backendRole = 'IBU_MENYUSUI';
+    } else if (widget.userRole == 'Batita') {
+      backendRole = 'ANAK_BALITA';
+    }
+
+    // Helper to parse double safely
+    double? parseDouble(dynamic value) {
+      if (value == null) return null;
+      if (value is num) return value.toDouble();
+      return double.tryParse(value.toString());
+    }
+
+    // Helper to parse int safely
+    int? parseInt(dynamic value) {
+      if (value == null) return null;
+      if (value is num) return value.toInt();
+      return int.tryParse(value.toString());
+    }
+
+    print("Submitting Form Data: $formData");
+    print("Backend Role: $backendRole");
+
+    final success = await preferenceProvider.updatePreference(
+      role: backendRole,
+      hpht: formData['hpht'],
+      heightCm: parseDouble(formData['tinggi_badan']) ?? 0.0,
+      weightKg: parseDouble(formData['berat_badan']) ?? 0.0,
+      ageYear: parseInt(formData['usia']) ?? 0,
+      bellyCircumferenceCm: parseDouble(formData['lingkar_perut']),
+      lilaCm: parseDouble(formData['lingkar_lengan_atas']),
+      lactationMl: parseDouble(formData['lactation_ml']),
     );
 
-    String displayName = formData['nama'] ?? widget.userRole;
+    if (success && mounted) {
+      final gestationalAge = preferenceProvider.currentPreference?.gestationalAgeWeeks;
+      String snackBarMessage = 'Pendaftaran berhasil!';
+      if (gestationalAge != null) {
+        snackBarMessage += ' Usia kandungan: $gestationalAge minggu.';
+      }
 
-    context.go('/', extra: {'userName': displayName});
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(snackBarMessage),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      String displayName = formData['nama'] ?? widget.userRole;
+
+      // Ensure AuthProvider is updated with the real role from backend
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.updateUserRole(backendRole);
+
+      context.go('/', extra: {'userName': displayName});
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(preferenceProvider.errorMessage ?? 'Gagal menyimpan data'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override

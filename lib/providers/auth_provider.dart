@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 import '../models/api_error.dart';
+import '../models/user_preference.dart';
 import '../services/auth_service.dart';
+import '../services/user_service.dart';
 
 /// Authentication state enum
 enum AuthState {
@@ -16,6 +18,7 @@ enum AuthState {
 /// Manages authentication state and user data
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
+  final UserService _userService = UserService();
 
   // State
   AuthState _state = AuthState.initial;
@@ -36,8 +39,11 @@ class AuthProvider with ChangeNotifier {
   bool get isUserComplete {
     if (_currentUser == null) return false;
 
-    // Check if user has a valid role (not default/empty)
-    final validRoles = ['IbuHamil', 'IbuMenyusui', 'Batita'];
+    // Check if user has a valid role (ui names and backend names)
+    final validRoles = [
+      'IbuHamil', 'IbuMenyusui', 'Batita',
+      'IBU_HAMIL', 'IBU_MENYUSUI', 'ANAK_BALITA'
+    ];
     final role = _currentUser!.role?.trim() ?? '';
     return role.isNotEmpty && validRoles.contains(role);
   }
@@ -73,11 +79,15 @@ class AuthProvider with ChangeNotifier {
       final isAuth = await _authService.isAuthenticated();
 
       if (isAuth) {
-        // Load user data from storage
+        // Load user data from storage first
         final user = await _authService.getCurrentUser();
         if (user != null) {
           _currentUser = user;
           _setState(AuthState.authenticated);
+          
+          // Refresh user data from backend in background
+          // This ensures role and other data are up to date
+          _refreshUser();
           return;
         }
       }
@@ -87,6 +97,26 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       print('Error checking auth status: $e');
       _setState(AuthState.unauthenticated);
+    }
+  }
+
+  /// Refresh user data from backend
+  Future<void> _refreshUser() async {
+    try {
+      // 1. Fetch current preferences
+      final preference = await _userService.getPreference();
+      
+      if (preference != null && _currentUser != null) {
+        // If preferences exist, the user definitely has a role
+        // Update local user role from preference if it differs
+        if (_currentUser!.role != preference.role) {
+          _currentUser = _currentUser!.copyWith(role: preference.role);
+          await _authService.updateUser(_currentUser!);
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print('Error refreshing user preferences: $e');
     }
   }
 
