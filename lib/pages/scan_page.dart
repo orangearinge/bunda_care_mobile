@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'rekomendasi_page.dart';
 import 'meal_log.dart';
+import 'scan_result_page.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -10,19 +11,20 @@ class ScanPage extends StatefulWidget {
 }
 
 class _ScanPageState extends State<ScanPage> {
-  bool isScanned = false;
-  String scannedItem = "";
-  String nutrisi = "";
-  String protein = "";
 
   // Fungsi simulasi hasil scan
   void _simulateScan() {
-    setState(() {
-      isScanned = true;
-      scannedItem = "Ayam";
-      nutrisi = "30%";
-      protein = "40%";
-    });
+    // Di sini kita langsung pindah halaman dengan data simulasi
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ScanResultPage(
+          scannedItems: ["Ayam", "Wortel", "Kentang"],
+          nutrisi: "Kaya Vitamin",
+          protein: "Tinggi Protein",
+        ),
+      ),
+    );
   }
 
   @override
@@ -105,83 +107,6 @@ class _ScanPageState extends State<ScanPage> {
                 ),
               ),
             ),
-
-            const SizedBox(height: 20),
-
-            // === Hasil Scan (tampil setelah tombol ditekan) ===
-            if (isScanned) ...[
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Center(
-                      child: Text(
-                        "📊 Hasil Scan",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      "Makanan: $scannedItem",
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    Text(
-                      "Nutrisi: $nutrisi",
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    Text(
-                      "Protein: $protein",
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // === Tombol ke Rekomendasi ===
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => MealLogPage(
-                                makanan: scannedItem,
-                                nutrisi: nutrisi,
-                                protein: protein,
-                              ),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 40,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                        child: const Text("Rekomendasi Makanan"),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
           ],
         ),
       ),
