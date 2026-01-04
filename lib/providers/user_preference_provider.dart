@@ -68,6 +68,28 @@ class UserPreferenceProvider with ChangeNotifier {
     }
   }
 
+  /// Fetch user preference from API
+  Future<void> fetchPreference() async {
+    _status = PreferenceStatus.loading;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final preference = await _userService.getPreference();
+      _currentPreference = preference;
+      _status = PreferenceStatus.success;
+      notifyListeners();
+    } on ApiError catch (e) {
+      _errorMessage = e.message;
+      _status = PreferenceStatus.error;
+      notifyListeners();
+    } catch (e) {
+      _errorMessage = 'Gagal memuat data profil.';
+      _status = PreferenceStatus.error;
+      notifyListeners();
+    }
+  }
+
   /// Reset status
   void resetStatus() {
     _status = PreferenceStatus.initial;

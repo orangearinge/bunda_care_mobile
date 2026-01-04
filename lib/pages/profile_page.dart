@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'chatbot_page.dart';
 import 'scan_page.dart';
 import 'edukasi_page.dart';
+import 'package:provider/provider.dart';
+import '../providers/user_preference_provider.dart';
+import '../models/user_preference.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -12,6 +15,15 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 4;
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch data on init
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserPreferenceProvider>(context, listen: false).fetchPreference();
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -50,160 +62,267 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+        child: Consumer<UserPreferenceProvider>(
+          builder: (context, provider, child) {
+            if (provider.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (provider.status == PreferenceStatus.error) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircleAvatar(
-                      radius: 34,
-                      backgroundImage: const NetworkImage(
-                        'https://i.pravatar.cc/150?img=47',
-                      ),
-                      backgroundColor: Colors.grey[200],
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'Nadia Febriani',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            '0882-0034-85047',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
+                    Text(provider.errorMessage ?? 'Gagal memuat data'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () => provider.fetchPreference(),
+                      child: const Text('Coba Lagi'),
                     ),
                   ],
                 ),
+              );
+            }
 
-                const SizedBox(height: 24),
+            final pref = provider.currentPreference;
+            if (pref == null) {
+              return const Center(child: Text('Data profil tidak ditemukan.'));
+            }
 
-                // Profil Saya Section
-                _buildSectionHeader('Profil Saya'),
-                const SizedBox(height: 12),
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CircleAvatar(
+                          radius: 34,
+                          backgroundImage: const NetworkImage(
+                            'https://i.pravatar.cc/150?img=47',
+                          ),
+                          backgroundColor: Colors.grey[200],
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                pref.name ?? 'Bunda',
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                pref.role.replaceAll('_', ' '),
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Profil Saya Section
+                    _buildSectionHeader('Profil Saya'),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                        border: Border.all(color: Colors.grey[200]!),
                       ),
-                    ],
-                    border: Border.all(color: Colors.grey[200]!),
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: const [
-                      _ProfileField(label: 'Tanggal Lahir', value: '07 November 1997'),
-                      Divider(height: 24),
-                      _ProfileField(label: 'Jenis Kelamin', value: 'Perempuan'),
-                      Divider(height: 24),
-                      _ProfileField(label: 'Kota/Kabupaten', value: 'Kabupaten Sleman'),
-                      Divider(height: 24),
-                      _ProfileField(label: 'Nomor KTP', value: '33050737548920002'),
-                      Divider(height: 24),
-                      _ProfileField(label: 'Alamat Sesuai KTP', value: 'Desa Sidobunder, Puring, Kebumen'),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                // Rekam Medis Section
-                _buildSectionHeader('Rekam Medis'),
-                const SizedBox(height: 12),
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[50]!,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey[200]!),
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          _StatPill(title: 'Tinggi\nBadan', value: '160 cm'),
-                          _StatPill(title: 'Berat\nBadan', value: '52 kg'),
-                          _StatPill(title: 'BMI', valueBold: '20.31'),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          _ProfileField(
+                            label: 'Usia', 
+                            value: '${pref.ageYear} Tahun'
+                          ),
+                          const Divider(height: 24),
+                          _ProfileField(
+                            label: 'Peran', 
+                            value: pref.role.replaceAll('_', ' ')
+                          ),
+                          if (pref.hpht != null) ...[
+                            const Divider(height: 24),
+                            _ProfileField(
+                              label: 'HPHT', 
+                              value: pref.hpht!
+                            ),
+                          ],
+                          if (pref.gestationalAgeWeeks != null) ...[
+                            const Divider(height: 24),
+                            _ProfileField(
+                              label: 'Usia Kandungan', 
+                              value: '${pref.gestationalAgeWeeks} Minggu'
+                            ),
+                          ],
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      const _AllergyCard(
-                        title: 'Alergi Makanan',
-                        items: ['Telur', 'Ikan', 'Kacang tanah'],
-                      ),
-                      const SizedBox(height: 12),
-                      const _AllergyCard(
-                        title: 'Alergi Obat',
-                        items: ['Aspirin', 'Autoimun', 'Antikonvulsan'],
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
 
-                const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                const SizedBox(height: 40),
-                Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        'versi 5.50-117',
-                        style: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 12,
-                        ),
+                    // Rekam Medis Section
+                    _buildSectionHeader('Rekam Medis'),
+                    const SizedBox(height: 12),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50]!,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey[200]!),
                       ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[200],
-                          foregroundColor: Colors.black87,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              _StatPill(title: 'Tinggi\nBadan', value: '${pref.heightCm} cm'),
+                              _StatPill(title: 'Berat\nBadan', value: '${pref.weightKg} kg'),
+                              _StatPill(
+                                title: 'BMI', 
+                                valueBold: pref.nutritionalTargets?.bmi.toStringAsFixed(2) ?? '-'
+                              ),
+                            ],
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
+                          const SizedBox(height: 16),
+                          if (pref.foodProhibitions.isNotEmpty)
+                            _AllergyCard(
+                              title: 'Pantangan Makanan',
+                              items: pref.foodProhibitions,
+                            ),
+                          if (pref.foodProhibitions.isNotEmpty && pref.allergens.isNotEmpty)
+                            const SizedBox(height: 12),
+                          if (pref.allergens.isNotEmpty)
+                            _AllergyCard(
+                              title: 'Alergi',
+                              items: pref.allergens,
+                            ),
+                          
+                          // Additional metrics for detailed view
+                          if (pref.bellyCircumferenceCm != null || pref.lilaCm != null) ...[
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                if (pref.bellyCircumferenceCm != null)
+                                  _StatPillSmall(label: 'Lingkar Perut', value: '${pref.bellyCircumferenceCm} cm'),
+                                if (pref.lilaCm != null)
+                                  _StatPillSmall(label: 'LiLA', value: '${pref.lilaCm} cm'),
+                              ],
+                            ),
+                          ],
+                          
+                          if (pref.lactationMl != null) ...[
+                             const SizedBox(height: 12),
+                             _ProfileField(label: 'Volume ASI', value: '${pref.lactationMl} ml/hari'),
+                          ],
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+                    
+                    // Nutritional Target Section
+                    if (pref.nutritionalTargets != null) ...[
+                      _buildSectionHeader('Target Nutrisi Harian'),
+                      const SizedBox(height: 12),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.teal[400]!, Colors.teal[600]!],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        child: const Text(
-                          'Logout',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                _NutrientInfo(
+                                  label: 'Kalori', 
+                                  value: '${pref.nutritionalTargets!.calories.toInt()}', 
+                                  unit: 'kkal'
+                                ),
+                                Container(width: 1, height: 40, color: Colors.white24),
+                                _NutrientInfo(
+                                  label: 'Protein', 
+                                  value: '${pref.nutritionalTargets!.proteinG}', 
+                                  unit: 'g'
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
+                      const SizedBox(height: 24),
                     ],
-                  ),
+
+                    const SizedBox(height: 40),
+                    Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            'versi 5.50-117',
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey[200],
+                              foregroundColor: Colors.black87,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
+                            ),
+                            child: const Text(
+                              'Logout',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
       bottomNavigationBar: Container(
@@ -462,3 +581,71 @@ class _AllergyCard extends StatelessWidget {
   }
 }
 
+class _NutrientInfo extends StatelessWidget {
+  final String label;
+  final String value;
+  final String unit;
+
+  const _NutrientInfo({
+    required this.label,
+    required this.value,
+    required this.unit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white70, fontSize: 13),
+        ),
+        const SizedBox(height: 4),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 2),
+            Text(
+              unit,
+              style: const TextStyle(color: Colors.white, fontSize: 12),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _StatPillSmall extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _StatPillSmall({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(color: Colors.grey[500], fontSize: 11, fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(color: Colors.black87, fontSize: 15, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+}

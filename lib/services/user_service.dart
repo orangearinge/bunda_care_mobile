@@ -50,12 +50,20 @@ class UserService {
       final response = await _api.get(_preferencePath);
       
       final data = response.data;
-      if (data != null && data['status'] == 'success') {
-        return UserPreference.fromJson(data['data'] as Map<String, dynamic>);
+      if (data != null) {
+        if (data['status'] == 'success' && data['data'] != null) {
+          return UserPreference.fromJson(data['data'] as Map<String, dynamic>);
+        } else if (data.containsKey('role')) {
+          // Direct response
+          return UserPreference.fromJson(data as Map<String, dynamic>);
+        }
       }
       return null;
     } catch (e) {
       // If no preference set yet, return null instead of throwing
+      if (ApiConstants.isDevelopment) {
+        print('GET PREFERENCE ERROR: $e');
+      }
       return null;
     }
   }
