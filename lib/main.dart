@@ -57,7 +57,7 @@ class _AppContentState extends State<AppContent> {
       title: 'Bunda Care',
       theme: ThemeData(
         useMaterial3: true,
-        colorSchemeSeed: const Color(0xFF6CC4A1),
+        colorSchemeSeed: Colors.pink[300],
       ),
       routerConfig: _appRouter.router,
     );

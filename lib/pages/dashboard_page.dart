@@ -130,7 +130,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [Colors.pink[300]!, Colors.purple[300]!],
+                          colors: [Colors.pink[400]!, Colors.pink[200]!],
                         ),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
@@ -412,8 +412,8 @@ class _DashboardPageState extends State<DashboardPage> {
                 _buildNavItem(Icons.chat_bubble_outline, Icons.chat_bubble, 1),
                 _buildNavItem(Icons.qr_code_scanner, Icons.qr_code_scanner, 2),
                 _buildNavItem(
-                  Icons.notifications_outlined,
-                  Icons.notifications,
+                  Icons.menu_book_outlined,
+                  Icons.menu_book,
                   3,
                 ),
                 _buildNavItem(Icons.person_outline, Icons.person, 4),
@@ -435,16 +435,16 @@ class _DashboardPageState extends State<DashboardPage> {
         gradientColors = [Colors.pink[300]!, Colors.pink[400]!];
         break;
       case 1:
-        gradientColors = [Colors.purple[300]!, Colors.purple[400]!];
+        gradientColors = [Colors.pink[200]!, Colors.pink[300]!];
         break;
       case 2:
-        gradientColors = [Colors.blue[300]!, Colors.blue[400]!];
+        gradientColors = [Colors.pink[400]!, Colors.pink[500]!];
         break;
       case 3:
-        gradientColors = [Colors.orange[300]!, Colors.orange[400]!];
+        gradientColors = [Colors.pink[200]!, Colors.pink[300]!];
         break;
       case 4:
-        gradientColors = [Colors.teal[300]!, Colors.teal[400]!];
+        gradientColors = [Colors.pink[100]!, Colors.pink[200]!];
         break;
       default:
         gradientColors = [Colors.grey[300]!, Colors.grey[400]!];

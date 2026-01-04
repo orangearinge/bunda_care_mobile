@@ -22,7 +22,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.pink[200]!, Colors.pink[100]!],
+              colors: [Colors.pink[400]!, Colors.pink[200]!],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -112,7 +112,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.pink[200]!, Colors.pink[100]!],
+                        colors: [Colors.pink[300]!, Colors.pink[200]!],
                       ),
                       shape: BoxShape.circle,
                       boxShadow: [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'chatbot_page.dart';
 import 'scan_page.dart';
 import 'edukasi_page.dart';
@@ -48,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -70,10 +71,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
                             'Nadia Febriani',
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                               fontSize: 22,
                               fontWeight: FontWeight.w800,
                               color: Colors.black87,
@@ -82,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           SizedBox(height: 4),
                           Text(
                             '0882-0034-85047',
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                               fontSize: 13,
                               color: Colors.black54,
                             ),
@@ -114,7 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   padding: const EdgeInsets.all(16),
                   child: Column(
-                    children: const [
+                    children: [
                       _ProfileField(label: 'Tanggal Lahir', value: '07 November 1997'),
                       Divider(height: 24),
                       _ProfileField(label: 'Jenis Kelamin', value: 'Perempuan'),
@@ -145,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
+                        children: [
                           _StatPill(title: 'Tinggi\nBadan', value: '160 cm'),
                           _StatPill(title: 'Berat\nBadan', value: '52 kg'),
                           _StatPill(title: 'BMI', valueBold: '20.31'),
@@ -173,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Text(
                         'versi 5.50-117',
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           color: Colors.grey[500],
                           fontSize: 12,
                         ),
@@ -184,17 +185,17 @@ class _ProfilePageState extends State<ProfilePage> {
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey[200],
-                          foregroundColor: Colors.black87,
+                          backgroundColor: Colors.pink[300],
+                          foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18),
                           ),
                           padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Logout',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                       ),
                     ],
@@ -228,8 +229,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 _buildNavItem(Icons.chat_bubble_outline, Icons.chat_bubble, 1),
                 _buildNavItem(Icons.qr_code_scanner, Icons.qr_code_scanner, 2),
                 _buildNavItem(
-                  Icons.notifications_outlined,
-                  Icons.notifications,
+                  Icons.menu_book_outlined,
+                  Icons.menu_book,
                   3,
                 ),
                 _buildNavItem(Icons.person_outline, Icons.person, 4),
@@ -245,15 +246,15 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.teal.withOpacity(0.1),
+        color: Colors.pink.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         title,
-        style: const TextStyle(
+        style: GoogleFonts.poppins(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: Colors.teal,
+          color: Colors.pink[400],
         ),
       ),
     );
@@ -268,16 +269,16 @@ class _ProfilePageState extends State<ProfilePage> {
         gradientColors = [Colors.pink[300]!, Colors.pink[400]!];
         break;
       case 1:
-        gradientColors = [Colors.purple[300]!, Colors.purple[400]!];
+        gradientColors = [Colors.pink[200]!, Colors.pink[300]!];
         break;
       case 2:
-        gradientColors = [Colors.blue[300]!, Colors.blue[400]!];
+        gradientColors = [Colors.pink[400]!, Colors.pink[500]!];
         break;
       case 3:
-        gradientColors = [Colors.orange[300]!, Colors.orange[400]!];
+        gradientColors = [Colors.pink[200]!, Colors.pink[300]!];
         break;
       case 4:
-        gradientColors = [Colors.teal[300]!, Colors.teal[400]!];
+        gradientColors = [Colors.pink[100]!, Colors.pink[200]!];
         break;
       default:
         gradientColors = [Colors.grey[300]!, Colors.grey[400]!];
@@ -322,7 +323,7 @@ class _ProfileField extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
+            style: GoogleFonts.poppins(
               color: Colors.grey[500],
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -331,7 +332,7 @@ class _ProfileField extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style: const TextStyle(
+            style: GoogleFonts.poppins(
               color: Colors.black87,
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -389,10 +390,10 @@ class _StatPill extends StatelessWidget {
             Text(
               valueBold!,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
-                color: Colors.teal,
+                color: Colors.pink[400],
               ),
             ),
         ],
@@ -429,8 +430,8 @@ class _AllergyCard extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
-              color: Colors.teal[700],
+            style: GoogleFonts.poppins(
+              color: Colors.pink[700],
               fontWeight: FontWeight.w700,
               fontSize: 13,
             ),

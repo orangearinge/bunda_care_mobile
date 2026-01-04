@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      colors: [Colors.pink[200]!, Colors.pink[100]!],
+                      colors: [Colors.pink[400]!, Colors.pink[200]!],
                     ),
                     borderRadius: BorderRadius.circular(200),
                   ),
@@ -264,7 +264,7 @@ class _LoginPageState extends State<LoginPage> {
                         ? null
                         : () => _login(authProvider),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pink[200],
+                      backgroundColor: Colors.pink[300],
                       foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'rekomendasi_page.dart';
 import 'meal_log.dart';
 
@@ -17,10 +18,21 @@ class ScanResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.pink[50],
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("Hasil Scan"),
-        backgroundColor: Colors.pink[300],
+        title: Text(
+          "Hasil Scan",
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.pink[400]!, Colors.pink[200]!],
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -80,9 +92,9 @@ class ScanResultPage extends StatelessWidget {
                     )).toList(),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     "Identifikasi Terdeteksi",
-                    style: TextStyle(
+                    style: GoogleFonts.poppins(
                       color: Colors.grey,
                       fontSize: 14,
                     ),
@@ -143,9 +155,9 @@ class ScanResultPage extends StatelessWidget {
                   elevation: 5,
                   shadowColor: Colors.pink.withOpacity(0.3),
                 ),
-                child: const Text(
+                child: Text(
                   "LIHAT REKOMENDASI",
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,

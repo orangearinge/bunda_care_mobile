@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'rekomendasi_page.dart';
 import 'meal_log.dart';
 import 'scan_result_page.dart';
@@ -30,11 +31,23 @@ class _ScanPageState extends State<ScanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.pink[50],
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("Scan Makanan"),
-        backgroundColor: Colors.pink[300],
+        title: Text(
+          "Scan Makanan",
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.pink[400]!, Colors.pink[200]!],
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -42,25 +55,42 @@ class _ScanPageState extends State<ScanPage> {
           children: [
             // === Area Kamera ===
             Container(
-              height: 200,
+              height: 250,
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.pink, width: 2),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.pink.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+                border: Border.all(color: Colors.pink[100]!, width: 2),
               ),
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.camera_alt, size: 50, color: Colors.pink),
-                    SizedBox(height: 8),
+                  children: [
+                    Icon(Icons.camera_alt, size: 60, color: Colors.pink[300]),
+                    const SizedBox(height: 16),
                     Text(
                       "Arahkan kamera ke makanan",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
                     ),
-                    SizedBox(height: 4),
-                    Text("untuk menganalisis nutrisinya"),
+                    const SizedBox(height: 4),
+                    Text(
+                      "untuk menganalisis nutrisinya",
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -70,19 +100,23 @@ class _ScanPageState extends State<ScanPage> {
 
             // === Info pencahayaan ===
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.pink[100],
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.pink[50],
+                borderRadius: BorderRadius.circular(15),
               ),
               child: Row(
-                children: const [
-                  Icon(Icons.lightbulb, color: Colors.white),
-                  SizedBox(width: 10),
+                children: [
+                  Icon(Icons.lightbulb, color: Colors.pink[300]),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       "Pastikan pencahayaan cukup untuk hasil terbaik",
-                      style: TextStyle(color: Colors.white),
+                      style: GoogleFonts.poppins(
+                        color: Colors.pink[800],
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
@@ -92,18 +126,28 @@ class _ScanPageState extends State<ScanPage> {
             const SizedBox(height: 30),
 
             // === Tombol Scan ===
-            ElevatedButton.icon(
-              onPressed: _simulateScan,
-              icon: const Icon(Icons.camera),
-              label: const Text("SCAN MAKANAN"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink[300],
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
-                  vertical: 14,
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton.icon(
+                onPressed: _simulateScan,
+                icon: const Icon(Icons.qr_code_scanner),
+                label: Text(
+                  "SCAN MAKANAN",
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.1,
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pink[300],
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  elevation: 4,
+                  shadowColor: Colors.pink.withOpacity(0.3),
                 ),
               ),
             ),

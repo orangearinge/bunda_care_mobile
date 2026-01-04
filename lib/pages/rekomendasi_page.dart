@@ -43,8 +43,17 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
       appBar: AppBar(
         // Judul AppBar menyesuaikan dengan pilihan yang sedang aktif
         title: Text("Rekomendasi ${_selectedMealTime.toUpperCase()}"),
-        backgroundColor: Colors.pink[300],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.pink[400]!, Colors.pink[200]!],
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

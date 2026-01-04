@@ -19,19 +19,19 @@ class EdukasiPage extends StatelessWidget {
         'title': 'Menu MPASI Pertama: Mulai dengan Bubur Tunggal',
         'subtitle': 'Panduan langkah demi langkah MPASI untuk 6 bulan.',
         'icon': Icons.baby_changing_station,
-        'color': Colors.blue.shade400,
+        'color': Colors.pink.shade300,
       },
       {
         'title': 'Mencegah Stunting Sejak Dini',
         'subtitle': 'Peran gizi seimbang selama 1000 hari pertama kehidupan.',
         'icon': Icons.height,
-        'color': accentColor,
+        'color': Colors.pink.shade500,
       },
       {
         'title': 'Snack Sehat untuk Balita Aktif',
         'subtitle': 'Resep mudah dan bergizi tinggi.',
         'icon': Icons.apple,
-        'color': Colors.orange.shade400,
+        'color': Colors.pink.shade200,
       },
     ];
 
@@ -42,7 +42,15 @@ class EdukasiPage extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: accentColor,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.pink[400]!, Colors.pink[200]!],
+            ),
+          ),
+        ),
         elevation: 0,
       ),
       body: SingleChildScrollView(
