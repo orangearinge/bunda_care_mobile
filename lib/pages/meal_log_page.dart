@@ -91,6 +91,8 @@ class _MealLogPageState extends State<MealLogPage> {
     final String calories = "${log['total']['calories']} kkal";
     final int logId = log['meal_log_id'];
 
+    final String? imageUrl = log['image_url'];
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -110,18 +112,19 @@ class _MealLogPageState extends State<MealLogPage> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: isConsumed ? Colors.green[50] : Colors.pink[50],
+                if (imageUrl != null && imageUrl.isNotEmpty)
+                  ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    isConsumed ? Icons.check_circle : Icons.schedule,
-                    color: isConsumed ? Colors.green : Colors.pink[300],
-                  ),
-                ),
+                    child: Image.network(
+                      imageUrl,
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _buildIconPlaceholder(isConsumed),
+                    ),
+                  )
+                else
+                  _buildIconPlaceholder(isConsumed),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -195,6 +198,21 @@ class _MealLogPageState extends State<MealLogPage> {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildIconPlaceholder(bool isConsumed) {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: isConsumed ? Colors.green[50] : Colors.pink[50],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Icon(
+        isConsumed ? Icons.check_circle : Icons.schedule,
+        color: isConsumed ? Colors.green : Colors.pink[300],
       ),
     );
   }

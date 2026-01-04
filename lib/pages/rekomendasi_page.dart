@@ -161,6 +161,7 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
   Widget _buildMenuCard(Map<String, dynamic> option) {
     final nutrition = option['nutrition'];
     final ingredients = option['ingredients'] as List;
+    final imageUrl = option['image_url'] as String?;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -178,6 +179,45 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Image section
+          if (imageUrl != null && imageUrl.isNotEmpty)
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              child: Image.network(
+                imageUrl,
+                width: double.infinity,
+                height: 180,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: double.infinity,
+                    height: 180,
+                    color: Colors.grey[200],
+                    child: Icon(
+                      Icons.restaurant,
+                      size: 64,
+                      color: Colors.grey[400],
+                    ),
+                  );
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    width: double.infinity,
+                    height: 180,
+                    color: Colors.grey[200],
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
