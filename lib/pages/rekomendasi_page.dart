@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/food_provider.dart';
+import 'meal_log_page.dart';
 
 class RekomendasiPage extends StatefulWidget {
   final String mealType;
@@ -228,11 +229,27 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
             ),
           ),
           InkWell(
-            onTap: () {
-              // TODO: Implement logging meal
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Logging ${option['menu_name']}...')),
+            onTap: () async {
+              final success = await context.read<FoodProvider>().logMeal(
+                menuId: option['menu_id'],
+                isConsumed: false,
               );
+              if (mounted && success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${option['menu_name']} ditambahkan ke rencana makan'),
+                    action: SnackBarAction(
+                      label: 'Lihat',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const MealLogPage()),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              }
             },
             child: Container(
               width: double.infinity,
@@ -243,7 +260,7 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
               ),
               child: const Center(
                 child: Text(
-                  "CATAT MAKANAN",
+                  "TAMBAH KE RENCANA MAKAN",
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,

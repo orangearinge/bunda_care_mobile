@@ -85,4 +85,60 @@ class FoodService {
       throw ApiError.fromException(Exception(e));
     }
   }
+
+  /// Log a meal (Wishlist or consumed)
+  /// POST /api/meal-log
+  Future<Map<String, dynamic>> logMeal({
+    required int menuId,
+    double servings = 1.0,
+    bool isConsumed = false,
+  }) async {
+    try {
+      final response = await _api.post(
+        '/api/meal-log',
+        data: {
+          "menu_id": menuId,
+          "servings": servings,
+          "is_consumed": isConsumed,
+        },
+      );
+      return response.data;
+    } catch (e) {
+      if (e is ApiError) rethrow;
+      throw ApiError.fromException(Exception(e));
+    }
+  }
+
+  /// Get meal logs
+  /// GET /api/meal-log
+  Future<List<dynamic>> getMealLogs({int limit = 50}) async {
+    try {
+      final response = await _api.get(
+        '/api/meal-log',
+        queryParameters: {"limit": limit},
+      );
+      final data = response.data;
+      if (data != null && data['status'] == 'success' && data['data'] != null) {
+        return (data['data'] as Map<String, dynamic>)['items'] ?? [];
+      } else if (data != null && data['items'] != null) {
+        return data['items'];
+      }
+      return [];
+    } catch (e) {
+      if (e is ApiError) rethrow;
+      throw ApiError.fromException(Exception(e));
+    }
+  }
+
+  /// Confirm a meal log as consumed
+  /// POST /api/meal-log/:id/confirm
+  Future<bool> confirmMeal(int mealLogId) async {
+    try {
+      final response = await _api.post('/api/meal-log/$mealLogId/confirm');
+      return response.data?['status'] == 'success' || response.statusCode == 200;
+    } catch (e) {
+      if (e is ApiError) rethrow;
+      throw ApiError.fromException(Exception(e));
+    }
+  }
 }

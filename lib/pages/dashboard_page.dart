@@ -11,6 +11,7 @@ import 'scan_page.dart';
 import 'chatbot_page.dart';
 import 'edukasi_page.dart';
 import 'profile_page.dart';
+import 'meal_log_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -327,13 +328,34 @@ class _DashboardPageState extends State<DashboardPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "Analisis Asupan Gizi",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Pencapaian Target Gizi",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const MealLogPage()),
+                            );
+                          },
+                          child: Text(
+                            "Daftar Rencana",
+                            style: TextStyle(
+                              color: Colors.pink[300],
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -420,7 +442,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text(
-                                      "Status Gizi Harian",
+                                      "Status Kebutuhan Gizi",
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
