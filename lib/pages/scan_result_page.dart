@@ -1,38 +1,30 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'rekomendasi_page.dart';
-import 'meal_log.dart';
 
 class ScanResultPage extends StatelessWidget {
   final List<String> scannedItems;
-  final String nutrisi;
-  final String protein;
+  final File? imageFile;
+  final Map<String, dynamic>? rawResults;
 
   const ScanResultPage({
     super.key,
     required this.scannedItems,
-    required this.nutrisi,
-    required this.protein,
+    this.imageFile,
+    this.rawResults,
   });
 
   @override
   Widget build(BuildContext context) {
+    final List<int> detectedIds = rawResults != null && rawResults!['detected_ids'] != null
+        ? List<int>.from(rawResults!['detected_ids'])
+        : [];
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.pink[50],
       appBar: AppBar(
-        title: Text(
-          "Hasil Scan",
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-        ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.pink[400]!, Colors.pink[200]!],
-            ),
-          ),
-        ),
+        title: const Text("Hasil Scan"),
+        backgroundColor: Colors.pink[300],
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -40,10 +32,9 @@ class ScanResultPage extends StatelessWidget {
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            // Hero section with food icon or image placeholder
+            // Hero section with food image
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 40),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
@@ -57,46 +48,64 @@ class ScanResultPage extends StatelessWidget {
               ),
               child: Column(
                 children: [
+                  if (imageFile != null)
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                      child: Image.file(
+                        imageFile!,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   Container(
                     padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.pink[50],
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.fastfood,
-                      size: 80,
-                      color: Colors.pink[300],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    alignment: WrapAlignment.center,
-                    children: scannedItems.map((item) => Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.pink[50],
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.pink[200]!),
-                      ),
-                      child: Text(
-                        item,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.pink[800],
+                    child: Column(
+                      children: [
+                        if (imageFile == null)
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.pink[50],
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.fastfood,
+                              size: 80,
+                              color: Colors.pink[300],
+                            ),
+                          ),
+                        const SizedBox(height: 20),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          alignment: WrapAlignment.center,
+                          children: scannedItems.map((item) => Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.pink[50],
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Colors.pink[200]!),
+                            ),
+                            child: Text(
+                              item,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.pink[800],
+                              ),
+                            ),
+                          )).toList(),
                         ),
-                      ),
-                    )).toList(),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Identifikasi Terdeteksi",
-                    style: GoogleFonts.poppins(
-                      color: Colors.grey,
-                      fontSize: 14,
+                        const SizedBox(height: 8),
+                        Text(
+                          scannedItems.isEmpty ? "Tidak ada makanan terdeteksi" : "Identifikasi Terdeteksi",
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -104,28 +113,21 @@ class ScanResultPage extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             
-            // Nutrition breakdown
-            Row(
-              children: [
-                Expanded(
-                  child: _buildNutritionCard(
-                    title: "Nutrisi Umum",
-                    value: nutrisi,
-                    icon: Icons.analytics,
-                    color: Colors.blue,
+            // Nutrition Candidates
+            if (rawResults != null && rawResults!['candidates'] != null)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(left: 8.0, bottom: 12),
+                    child: Text(
+                      "Detail Nutrisi (estimasi per 100g)",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildNutritionCard(
-                    title: "Kandungan Protein",
-                    value: protein,
-                    icon: Icons.fitness_center,
-                    color: Colors.orange,
-                  ),
-                ),
-              ],
-            ),
+                  ...(rawResults!['candidates'] as List).map((c) => _buildCandidateTile(c)).toList(),
+                ],
+              ),
             
             const SizedBox(height: 40),
             
@@ -138,10 +140,9 @@ class ScanResultPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => MealLogPage(
-                        makanan: scannedItems.join(", "),
-                        nutrisi: nutrisi,
-                        protein: protein,
+                      builder: (_) => RekomendasiPage(
+                        mealType: 'lunch',
+                        detectedIds: detectedIds,
                       ),
                     ),
                   );
@@ -155,9 +156,9 @@ class ScanResultPage extends StatelessWidget {
                   elevation: 5,
                   shadowColor: Colors.pink.withOpacity(0.3),
                 ),
-                child: Text(
+                child: const Text(
                   "LIHAT REKOMENDASI",
-                  style: GoogleFonts.poppins(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
@@ -182,47 +183,41 @@ class ScanResultPage extends StatelessWidget {
     );
   }
 
-  Widget _buildNutritionCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-  }) {
+  Widget _buildCandidateTile(Map<String, dynamic> candidate) {
+    final nutrition = candidate['per_100g'];
     return Container(
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(15),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Icon(icon, color: color),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  candidate['name'],
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Kalori: ${nutrition['calories']} kkal",
+                  style: const TextStyle(color: Colors.blue),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
-            ),
-          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text("P: ${nutrition['protein_g']}g", style: const TextStyle(fontSize: 12)),
+              Text("K: ${nutrition['carbs_g']}g", style: const TextStyle(fontSize: 12)),
+              Text("L: ${nutrition['fat_g']}g", style: const TextStyle(fontSize: 12)),
+            ],
+          )
         ],
       ),
     );

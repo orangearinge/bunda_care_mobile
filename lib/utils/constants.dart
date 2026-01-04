@@ -41,6 +41,12 @@ class ApiConstants {
   static const String googleAuth = "/api/auth/google";
   static const String logout = "/api/auth/logout";
 
+  // ==================== Food Endpoints ====================
+  static const String scanFood = "/api/scan-food";
+  static const String recommendation = "/api/recommendation";
+  static const String mealLog = "/api/meal-log";
+
+
   // ==================== Timeouts ====================
 
   static const Duration connectionTimeout = Duration(seconds: 30);

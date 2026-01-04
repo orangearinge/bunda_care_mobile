@@ -1,146 +1,331 @@
 import 'package:flutter/material.dart';
-
-// --- Data Dummy Rekomendasi ---
-// Fungsi atau Map untuk mendapatkan rekomendasi berdasarkan waktu makan
-String getRecommendation(String mealTime) {
-  final Map<String, String> dummyRecommendations = {
-    'lunch':
-        "🥗 Menu Makan Siang:\n- Nasi Merah (1 porsi)\n- Ayam Panggang (1 potong tanpa kulit)\n- Tumis Buncis dan Wortel\n- Buah (Pisang)",
-    'dinner':
-        "🍽️ Menu Makan Malam:\n- Sup Ikan Fillet (Tanpa santan)\n- Kentang Rebus (1 buah kecil)\n- Salad Timun Tomat\n- Air Putih Hangat",
-    'breakfast':
-        "☀️ Menu Sarapan:\n- Oatmeal (1 mangkuk)\n- 1 Telur Rebus\n- Segelas Susu Rendah Lemak\n- Buah Berry",
-  };
-  return dummyRecommendations[mealTime] ?? "Pilihan waktu makan tidak valid.";
-}
+import 'package:provider/provider.dart';
+import '../providers/food_provider.dart';
+import 'meal_log_page.dart';
 
 class RekomendasiPage extends StatefulWidget {
-  // Terima mealType Awal dari ScanPage (seharusnya selalu 'lunch' dari ScanPage)
   final String mealType;
-  const RekomendasiPage({super.key, required this.mealType});
+  final List<int>? detectedIds;
+
+  const RekomendasiPage({
+    super.key,
+    required this.mealType,
+    this.detectedIds,
+  });
 
   @override
   _RekomendasiPageState createState() => _RekomendasiPageState();
 }
 
 class _RekomendasiPageState extends State<RekomendasiPage> {
-  // State yang akan menyimpan pilihan waktu makan saat ini (default-nya 'lunch')
-  late String _selectedMealTime;
-
-  // Daftar opsi waktu makan untuk Dropdown
-  final List<String> _mealTimes = ['lunch', 'dinner', 'breakfast'];
+  late String _selectedMealType;
+  final List<String> _mealTypes = ['BREAKFAST', 'LUNCH', 'DINNER'];
 
   @override
   void initState() {
     super.initState();
-    // Inisialisasi state dengan nilai yang dikirim dari widget sebelumnya
-    _selectedMealTime = widget.mealType;
+    _selectedMealType = widget.mealType.toUpperCase();
+    
+    // Fetch initial recommendations
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchData();
+    });
+  }
+
+  void _fetchData() {
+    context.read<FoodProvider>().fetchRecommendations(
+      mealType: _selectedMealType,
+      detectedIds: widget.detectedIds,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.pink[50],
       appBar: AppBar(
-        // Judul AppBar menyesuaikan dengan pilihan yang sedang aktif
-        title: Text("Rekomendasi ${_selectedMealTime.toUpperCase()}"),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.pink[400]!, Colors.pink[200]!],
+        title: Text("Rekomendasi ${_selectedMealType}"),
+        backgroundColor: Colors.pink[300],
+        foregroundColor: Colors.white,
+      ),
+      body: Consumer<FoodProvider>(
+        builder: (context, foodProvider, child) {
+          return Column(
+            children: [
+              // --- Header & Dropdown ---
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      "Pilih Waktu Makan:",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.0),
+                        border: Border.all(color: Colors.pink[200]!),
+                      ),
+                      child: DropdownButton<String>(
+                        value: _selectedMealType,
+                        icon: const Icon(Icons.arrow_drop_down, color: Colors.pink),
+                        underline: Container(),
+                        style: TextStyle(color: Colors.pink[900], fontSize: 16),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              _selectedMealType = newValue;
+                            });
+                            _fetchData();
+                          }
+                        },
+                        items: _mealTypes.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // --- Content ---
+              Expanded(
+                child: foodProvider.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : foodProvider.errorMessage != null
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  foodProvider.errorMessage!,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: _fetchData,
+                                  child: const Text("Coba Lagi"),
+                                ),
+                              ],
+                            ),
+                          )
+                        : _buildRecommendationList(foodProvider.recommendations),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildRecommendationList(Map<String, dynamic>? data) {
+    if (data == null || data['recommendations'] == null || (data['recommendations'] as List).isEmpty) {
+      return const Center(
+        child: Text("Tidak ada rekomendasi yang sesuai dengan preferensi Anda."),
+      );
+    }
+
+    final recommendations = data['recommendations'] as List;
+    // The backend returns a list of objects per meal type
+    // Since we filter by meal type, we take the first matching one
+    final currentMealRec = recommendations.firstWhere(
+      (r) => r['meal_type'] == _selectedMealType,
+      orElse: () => null,
+    );
+
+    if (currentMealRec == null || (currentMealRec['options'] as List).isEmpty) {
+      return const Center(
+        child: Text("Tidak ada opsi menu untuk waktu makan ini."),
+      );
+    }
+
+    final options = currentMealRec['options'] as List;
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: options.length,
+      itemBuilder: (context, index) {
+        final option = options[index];
+        return _buildMenuCard(option);
+      },
+    );
+  }
+
+  Widget _buildMenuCard(Map<String, dynamic> option) {
+    final nutrition = option['nutrition'];
+    final ingredients = option['ingredients'] as List;
+    final imageUrl = option['image_url'] as String?;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image section
+          if (imageUrl != null && imageUrl.isNotEmpty)
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              child: Image.network(
+                imageUrl,
+                width: double.infinity,
+                height: 180,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: double.infinity,
+                    height: 180,
+                    color: Colors.grey[200],
+                    child: Icon(
+                      Icons.restaurant,
+                      size: 64,
+                      color: Colors.grey[400],
+                    ),
+                  );
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    width: double.infinity,
+                    height: 180,
+                    color: Colors.grey[200],
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        option['menu_name'],
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.green[50],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        "${nutrition['calories'].toInt()} kkal",
+                        style: TextStyle(
+                          color: Colors.green[700],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Bahan: ${ingredients.map((i) => i['name']).join(', ')}",
+                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildNutrientInfo("Protein", "${nutrition['protein_g'].toStringAsFixed(1)}g"),
+                    _buildNutrientInfo("Karbo", "${nutrition['carbs_g'].toStringAsFixed(1)}g"),
+                    _buildNutrientInfo("Lemak", "${nutrition['fat_g'].toStringAsFixed(1)}g"),
+                  ],
+                ),
+              ],
             ),
           ),
-        ),
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // --- Dropdown Menu di Kanan ---
-            Align(
-              alignment: Alignment.topRight,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                decoration: BoxDecoration(
-                  color: Colors.pink[100],
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: DropdownButton<String>(
-                  value: _selectedMealTime,
-                  icon: const Icon(Icons.arrow_drop_down, color: Colors.pink),
-                  underline: Container(), // Menghilangkan garis bawah default
-                  style: TextStyle(color: Colors.pink[900], fontSize: 16),
-
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      // Gunakan setState untuk mengubah pilihan dan me-refresh UI
-                      setState(() {
-                        _selectedMealTime = newValue;
-                      });
-                    }
-                  },
-
-                  items: _mealTimes.map<DropdownMenuItem<String>>((
-                    String value,
-                  ) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(
-                        value.toUpperCase(),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // --- Area Konten Rekomendasi ---
-            // Teks yang akan berubah sesuai dengan pilihan drop-down
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    blurRadius: 5,
-                    offset: const Offset(0, 3),
+          InkWell(
+            onTap: () async {
+              final success = await context.read<FoodProvider>().logMeal(
+                menuId: option['menu_id'],
+                isConsumed: false,
+              );
+              if (mounted && success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('${option['menu_name']} ditambahkan ke rencana makan'),
+                    action: SnackBarAction(
+                      label: 'Lihat',
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const MealLogPage()),
+                        );
+                      },
+                    ),
                   ),
-                ],
+                );
+              }
+            },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.pink[300],
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
               ),
-              child: Text(
-                // Panggil fungsi untuk mendapatkan rekomendasi dummy
-                getRecommendation(_selectedMealTime),
-                style: const TextStyle(fontSize: 16, height: 1.5),
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            // Teks statis tambahan dari screenshot
-            Center(
-              child: Text(
-                "ini halaman rekomendasi makanan untuk $_selectedMealTime",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.grey,
+              child: const Center(
+                child: Text(
+                  "TAMBAH KE RENCANA MAKAN",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildNutrientInfo(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
+        ),
+        Text(
+          value,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 }

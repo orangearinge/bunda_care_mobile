@@ -1,4 +1,5 @@
 import '../models/user_preference.dart';
+import '../models/dashboard_summary.dart';
 import '../models/api_error.dart';
 import '../utils/constants.dart';
 import 'api_service.dart';
@@ -50,13 +51,50 @@ class UserService {
       final response = await _api.get(_preferencePath);
       
       final data = response.data;
-      if (data != null && data['status'] == 'success') {
-        return UserPreference.fromJson(data['data'] as Map<String, dynamic>);
+      if (data != null) {
+        if (data['status'] == 'success' && data['data'] != null) {
+          return UserPreference.fromJson(data['data'] as Map<String, dynamic>);
+        } else if (data.containsKey('role')) {
+          // Direct response
+          return UserPreference.fromJson(data as Map<String, dynamic>);
+        }
       }
       return null;
     } catch (e) {
       // If no preference set yet, return null instead of throwing
+      if (ApiConstants.isDevelopment) {
+        print('GET PREFERENCE ERROR: $e');
+      }
       return null;
+    }
+  }
+
+  /// Get dashboard summary
+  /// GET /api/user/dashboard
+  Future<DashboardSummary> getDashboardSummary() async {
+    try {
+      final response = await _api.get('/api/user/dashboard');
+      final data = response.data;
+      
+      if (data == null) {
+        throw ApiError(code: 'EMPTY_RESPONSE', message: 'Respon kosong dari server');
+      }
+
+      // Handle both wrapped and direct responses
+      if (data['status'] == 'success' && data['data'] != null) {
+        return DashboardSummary.fromJson(data['data'] as Map<String, dynamic>);
+      } else if (data.containsKey('user') || data.containsKey('targets')) {
+        // Direct response
+        return DashboardSummary.fromJson(data as Map<String, dynamic>);
+      } else {
+        throw ApiError(
+          code: 'FETCH_FAILED',
+          message: data['message'] ?? 'Gagal mengambil data dashboard',
+        );
+      }
+    } catch (e) {
+      if (e is ApiError) rethrow;
+      throw ApiError.fromException(Exception(e));
     }
   }
 }

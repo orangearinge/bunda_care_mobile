@@ -20,6 +20,7 @@ class UserPreferenceProvider with ChangeNotifier {
   /// Update user preference through API
   Future<bool> updatePreference({
     required String role,
+    String? name,
     String? hpht,
     required double heightCm,
     required double weightKg,
@@ -37,9 +38,10 @@ class UserPreferenceProvider with ChangeNotifier {
     try {
       final preference = UserPreference(
         role: role,
+        name: name,
         hpht: hpht,
         heightCm: heightCm.toInt(),
-        weightKg: weightKg.toInt(),
+        weightKg: weightKg,
         ageYear: ageYear,
         bellyCircumferenceCm: bellyCircumferenceCm,
         lilaCm: lilaCm,
@@ -63,6 +65,28 @@ class UserPreferenceProvider with ChangeNotifier {
       _status = PreferenceStatus.error;
       notifyListeners();
       return false;
+    }
+  }
+
+  /// Fetch user preference from API
+  Future<void> fetchPreference() async {
+    _status = PreferenceStatus.loading;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final preference = await _userService.getPreference();
+      _currentPreference = preference;
+      _status = PreferenceStatus.success;
+      notifyListeners();
+    } on ApiError catch (e) {
+      _errorMessage = e.message;
+      _status = PreferenceStatus.error;
+      notifyListeners();
+    } catch (e) {
+      _errorMessage = 'Gagal memuat data profil.';
+      _status = PreferenceStatus.error;
+      notifyListeners();
     }
   }
 
