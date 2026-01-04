@@ -59,42 +59,6 @@ class _DashboardPageState extends State<DashboardPage> {
     // GoRouter will automatically redirect to login
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    // Navigasi berdasarkan index
-    switch (index) {
-      case 0:
-        // Home - sudah di dashboard
-        break;
-      case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ChatbotPage()),
-        );
-        break;
-      case 2:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ScanPage()),
-        );
-        break;
-      case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const EdukasiPage()),
-        );
-        break;
-      case 4:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ProfilePage()),
-        );
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -520,88 +484,9 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(Icons.home_outlined, Icons.home, 0),
-                _buildNavItem(Icons.chat_bubble_outline, Icons.chat_bubble, 1),
-                _buildNavItem(Icons.qr_code_scanner, Icons.qr_code_scanner, 2),
-                _buildNavItem(
-                  Icons.menu_book_outlined,
-                  Icons.menu_book,
-                  3,
-                ),
-                _buildNavItem(Icons.person_outline, Icons.person, 4),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 
-  Widget _buildNavItem(IconData iconOutlined, IconData iconFilled, int index) {
-    bool isSelected = _selectedIndex == index;
-
-    // Warna gradient untuk setiap item
-    List<Color> gradientColors;
-    switch (index) {
-      case 0:
-        gradientColors = [Colors.pink[300]!, Colors.pink[400]!];
-        break;
-      case 1:
-        gradientColors = [Colors.pink[200]!, Colors.pink[300]!];
-        break;
-      case 2:
-        gradientColors = [Colors.pink[400]!, Colors.pink[500]!];
-        break;
-      case 3:
-        gradientColors = [Colors.pink[200]!, Colors.pink[300]!];
-        break;
-      case 4:
-        gradientColors = [Colors.pink[100]!, Colors.pink[200]!];
-        break;
-      default:
-        gradientColors = [Colors.grey[300]!, Colors.grey[400]!];
-    }
-
-    return GestureDetector(
-      onTap: () => _onItemTapped(index),
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          gradient: isSelected
-              ? LinearGradient(
-                  colors: gradientColors,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              : null,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Icon(
-          isSelected ? iconFilled : iconOutlined,
-          color: isSelected ? Colors.white : Colors.grey[400],
-          size: 28,
-        ),
-      ),
-    );
-  }
 
   static Widget _buildRekomendasiCard(
     String nama,

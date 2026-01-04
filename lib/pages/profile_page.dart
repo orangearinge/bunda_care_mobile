@@ -25,37 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
 
-    switch (index) {
-      case 0:
-        Navigator.pop(context);
-        break;
-      case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ChatbotPage()),
-        );
-        break;
-      case 2:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ScanPage()),
-        );
-        break;
-      case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const EdukasiPage()),
-        );
-        break;
-      case 4:
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -254,7 +224,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [Colors.teal[400]!, Colors.teal[600]!],
+                            colors: [Colors.pink[300]!, Colors.purple[300]!],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -301,11 +271,12 @@ class _ProfilePageState extends State<ProfilePage> {
                               Navigator.pop(context);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey[200],
-                              foregroundColor: Colors.black87,
+                              backgroundColor: Colors.pink[50],
+                              foregroundColor: Colors.pink[400],
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18),
+                                side: BorderSide(color: Colors.pink[100]!),
                               ),
                               padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
                             ),
@@ -325,38 +296,6 @@ class _ProfilePageState extends State<ProfilePage> {
           },
         ),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 2,
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(Icons.home_outlined, Icons.home, 0),
-                _buildNavItem(Icons.chat_bubble_outline, Icons.chat_bubble, 1),
-                _buildNavItem(Icons.qr_code_scanner, Icons.qr_code_scanner, 2),
-                _buildNavItem(
-                  Icons.notifications_outlined,
-                  Icons.notifications,
-                  3,
-                ),
-                _buildNavItem(Icons.person_outline, Icons.person, 4),
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -364,66 +303,22 @@ class _ProfilePageState extends State<ProfilePage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.teal.withOpacity(0.1),
+        color: Colors.pink[50],
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.pink[100]!),
       ),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w700,
-          color: Colors.teal,
+          color: Colors.pink[400],
         ),
       ),
     );
   }
 
-  Widget _buildNavItem(IconData iconOutlined, IconData iconFilled, int index) {
-    bool isSelected = _selectedIndex == index;
 
-    List<Color> gradientColors;
-    switch (index) {
-      case 0:
-        gradientColors = [Colors.pink[300]!, Colors.pink[400]!];
-        break;
-      case 1:
-        gradientColors = [Colors.purple[300]!, Colors.purple[400]!];
-        break;
-      case 2:
-        gradientColors = [Colors.blue[300]!, Colors.blue[400]!];
-        break;
-      case 3:
-        gradientColors = [Colors.orange[300]!, Colors.orange[400]!];
-        break;
-      case 4:
-        gradientColors = [Colors.teal[300]!, Colors.teal[400]!];
-        break;
-      default:
-        gradientColors = [Colors.grey[300]!, Colors.grey[400]!];
-    }
-
-    return GestureDetector(
-      onTap: () => _onItemTapped(index),
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          gradient: isSelected
-              ? LinearGradient(
-                  colors: gradientColors,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              : null,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Icon(
-          isSelected ? iconFilled : iconOutlined,
-          color: isSelected ? Colors.white : Colors.grey[400],
-          size: 28,
-        ),
-      ),
-    );
-  }
 }
 
 class _ProfileField extends StatelessWidget {
@@ -508,10 +403,10 @@ class _StatPill extends StatelessWidget {
             Text(
               valueBold!,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
-                color: Colors.teal,
+                color: Colors.pink[400],
               ),
             ),
         ],
@@ -549,7 +444,7 @@ class _AllergyCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              color: Colors.teal[700],
+              color: Colors.pink[400],
               fontWeight: FontWeight.w700,
               fontSize: 13,
             ),
