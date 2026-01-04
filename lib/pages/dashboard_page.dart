@@ -70,281 +70,326 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header Section
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header & Welcome Section
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Halo, Bunda 👋",
-                          style: GoogleFonts.poppins(
-                            fontStyle:
-                                AppBarThemeData().titleTextStyle?.fontStyle,
-
-                            fontSize: 16,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          userName,
-                          style: GoogleFonts.poppins(
-                            fontSize: 27,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 2,
-                            blurRadius: 8,
-                          ),
-                        ],
-                      ),
-                      child: IconButton(
-                        icon: Icon(Icons.logout, color: Colors.pink[300]),
-                        onPressed: () => _logout(context),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 30),
-
-                // Welcome Card dengan Gradient
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.pink[300]!, Colors.purple[300]!],
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.pink.withOpacity(0.3),
-                        spreadRadius: 2,
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              "Bundacare",
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                            Text(
+                              "Halo, Bunda 👋",
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                color: Colors.grey[600],
                               ),
                             ),
                             const SizedBox(height: 4),
-                            const Text(
-                              "Analisis gizi Ibu dan anak",
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.white70,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: const Text(
-                                "Kesehatan Ibu & Bayi",
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                            Text(
+                              userName,
+                              style: GoogleFonts.poppins(
+                                fontSize: 27,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          shape: BoxShape.circle,
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 8,
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                            icon: Icon(Icons.logout, color: Colors.pink[300]),
+                            onPressed: () => _logout(context),
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.pregnant_woman,
-                          size: 40,
-                          color: Colors.white,
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Colors.pink[300]!, Colors.purple[300]!],
                         ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.pink.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "Bundacare",
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                const Text(
+                                  "Analisis gizi Ibu dan anak",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: const Text(
+                                    "Kesehatan Ibu & Bayi",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: 70,
+                            height: 70,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.pregnant_woman,
+                              size: 40,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    // Rekomendasi Header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Rekomendasi Hari Ini",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const RekomendasiPage(mealType: 'lunch'),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            "Lihat Semua",
+                            style: TextStyle(
+                              color: Colors.pink[300],
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-
-                const SizedBox(height: 30),
-
-                // Section Rekomendasi
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              ),
+              const SizedBox(height: 16),
+              // Horizontal Recommendations List
+              SizedBox(
+                height: 220,
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    _buildRekomendasiCard(
+                      "Sup Bayam Sehat",
+                      "120 kkal",
+                      "Tinggi zat besi",
+                      "https://picsum.photos/200",
+                      Colors.green,
+                    ),
+                    _buildRekomendasiCard(
+                      "Tumis Brokoli Tofu",
+                      "135 kkal",
+                      "Kaya protein",
+                      "https://picsum.photos/201",
+                      Colors.teal,
+                    ),
+                    _buildRekomendasiCard(
+                      "Bubur Labu Kuning",
+                      "90 kkal",
+                      "Vitamin A tinggi",
+                      "https://picsum.photos/202",
+                      Colors.orange,
+                    ),
+                    _buildRekomendasiCard(
+                      "Sop Ayam Jahe",
+                      "150 kkal",
+                      "Hangat & bergizi",
+                      "https://picsum.photos/203",
+                      Colors.amber,
+                    ),
+                  ],
+                ),
+              ),
+              // Nutrition Analysis Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Rekomendasi Hari Ini",
+                      "Analisis Asupan Gizi",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const RekomendasiPage(mealType: 'lunch'),
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.pink.withOpacity(0.08),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
                           ),
-                        );
-                      },
-                      child: Text(
-                        "Lihat Semua",
-                        style: TextStyle(
-                          color: Colors.pink[300],
-                          fontWeight: FontWeight.w600,
-                        ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            height: 140,
+                            width: 140,
+                            child: Stack(
+                              children: [
+                                PieChart(
+                                  PieChartData(
+                                    sectionsSpace: 0,
+                                    centerSpaceRadius: 45,
+                                    startDegreeOffset: -90,
+                                    sections: [
+                                      PieChartSectionData(
+                                        color: Colors.pink[300],
+                                        value: 60,
+                                        showTitle: false,
+                                        radius: 18,
+                                      ),
+                                      PieChartSectionData(
+                                        color: Colors.pink[100],
+                                        value: 40,
+                                        showTitle: false,
+                                        radius: 14,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "60%",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.pink[400],
+                                        ),
+                                      ),
+                                      Text(
+                                        "Tercukupi",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 10,
+                                          color: Colors.grey[500],
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                _buildLegendItem(
+                                  color: Colors.pink[300]!,
+                                  text: "Tercukupi",
+                                  subText: "Energi & Protein",
+                                ),
+                                const SizedBox(height: 16),
+                                _buildLegendItem(
+                                  color: Colors.pink[100]!,
+                                  text: "Kurang",
+                                  subText: "Zat Besi & Kalsium",
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 16),
-
-                SizedBox(
-                  height: 220,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      _buildRekomendasiCard(
-                        "Sup Bayam Sehat",
-                        "120 kkal",
-                        "Tinggi zat besi",
-                        "https://picsum.photos/200",
-                        Colors.green,
-                      ),
-                      _buildRekomendasiCard(
-                        "Tumis Brokoli Tofu",
-                        "135 kkal",
-                        "Kaya protein",
-                        "https://picsum.photos/201",
-                        Colors.teal,
-                      ),
-                      _buildRekomendasiCard(
-                        "Bubur Labu Kuning",
-                        "90 kkal",
-                        "Vitamin A tinggi",
-                        "https://picsum.photos/202",
-                        Colors.orange,
-                      ),
-                      _buildRekomendasiCard(
-                        "Sop Ayam Jahe",
-                        "150 kkal",
-                        "Hangat & bergizi",
-                        "https://picsum.photos/203",
-                        Colors.amber,
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-
-                // Pie Chart Section
-                const SizedBox(height: 20),
-                const Text(
-                  "Analisis Asupan Gizi",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 199, 199, 199),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.15),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  height: 250,
-                  child: PieChart(
-                    PieChartData(
-                      sectionsSpace: 4,
-                      centerSpaceRadius: 40,
-                      startDegreeOffset: -90,
-                      sections: [
-                        PieChartSectionData(
-                          color: Colors.pink[300],
-                          value: 60, // <-- persentase tercukupi
-                          title: 'Tercukupi\n60%',
-                          radius: 80,
-                          titleStyle: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        PieChartSectionData(
-                          color: Colors.grey[300],
-                          value: 40, // <-- persentase kurang
-                          title: 'Kurang\n40%',
-                          radius: 70,
-                          titleStyle: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
-      // Bottom Navigation Bar
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -377,7 +422,6 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
       ),
-
     );
   }
 
@@ -525,6 +569,45 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ],
       ),
+    );
+  }
+  Widget _buildLegendItem({
+    required Color color,
+    required String text,
+    required String subText,
+  }) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              text,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            Text(
+              subText,
+              style: GoogleFonts.poppins(
+                fontSize: 11,
+                color: Colors.grey[500],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
