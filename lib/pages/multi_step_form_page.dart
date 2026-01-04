@@ -16,10 +16,10 @@ class MultiStepFormPage extends StatefulWidget {
 class _MultiStepFormPageState extends State<MultiStepFormPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  final int _totalSteps = 3;
+  final int _totalSteps = 4;
 
   final List<GlobalKey<FormState>> _formKeys = List.generate(
-    3,
+    4,
     (_) => GlobalKey<FormState>(),
   );
 
@@ -39,6 +39,10 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
   }
 
   Widget _getFormStep(int step) {
+    if (step == 3) {
+      return _buildDietaryPreferencesForm(step);
+    }
+
     switch (widget.userRole) {
       case 'IbuHamil':
         return _buildIbuHamilForm(step);
@@ -49,6 +53,34 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       default:
         return _buildDefaultForm(step);
     }
+  }
+
+  // ===================== DIETARY PREFERENCES (GLOBAL) =====================
+  Widget _buildDietaryPreferencesForm(int step) {
+    return _buildFormTemplate(
+      step: step,
+      title: "Langkah 4: Pantangan & Alergi",
+      titleColor: Colors.orange[700]!,
+      fields: [
+        _buildTextField(
+          "Pantangan Makanan (pisahkan dengan koma)",
+          "food_prohibitions",
+          TextInputType.text,
+          required: false,
+        ),
+        _buildTextField(
+          "Alergi (pisahkan dengan koma)",
+          "allergens",
+          TextInputType.text,
+          required: false,
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          "Contoh: Durian, Nanas, Udang, Kacang",
+          style: TextStyle(color: Colors.grey, fontSize: 12),
+        ),
+      ],
+    );
   }
 
   // ===================== IBU HAMIL =====================
@@ -289,7 +321,12 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
   }
 
   // ===================== TEXT FIELD =====================
-  Widget _buildTextField(String label, String key, TextInputType inputType) {
+  Widget _buildTextField(
+    String label,
+    String key,
+    TextInputType inputType, {
+    bool required = true,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
@@ -304,8 +341,10 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           ),
         ),
         keyboardType: inputType,
-        validator: (value) =>
-            value == null || value.isEmpty ? '$label wajib diisi' : null,
+        validator: (value) {
+          if (!required) return null;
+          return value == null || value.isEmpty ? '$label wajib diisi' : null;
+        },
         onSaved: (value) => formData[key] = value,
       ),
     );
@@ -448,8 +487,20 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     print("Submitting Form Data: $formData");
     print("Backend Role: $backendRole");
 
+    // Helper to parse list from comma separated string
+    List<String> parseList(dynamic value) {
+      if (value == null || value.toString().isEmpty) return [];
+      return value
+          .toString()
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
+
     final success = await preferenceProvider.updatePreference(
       role: backendRole,
+      name: formData['nama'],
       hpht: formData['hpht'],
       heightCm: parseDouble(formData['tinggi_badan']) ?? 0.0,
       weightKg: parseDouble(formData['berat_badan']) ?? 0.0,
@@ -457,6 +508,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       bellyCircumferenceCm: parseDouble(formData['lingkar_perut']),
       lilaCm: parseDouble(formData['lingkar_lengan_atas']),
       lactationMl: parseDouble(formData['lactation_ml']),
+      foodProhibitions: parseList(formData['food_prohibitions']),
+      allergens: parseList(formData['allergens']),
     );
 
     if (success && mounted) {

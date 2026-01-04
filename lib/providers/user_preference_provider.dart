@@ -20,6 +20,7 @@ class UserPreferenceProvider with ChangeNotifier {
   /// Update user preference through API
   Future<bool> updatePreference({
     required String role,
+    String? name,
     String? hpht,
     required double heightCm,
     required double weightKg,
@@ -37,9 +38,10 @@ class UserPreferenceProvider with ChangeNotifier {
     try {
       final preference = UserPreference(
         role: role,
+        name: name,
         hpht: hpht,
         heightCm: heightCm.toInt(),
-        weightKg: weightKg.toInt(),
+        weightKg: weightKg,
         ageYear: ageYear,
         bellyCircumferenceCm: bellyCircumferenceCm,
         lilaCm: lilaCm,

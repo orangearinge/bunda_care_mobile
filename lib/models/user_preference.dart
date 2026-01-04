@@ -1,9 +1,10 @@
 /// Model for user preferences
 class UserPreference {
   final String role;
+  final String? name; // For syncing user name
   final String? hpht; // YYYY-MM-DD
   final int heightCm;
-  final int weightKg;
+  final double weightKg;
   final int ageYear;
   final double? bellyCircumferenceCm;
   final double? lilaCm;
@@ -15,6 +16,7 @@ class UserPreference {
 
   UserPreference({
     required this.role,
+    this.name,
     this.hpht,
     required this.heightCm,
     required this.weightKg,
@@ -32,9 +34,10 @@ class UserPreference {
   factory UserPreference.fromJson(Map<String, dynamic> json) {
     return UserPreference(
       role: json['role'] as String,
+      name: json['name'] as String? ?? json['nama'] as String?,
       hpht: json['hpht'] as String?,
       heightCm: (json['height_cm'] as num).toInt(),
-      weightKg: (json['weight_kg'] as num).toInt(),
+      weightKg: (json['weight_kg'] as num).toDouble(),
       ageYear: (json['age_year'] as num).toInt(),
       bellyCircumferenceCm: (json['belly_circumference_cm'] as num?)?.toDouble(),
       lilaCm: (json['lila_cm'] as num?)?.toDouble(),
@@ -52,6 +55,7 @@ class UserPreference {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
       'role': role,
+      'name': name,
       'height_cm': heightCm,
       'weight_kg': weightKg,
       'age_year': ageYear,
