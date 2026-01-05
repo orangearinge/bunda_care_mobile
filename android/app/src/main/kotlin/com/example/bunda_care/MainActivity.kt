@@ -1,4 +1,4 @@
-package com.example.smart_mpasi
+package com.example.bunda_care
 
 import io.flutter.embedding.android.FlutterActivity
 
