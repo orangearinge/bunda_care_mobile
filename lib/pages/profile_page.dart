@@ -23,11 +23,12 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     // Fetch data on init
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<UserPreferenceProvider>(context, listen: false).fetchPreference();
+      Provider.of<UserPreferenceProvider>(
+        context,
+        listen: false,
+      ).fetchPreference();
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -72,13 +73,15 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         CircleAvatar(
                           radius: 34,
-                          backgroundImage: authProvider.currentUser?.avatar != null
+                          backgroundImage:
+                              authProvider.currentUser?.avatar != null
                               ? NetworkImage(authProvider.currentUser!.avatar!)
                               : null,
                           backgroundColor: Colors.pink[100],
                           child: authProvider.currentUser?.avatar == null
                               ? Text(
-                                  authProvider.currentUser?.getInitials() ?? 'B',
+                                  authProvider.currentUser?.getInitials() ??
+                                      'B',
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -93,7 +96,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                authProvider.currentUser?.name ?? pref.name ?? 'Bunda',
+                                pref.name ??
+                                    authProvider.currentUser?.name ??
+                                    'Bunda',
                                 style: const TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w800,
@@ -112,13 +117,24 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {
-                            Navigator.push(
+                          onPressed: () async {
+                            final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EditProfilePage(initialPreference: pref),
+                                builder: (context) =>
+                                    EditProfilePage(initialPreference: pref),
                               ),
                             );
+
+                            // Refresh data when returning from edit page
+                            if (result == true || result == null) {
+                              if (mounted) {
+                                Provider.of<UserPreferenceProvider>(
+                                  context,
+                                  listen: false,
+                                ).fetchPreference();
+                              }
+                            }
                           },
                           icon: Container(
                             padding: const EdgeInsets.all(8),
@@ -126,7 +142,11 @@ class _ProfilePageState extends State<ProfilePage> {
                               color: Colors.pink[50],
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(Icons.edit, color: Colors.pink[400], size: 20),
+                            child: Icon(
+                              Icons.edit,
+                              color: Colors.pink[400],
+                              size: 20,
+                            ),
                           ),
                         ),
                       ],
@@ -155,26 +175,23 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Column(
                         children: [
                           _ProfileField(
-                            label: 'Usia', 
-                            value: '${pref.ageYear} Tahun'
+                            label: 'Usia',
+                            value: '${pref.ageYear} Tahun',
                           ),
                           const Divider(height: 24),
                           _ProfileField(
-                            label: 'Peran', 
-                            value: pref.role.replaceAll('_', ' ')
+                            label: 'Peran',
+                            value: pref.role.replaceAll('_', ' '),
                           ),
                           if (pref.hpht != null) ...[
                             const Divider(height: 24),
-                            _ProfileField(
-                              label: 'HPHT', 
-                              value: pref.hpht!
-                            ),
+                            _ProfileField(label: 'HPHT', value: pref.hpht!),
                           ],
                           if (pref.gestationalAgeWeeks != null) ...[
                             const Divider(height: 24),
                             _ProfileField(
-                              label: 'Usia Kandungan', 
-                              value: '${pref.gestationalAgeWeeks} Minggu'
+                              label: 'Usia Kandungan',
+                              value: '${pref.gestationalAgeWeeks} Minggu',
                             ),
                           ],
                         ],
@@ -199,11 +216,20 @@ class _ProfilePageState extends State<ProfilePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _StatPill(title: 'Tinggi\nBadan', value: '${pref.heightCm} cm'),
-                              _StatPill(title: 'Berat\nBadan', value: '${pref.weightKg} kg'),
                               _StatPill(
-                                title: 'BMI', 
-                                valueBold: pref.nutritionalTargets?.bmi.toStringAsFixed(2) ?? '-'
+                                title: 'Tinggi\nBadan',
+                                value: '${pref.heightCm} cm',
+                              ),
+                              _StatPill(
+                                title: 'Berat\nBadan',
+                                value: '${pref.weightKg} kg',
+                              ),
+                              _StatPill(
+                                title: 'BMI',
+                                valueBold:
+                                    pref.nutritionalTargets?.bmi
+                                        .toStringAsFixed(2) ??
+                                    '-',
                               ),
                             ],
                           ),
@@ -213,38 +239,49 @@ class _ProfilePageState extends State<ProfilePage> {
                               title: 'Pantangan Makanan',
                               items: pref.foodProhibitions,
                             ),
-                          if (pref.foodProhibitions.isNotEmpty && pref.allergens.isNotEmpty)
+                          if (pref.foodProhibitions.isNotEmpty &&
+                              pref.allergens.isNotEmpty)
                             const SizedBox(height: 12),
                           if (pref.allergens.isNotEmpty)
                             _AllergyCard(
                               title: 'Alergi',
                               items: pref.allergens,
                             ),
-                          
+
                           // Additional metrics for detailed view
-                          if (pref.bellyCircumferenceCm != null || pref.lilaCm != null) ...[
+                          if (pref.bellyCircumferenceCm != null ||
+                              pref.lilaCm != null) ...[
                             const SizedBox(height: 12),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 if (pref.bellyCircumferenceCm != null)
-                                  _StatPillSmall(label: 'Lingkar Perut', value: '${pref.bellyCircumferenceCm} cm'),
+                                  _StatPillSmall(
+                                    label: 'Lingkar Perut',
+                                    value: '${pref.bellyCircumferenceCm} cm',
+                                  ),
                                 if (pref.lilaCm != null)
-                                  _StatPillSmall(label: 'LiLA', value: '${pref.lilaCm} cm'),
+                                  _StatPillSmall(
+                                    label: 'LiLA',
+                                    value: '${pref.lilaCm} cm',
+                                  ),
                               ],
                             ),
                           ],
-                          
+
                           if (pref.lactationMl != null) ...[
-                             const SizedBox(height: 12),
-                             _ProfileField(label: 'Volume ASI', value: '${pref.lactationMl} ml/hari'),
+                            const SizedBox(height: 12),
+                            _ProfileField(
+                              label: 'Volume ASI',
+                              value: '${pref.lactationMl} ml/hari',
+                            ),
                           ],
                         ],
                       ),
                     ),
 
                     const SizedBox(height: 24),
-                    
+
                     // Nutritional Target Section
                     if (pref.nutritionalTargets != null) ...[
                       _buildSectionHeader('Target Nutrisi Harian'),
@@ -266,15 +303,20 @@ class _ProfilePageState extends State<ProfilePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 _NutrientInfo(
-                                  label: 'Kalori', 
-                                  value: '${pref.nutritionalTargets!.calories.toInt()}', 
-                                  unit: 'kkal'
+                                  label: 'Kalori',
+                                  value:
+                                      '${pref.nutritionalTargets!.calories.toInt()}',
+                                  unit: 'kkal',
                                 ),
-                                Container(width: 1, height: 40, color: Colors.white24),
+                                Container(
+                                  width: 1,
+                                  height: 40,
+                                  color: Colors.white24,
+                                ),
                                 _NutrientInfo(
-                                  label: 'Protein', 
-                                  value: '${pref.nutritionalTargets!.proteinG}', 
-                                  unit: 'g'
+                                  label: 'Protein',
+                                  value: '${pref.nutritionalTargets!.proteinG}',
+                                  unit: 'g',
                                 ),
                               ],
                             ),
@@ -308,11 +350,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                 borderRadius: BorderRadius.circular(18),
                                 side: BorderSide(color: Colors.pink[100]!),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 14),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 48,
+                                vertical: 14,
+                              ),
                             ),
                             child: const Text(
                               'Logout',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
@@ -347,8 +395,6 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-
-
 }
 
 class _ProfileField extends StatelessWidget {
@@ -424,10 +470,7 @@ class _StatPill extends StatelessWidget {
             Text(
               value!,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
             ),
           if (valueBold != null)
             Text(
@@ -483,22 +526,29 @@ class _AllergyCard extends StatelessWidget {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: items.map((item) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.red[50],
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.red[100]!),
-              ),
-              child: Text(
-                item,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.red[700],
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            )).toList(),
+            children: items
+                .map(
+                  (item) => Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.red[50],
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.red[100]!),
+                    ),
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.red[700],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
           ),
         ],
       ),
@@ -563,12 +613,20 @@ class _StatPillSmall extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(color: Colors.grey[500], fontSize: 11, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(color: Colors.black87, fontSize: 15, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ],
     );

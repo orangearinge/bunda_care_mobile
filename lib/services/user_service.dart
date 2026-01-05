@@ -26,9 +26,11 @@ class UserService {
       }
 
       // Check for success status or if data looks like a preference object
-      if (data != null && (data['status'] == 'success' || data['success'] == true)) {
+      if (data != null &&
+          (data['status'] == 'success' || data['success'] == true)) {
         return UserPreference.fromJson(data['data'] as Map<String, dynamic>);
-      } else if (data != null && (data.containsKey('role') || data['data'] != null)) {
+      } else if (data != null &&
+          (data.containsKey('role') || data['data'] != null)) {
         // Handle direct response (no status wrapper) or traditional data wrapper
         final preferenceData = data['data'] ?? data;
         return UserPreference.fromJson(preferenceData as Map<String, dynamic>);
@@ -49,7 +51,7 @@ class UserService {
   Future<UserPreference?> getPreference() async {
     try {
       final response = await _api.get(_preferencePath);
-      
+
       final data = response.data;
       if (data != null) {
         if (data['status'] == 'success' && data['data'] != null) {
@@ -75,9 +77,12 @@ class UserService {
     try {
       final response = await _api.get('/api/user/dashboard');
       final data = response.data;
-      
+
       if (data == null) {
-        throw ApiError(code: 'EMPTY_RESPONSE', message: 'Respon kosong dari server');
+        throw ApiError(
+          code: 'EMPTY_RESPONSE',
+          message: 'Respon kosong dari server',
+        );
       }
 
       // Handle both wrapped and direct responses
@@ -92,6 +97,28 @@ class UserService {
           message: data['message'] ?? 'Gagal mengambil data dashboard',
         );
       }
+    } catch (e) {
+      if (e is ApiError) rethrow;
+      throw ApiError.fromException(Exception(e));
+    }
+  }
+
+  /// Update user avatar
+  /// PUT /api/user/avatar
+  Future<String> updateAvatar(String avatarUrl) async {
+    try {
+      final response = await _api.put(
+        '/api/user/avatar',
+        data: {'avatar': avatarUrl},
+      );
+      final data = response.data;
+      if (data != null && data['avatar'] != null) {
+        return data['avatar'] as String;
+      }
+      throw ApiError(
+        code: 'AVATAR_UPDATE_FAILED',
+        message: data?['message'] ?? 'Gagal memperbarui avatar',
+      );
     } catch (e) {
       if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));

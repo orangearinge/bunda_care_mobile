@@ -7,11 +7,11 @@ import '../services/user_service.dart';
 
 /// Authentication state enum
 enum AuthState {
-  initial,        // App just started, checking auth status
-  loading,        // Processing auth request
-  authenticated,  // User is logged in
-  unauthenticated,// User is not logged in
-  error,          // Auth error occurred
+  initial, // App just started, checking auth status
+  loading, // Processing auth request
+  authenticated, // User is logged in
+  unauthenticated, // User is not logged in
+  error, // Auth error occurred
 }
 
 /// Authentication provider using Provider pattern
@@ -41,8 +41,12 @@ class AuthProvider with ChangeNotifier {
 
     // Check if user has a valid role (ui names and backend names)
     final validRoles = [
-      'IbuHamil', 'IbuMenyusui', 'Batita',
-      'IBU_HAMIL', 'IBU_MENYUSUI', 'ANAK_BALITA'
+      'IbuHamil',
+      'IbuMenyusui',
+      'Batita',
+      'IBU_HAMIL',
+      'IBU_MENYUSUI',
+      'ANAK_BALITA',
     ];
     final role = _currentUser!.role?.trim() ?? '';
     return role.isNotEmpty && validRoles.contains(role);
@@ -63,9 +67,25 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  /// Update current user name
+  Future<void> updateUserName(String name) async {
+    if (_currentUser != null) {
+      _currentUser = _currentUser!.copyWith(name: name);
+      // Save updated user to storage
+      await _authService.updateUser(_currentUser!);
+      notifyListeners();
+    }
+  }
 
-
-
+  /// Update current user avatar
+  Future<void> updateUserAvatar(String avatar) async {
+    if (_currentUser != null) {
+      _currentUser = _currentUser!.copyWith(avatar: avatar);
+      // Save updated user to storage
+      await _authService.updateUser(_currentUser!);
+      notifyListeners();
+    }
+  }
 
   // ==================== Initialization ====================
 
@@ -84,7 +104,7 @@ class AuthProvider with ChangeNotifier {
         if (user != null) {
           _currentUser = user;
           _setState(AuthState.authenticated);
-          
+
           // Refresh user data from backend in background
           // This ensures role and other data are up to date
           _refreshUser();
@@ -105,7 +125,7 @@ class AuthProvider with ChangeNotifier {
     try {
       // 1. Fetch current preferences
       final preference = await _userService.getPreference();
-      
+
       if (preference != null && _currentUser != null) {
         // If preferences exist, the user definitely has a role
         // Update local user role from preference if it differs
@@ -153,10 +173,7 @@ class AuthProvider with ChangeNotifier {
   // ==================== Login ====================
 
   /// Login user with email and password
-  Future<bool> login({
-    required String email,
-    required String password,
-  }) async {
+  Future<bool> login({required String email, required String password}) async {
     _setState(AuthState.loading);
     _clearError();
 

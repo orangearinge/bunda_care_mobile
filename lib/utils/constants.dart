@@ -1,38 +1,34 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// API Configuration Constants
 /// Contains all API endpoints, URLs, and configuration values
+/// Values are loaded from .env file via flutter_dotenv
 class ApiConstants {
   // Prevent instantiation
   ApiConstants._();
 
-  // ==================== Base URLs ====================
-
-  /// Base URL for development (local network)
-  /// IMPORTANT: Replace with your actual local network IP or ngrok URL
-  /// Examples:
-  /// - Android Emulator: "http://10.0.2.2:5000"
-  /// - Physical Device (USB via 'adb reverse tcp:5000 tcp:5000'): "http://127.0.0.1:5000"
-  /// - Physical Device (WiFi): "http://<YOUR_LAN_IP>:5000" (e.g. 192.168.1.5)
-  static const String devBaseUrl = "http://192.168.8.228:5000"; // GANTI dengan IP laptop Anda jika pakai WiFi
-
-  /// Base URL for production
-  static const String prodBaseUrl = "https://api.bundacare.com";
-
-  /// Current environment - change to false for production
-  static const bool isDevelopment = true;
-
-  /// Base URL for Web Development
-  /// Note: Web browsers enforce CORS. Your backend must allow requests from the Flutter Web port.
-  static const String webDevBaseUrl = "http://127.0.0.1:5000";
-
-  /// Get the active base URL based on environment and platform
+  // ==================== Environment = :===================
+  
+  /// Base URL for the API
+  /// Loaded from .env (API_BASE_URL)
   static String get baseUrl {
-    if (kIsWeb && isDevelopment) {
-      return webDevBaseUrl;
-    }
-    return isDevelopment ? devBaseUrl : prodBaseUrl;
+    final url = dotenv.env['API_BASE_URL'];
+    if (url != null) return url;
+    
+    // Fallback logic
+    if (kIsWeb) return "http://127.0.0.1:5000";
+    return "http://10.0.2.2:5000"; // Android Emulator default
   }
+
+  /// Current environment status
+  static bool get isDevelopment => dotenv.env['APP_ENV'] != 'production';
+
+  // ==================== Cloudinary ====================
+  
+  static String get cloudinaryCloudName => dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? 'demo';
+  static String get cloudinaryUploadPreset => dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? 'ml_default';
+  static String get cloudinaryFolder => dotenv.env['CLOUDINARY_FOLDER'] ?? 'bunda_care/avatars';
 
   // ==================== Auth Endpoints ====================
 

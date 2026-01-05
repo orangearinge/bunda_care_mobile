@@ -7,7 +7,7 @@ import '../pages/signup_page.dart';
 import '../pages/profile_page.dart';
 import '../pages/registration_form_page.dart';
 import '../pages/multi_step_form_page.dart';
-import '../main.dart';
+import '../pages/main_navigation.dart';
 
 /// Application router configuration with authentication guards
 class AppRouter {

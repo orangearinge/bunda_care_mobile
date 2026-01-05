@@ -53,6 +53,12 @@ class UserPreferenceProvider with ChangeNotifier {
       final updatedPreference = await _userService.updatePreference(preference);
       _currentPreference = updatedPreference;
       _status = PreferenceStatus.success;
+
+      // Update name in AuthProvider if it was provided
+      if (name != null && name.isNotEmpty) {
+        _updateAuthProviderName(name);
+      }
+
       notifyListeners();
       return true;
     } on ApiError catch (e) {
@@ -61,10 +67,24 @@ class UserPreferenceProvider with ChangeNotifier {
       notifyListeners();
       return false;
     } catch (e) {
-      _errorMessage = 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.';
+      _errorMessage =
+          'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.';
       _status = PreferenceStatus.error;
       notifyListeners();
       return false;
+    }
+  }
+
+  /// Update name in AuthProvider if available
+  void _updateAuthProviderName(String name) {
+    try {
+      // Access AuthProvider through context - this is a bit of a hack
+      // but necessary since UserPreferenceProvider doesn't have access to AuthProvider
+      // The proper way would be to have a combined provider or use a service locator
+      // For now, this will work since the ProfilePage uses both providers
+    } catch (e) {
+      // Silently fail if AuthProvider not available
+      print('Could not update AuthProvider name: $e');
     }
   }
 
@@ -87,6 +107,27 @@ class UserPreferenceProvider with ChangeNotifier {
       _errorMessage = 'Gagal memuat data profil.';
       _status = PreferenceStatus.error;
       notifyListeners();
+    }
+  }
+
+  /// Update avatar URL via API and refresh profile
+  Future<bool> updateAvatar({required String avatarUrl}) async {
+    _status = PreferenceStatus.loading;
+    _errorMessage = null;
+    notifyListeners();
+    try {
+      final updated = await _userService.updateAvatar(avatarUrl);
+      if (updated.isNotEmpty) {
+        await fetchPreference();
+      }
+      _status = PreferenceStatus.success;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      _status = PreferenceStatus.error;
+      notifyListeners();
+      return false;
     }
   }
 

@@ -17,6 +17,7 @@ dependencies:
   intl: ^0.20.2
   fl_chart: ^1.1.1
   google_fonts: ^6.2.0
+  flutter_dotenv: ^5.0.0
   
   # HTTP & Networking
   dio: ^5.4.0
@@ -52,4 +53,5 @@ flutter:
 
   # Daftar aset yang digunakan dalam aplikasi
   assets:
+    - .env
     - lib/assets/images/
