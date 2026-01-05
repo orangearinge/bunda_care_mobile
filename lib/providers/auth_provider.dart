@@ -123,7 +123,26 @@ class AuthProvider with ChangeNotifier {
   /// Refresh user data from backend
   Future<void> _refreshUser() async {
     try {
-      // 1. Fetch current preferences
+      // 1. Fetch current user profile data
+      final userProfile = await _userService.getUserProfile();
+
+      if (userProfile != null && _currentUser != null) {
+        // Update user data with fresh profile info
+        final updatedUser = _currentUser!.copyWith(
+          name: userProfile['name'] as String?,
+          avatar: userProfile['avatar'] as String?,
+          role: userProfile['role'] as String?,
+        );
+
+        // Only update if there are changes
+        if (updatedUser != _currentUser) {
+          _currentUser = updatedUser;
+          await _authService.updateUser(_currentUser!);
+          notifyListeners();
+        }
+      }
+
+      // 2. Fetch current preferences (for role validation)
       final preference = await _userService.getPreference();
 
       if (preference != null && _currentUser != null) {
@@ -136,7 +155,7 @@ class AuthProvider with ChangeNotifier {
         }
       }
     } catch (e) {
-      print('Error refreshing user preferences: $e');
+      print('Error refreshing user data: $e');
     }
   }
 

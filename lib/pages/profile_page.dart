@@ -129,10 +129,18 @@ class _ProfilePageState extends State<ProfilePage> {
                             // Refresh data when returning from edit page
                             if (result == true || result == null) {
                               if (mounted) {
-                                Provider.of<UserPreferenceProvider>(
+                                final userPreferenceProvider =
+                                    Provider.of<UserPreferenceProvider>(
+                                      context,
+                                      listen: false,
+                                    );
+                                final authProvider = Provider.of<AuthProvider>(
                                   context,
                                   listen: false,
-                                ).fetchPreference();
+                                );
+
+                                await userPreferenceProvider.fetchPreference();
+                                await authProvider.checkAuthStatus();
                               }
                             }
                           },

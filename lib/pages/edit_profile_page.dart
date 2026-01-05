@@ -161,8 +161,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
           context,
           listen: false,
         );
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
         await provider.updateAvatar(avatarUrl: uploadedUrl);
         await provider.fetchPreference();
+
+        // Refresh auth provider to get updated avatar
+        await authProvider.checkAuthStatus();
       } catch (_) {
         // tolerate backend issues for now
       }
@@ -412,11 +417,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             await authProvider.updateUserName(nameValue);
           }
 
-          // Update avatar in AuthProvider if it was changed
-          if (_avatarUrl != null &&
-              _avatarUrl != authProvider.currentUser?.avatar) {
-            await authProvider.updateUserAvatar(_avatarUrl!);
-          }
+          // Avatar is already updated via updateAvatar and checkAuthStatus above
+          // No need to update again here
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

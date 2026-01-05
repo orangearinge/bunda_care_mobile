@@ -103,6 +103,30 @@ class UserService {
     }
   }
 
+  /// Get user profile
+  /// GET /api/user/profile
+  Future<Map<String, dynamic>> getUserProfile() async {
+    try {
+      final response = await _api.get('/api/user/profile');
+      final data = response.data;
+      if (data != null) {
+        if (data['status'] == 'success' && data['data'] != null) {
+          return data['data'] as Map<String, dynamic>;
+        } else if (data.containsKey('id')) {
+          // Direct response
+          return data as Map<String, dynamic>;
+        }
+      }
+      throw ApiError(
+        code: 'PROFILE_FETCH_FAILED',
+        message: 'Gagal mengambil data profil pengguna',
+      );
+    } catch (e) {
+      if (e is ApiError) rethrow;
+      throw ApiError.fromException(Exception(e));
+    }
+  }
+
   /// Update user avatar
   /// PUT /api/user/avatar
   Future<String> updateAvatar(String avatarUrl) async {
