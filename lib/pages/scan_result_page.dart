@@ -1,16 +1,20 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'rekomendasi_page.dart';
 
 class ScanResultPage extends StatelessWidget {
   final List<String> scannedItems;
-  final File? imageFile;
+  final Uint8List? imageBytes;
+  final String? imagePath;
   final Map<String, dynamic>? rawResults;
 
   const ScanResultPage({
     super.key,
     required this.scannedItems,
-    this.imageFile,
+    this.imageBytes,
+    this.imagePath,
     this.rawResults,
   });
 
@@ -48,21 +52,28 @@ class ScanResultPage extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  if (imageFile != null)
+                  if (imageBytes != null || imagePath != null)
                     ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-                      child: Image.file(
-                        imageFile!,
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
+                      child: kIsWeb
+                          ? Image.memory(
+                              imageBytes!,
+                              height: 200,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.file(
+                              File(imagePath!),
+                              height: 200,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                   Container(
                     padding: const EdgeInsets.all(20),
                     child: Column(
                       children: [
-                        if (imageFile == null)
+                        if (imageBytes == null && imagePath == null)
                           Container(
                             padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(

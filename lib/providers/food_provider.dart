@@ -22,13 +22,13 @@ class FoodProvider with ChangeNotifier {
   bool get isLoading => _status == FoodStatus.loading;
 
   /// Scan food image
-  Future<bool> scanFood(File imageFile) async {
+  Future<bool> scanFood(List<int> imageBytes, String fileName) async {
     _status = FoodStatus.loading;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final results = await _foodService.scanFood(imageFile);
+      final results = await _foodService.scanFood(imageBytes, fileName);
       _scanResults = results;
       _status = FoodStatus.success;
       notifyListeners();

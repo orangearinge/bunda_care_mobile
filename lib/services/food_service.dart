@@ -10,12 +10,11 @@ class FoodService {
 
   /// Scan food image
   /// POST /api/scan-food
-  Future<Map<String, dynamic>> scanFood(File imageFile) async {
+  Future<Map<String, dynamic>> scanFood(List<int> imageBytes, String fileName) async {
     try {
-      String fileName = imageFile.path.split('/').last;
       FormData formData = FormData.fromMap({
-        "image": await MultipartFile.fromFile(
-          imageFile.path,
+        "image": MultipartFile.fromBytes(
+          imageBytes,
           filename: fileName,
         ),
       });
