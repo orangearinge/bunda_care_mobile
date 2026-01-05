@@ -4,7 +4,9 @@ import 'scan_page.dart';
 import 'edukasi_page.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_preference_provider.dart';
+import '../providers/auth_provider.dart';
 import '../models/user_preference.dart';
+import 'edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -32,8 +34,8 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Consumer<UserPreferenceProvider>(
-          builder: (context, provider, child) {
+        child: Consumer2<UserPreferenceProvider, AuthProvider>(
+          builder: (context, provider, authProvider, child) {
             if (provider.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
@@ -70,10 +72,20 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         CircleAvatar(
                           radius: 34,
-                          backgroundImage: const NetworkImage(
-                            'https://i.pravatar.cc/150?img=47',
-                          ),
-                          backgroundColor: Colors.grey[200],
+                          backgroundImage: authProvider.currentUser?.avatar != null
+                              ? NetworkImage(authProvider.currentUser!.avatar!)
+                              : null,
+                          backgroundColor: Colors.pink[100],
+                          child: authProvider.currentUser?.avatar == null
+                              ? Text(
+                                  authProvider.currentUser?.getInitials() ?? 'B',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.pink[400],
+                                  ),
+                                )
+                              : null,
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -81,7 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                pref.name ?? 'Bunda',
+                                authProvider.currentUser?.name ?? pref.name ?? 'Bunda',
                                 style: const TextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w800,
@@ -97,6 +109,24 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProfilePage(initialPreference: pref),
+                              ),
+                            );
+                          },
+                          icon: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.pink[50],
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.edit, color: Colors.pink[400], size: 20),
                           ),
                         ),
                       ],
