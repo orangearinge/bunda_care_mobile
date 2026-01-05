@@ -52,6 +52,4 @@ flutter:
 
   # Daftar aset yang digunakan dalam aplikasi
   assets:
-
-
-    # Atau jika ingin load semua file di folder images, gunakan:
+    - lib/assets/images/

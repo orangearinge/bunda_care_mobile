@@ -70,78 +70,81 @@ class _LoginPageState extends State<LoginPage> {
       // SafeArea memastikan konten tidak tertutup status bar (di atas)
       body: Consumer<AuthProvider>(
         builder: (context, authProvider, child) => SafeArea(
-        // **HAPUS SingleChildScrollView** agar tidak scroll di awal.
-        // Flutter otomatis menggeser layar saat keyboard muncul (resizeToAvoidBottomInset: true default)
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
 
-          // Form wrapper untuk validasi
-          child: Form(
-            key: _formKey,
-            // Column untuk menampung semua elemen form
-            child: Column(
-              // MainAxisSize.max agar column mengisi ruang vertikal yang tersedia
-              mainAxisSize: MainAxisSize.max,
-              children: [
                 // Jarak di atas dikurangi secara signifikan
-                const SizedBox(height: 16), // Disesuaikan dari 40
-                // --- Header Section dengan Logo dan Ilustrasi ---
-                Container(
-                  width: double.infinity,
-                  // Tinggi dikurangi dari 280 menjadi 200 agar konten di bawahnya muat
-                  height: 200, // <--- PERUBAHAN TINGGI DI SINI
-                  decoration: BoxDecoration(
-                    // Gradient background dari pink terang ke pink muda
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.pink[400]!, Colors.pink[200]!],
-                    ),
-                    borderRadius: BorderRadius.circular(200),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Nama aplikasi
-                      const Text(
-                        "Bundacare",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                  // --- Header Section dengan Desain Modern ---
+                  ClipPath(
+                    clipper: HeaderClipper(),
+                    child: Container(
+                      width: double.infinity,
+                      height: 300,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.pink[400]!, Colors.pink[300]!],
                         ),
                       ),
-
-                      // Tagline aplikasi
-                      const Text(
-                        "Analisis gizi Ibu dan anak",
-                        style: TextStyle(fontSize: 14, color: Colors.black54),
-                      ),
-
-                      const SizedBox(height: 10), // Spasi dikurangi
-                      // Ilustrasi icon
-                      Container(
-                        width: 80, // Ukuran Icon dikurangi dari 120
-                        height: 80, // Ukuran Icon dikurangi dari 120
-                        decoration: BoxDecoration(
-                          color: Colors.blue[100],
-                          shape: BoxShape.circle,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.local_hospital,
-                            size: 40,
-                            color: Colors.blue[400],
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(height: 20), // Padding tambahan agar konten tidak terlalu ke atas
+                          // Logo BundaCare
+                          Container(
+                            width: 90,
+                            height: 90,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Image.asset(
+                                'lib/assets/images/logo_bundacare.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
-                        ),
+                          const SizedBox(height: 15),
+                          const Text(
+                            "Bundacare",
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          const Text(
+                            "Analisis gizi Ibu dan anak",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.white70,
+                            ),
+                          ),
+                          const SizedBox(height: 40), // Spacer bawah untuk menjaga jarak dari lengkungan
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
 
-                // Jarak di bawah header dikurangi
-                const SizedBox(height: 20), // Disesuaikan dari 40
+                  // Container Form
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+                    child: Column(
+                      children: [
                 // --- Input Email ---
                 TextFormField(
                   controller: _emailController,
@@ -291,88 +294,70 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
 
-                // Spasi dikurangi dan diganti dengan Spacer untuk mengisi ruang kosong yang tersisa
-                // Ini memastikan elemen di bawah terdorong ke bawah/atas dengan seimbang
-                const Spacer(), // <--- PENGGUNAAN SPACER DI SINI
-                // --- Divider Text ---
-                const Text(
-                  'Or Log in With',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-
-                const SizedBox(height: 10), // Disesuaikan dari 16
-                // --- Social Login Buttons ---
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Google Login
-                    _socialLoginButton(
-                      icon: Icons.g_mobiledata,
-                      color: Colors.red,
-                      onPressed: authProvider.isLoading
-                          ? null
-                          : () => _handleGoogleSignIn(authProvider),
+                      ],
                     ),
-                    const SizedBox(width: 16),
+                  ),
+                  const SizedBox(height: 10),
+                  // --- Divider Text ---
+                  const Text(
+                    'Or Log in With',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
 
-                    // Facebook Login
-                    _socialLoginButton(
-                      icon: Icons.facebook,
-                      color: Colors.blue[700]!,
-                      onPressed: () {
-                        // Handle Facebook login
-                      },
-                    ),
-                    const SizedBox(width: 16),
-
-                    // Apple Login
-                    _socialLoginButton(
-                      icon: Icons.apple,
-                      color: Colors.black,
-                      onPressed: () {
-                        // Handle Apple login
-                      },
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 10), // Disesuaikan dari 24
-                // --- Link Sign Up ---
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Don't have an account? ",
-                      style: TextStyle(color: Colors.grey, fontSize: 13),
-                    ),
-
-                    // Tombol navigasi ke halaman Sign Up
-                    TextButton(
-                      onPressed: () {
-                        context.push('/register');
-                      },
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 0),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  const SizedBox(height: 20),
+                  // --- Social Login Buttons ---
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _socialLoginButton(
+                        icon: Icons.g_mobiledata,
+                        color: Colors.red,
+                        onPressed: authProvider.isLoading
+                            ? null
+                            : () => _handleGoogleSignIn(authProvider),
                       ),
-                      child: Text(
-                        'Sign up',
-                        style: TextStyle(
-                          color: Colors.blue[400],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
+                      const SizedBox(width: 16),
+                      _socialLoginButton(
+                        icon: Icons.facebook,
+                        color: Colors.blue[700]!,
+                        onPressed: () {},
+                      ),
+                      const SizedBox(width: 16),
+                      _socialLoginButton(
+                        icon: Icons.apple,
+                        color: Colors.black,
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 30),
+                  // --- Link Sign Up ---
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Don't have an account? ",
+                        style: TextStyle(color: Colors.grey, fontSize: 13),
+                      ),
+                      TextButton(
+                        onPressed: () => context.push('/register'),
+                        child: Text(
+                          'Sign up',
+                          style: TextStyle(
+                            color: Colors.blue[400],
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 16), // Disesuaikan dari 20
-              ],
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
-        ),
         ),
       ),
     );
@@ -447,4 +432,33 @@ class _LoginPageState extends State<LoginPage> {
     _passwordController.dispose();
     super.dispose();
   }
+}
+
+/// Clipper untuk membuat background header melengkung seperti setengah lingkaran
+class HeaderClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    // Mulai dari kiri bawah (dengan offset)
+    path.lineTo(0, size.height - 80);
+    
+    // Buat kurva quadratic beizer ke kanan bawah
+    // Control point ada di tengah paling bawah (size.width / 2, size.height)
+    // End point ada di kanan bawah (size.width, size.height - 80)
+    path.quadraticBezierTo(
+      size.width / 2, 
+      size.height, 
+      size.width, 
+      size.height - 80
+    );
+    
+    // Garis ke kanan atas
+    path.lineTo(size.width, 0);
+    path.close();
+    
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
