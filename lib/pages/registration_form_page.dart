@@ -8,16 +8,33 @@ class RegistrationFormPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color accentColor = Colors.pink[200]!;
+    final Color accentColor = Colors.pink[300]!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Pilih Kategori"),
-        backgroundColor: accentColor,
+        title: const Text("Pilih Kategori"),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.pink[400]!, Colors.pink[300]!],
+            ),
+          ),
+        ),
         foregroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () async {
+            // Logout dulu supaya tidak terkena redirect otomatis kembali ke sini
+            final authProvider = Provider.of<AuthProvider>(context, listen: false);
+            await authProvider.logout();
+            
+            // Gunakan context.go untuk pindah ke halaman login
+            if (context.mounted) {
+              context.go('/login');
+            }
+          },
         ),
       ),
       body: Padding(
@@ -90,10 +107,6 @@ class RegistrationFormPage extends StatelessWidget {
       onPressed: () async {
         // Debug: Print untuk memastikan fungsi dipanggil
         print('Tombol $label ditekan!');
-
-        // Update user role in auth provider
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        await authProvider.updateUserRole(role);
 
         // Navigasi ke MultiStepFormPage
         context.go('/multi-step-form/$role');

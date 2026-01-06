@@ -454,7 +454,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         curve: Curves.easeIn,
       );
     } else {
-      context.pop();
+      // Kembali ke halaman pemilihan 'role' (RegistrationFormPage)
+      context.go('/role-selection');
     }
   }
 
