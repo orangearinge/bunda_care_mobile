@@ -6,18 +6,21 @@ import 'providers/user_preference_provider.dart';
 import 'providers/food_provider.dart';
 import 'router/app_router.dart';
 import 'pages/main_navigation.dart';
+import 'utils/constants.dart';
 
 void main() async {
   // Menangkap error flutter di luar zone (misalnya saat inisialisasi)
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   try {
     await dotenv.load(fileName: ".env");
     debugPrint("Environment loaded successfully");
+    // Debug API configuration
+    ApiConstants.debugPrintConfig();
   } catch (e) {
     debugPrint("Warning: Could not load .env file: $e");
   }
-  
+
   runApp(const BundaCareApp());
 }
 
@@ -61,16 +64,13 @@ class _AppContentState extends State<AppContent> {
   Widget build(BuildContext context) {
     // Watch AuthProvider untuk mendeteksi perubahan state
     final authProvider = context.watch<AuthProvider>();
-    
+
     // Jika masih dalam status inisialisasi awal, tampilkan loading screen sederhana
     // Ini membantu mencegah blank screen saat GoRouter sedang bersiap
     if (authProvider.state == AuthState.initial) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-          colorSchemeSeed: Colors.pink[300],
-        ),
+        theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.pink[300]),
         home: const Scaffold(
           backgroundColor: Colors.white,
           body: Center(
@@ -81,7 +81,10 @@ class _AppContentState extends State<AppContent> {
                 SizedBox(height: 20),
                 Text(
                   "Memulai Bunda Care...",
-                  style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.pink,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -96,10 +99,7 @@ class _AppContentState extends State<AppContent> {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Bunda Care',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.pink[300],
-      ),
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.pink[300]),
       routerConfig: _appRouter!.router,
     );
   }

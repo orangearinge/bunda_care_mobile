@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:io' show Platform;
 
 /// API Configuration Constants
 /// Contains all API endpoints, URLs, and configuration values
@@ -9,26 +10,80 @@ class ApiConstants {
   ApiConstants._();
 
   // ==================== Environment = :===================
-  
+
   /// Base URL for the API
   /// Loaded from .env (API_BASE_URL)
+  /// Automatically detects platform and uses appropriate URL
   static String get baseUrl {
+    // For web, always use localhost regardless of .env
+    if (kIsWeb) {
+      return "http://127.0.0.1:5000"; // Web localhost
+    }
+
+    // For mobile platforms, check .env first
     final url = dotenv.env['API_BASE_URL'];
-    if (url != null) return url;
-    
-    // Fallback logic
-    if (kIsWeb) return "http://127.0.0.1:5000";
-    return "http://10.0.2.2:5000"; // Android Emulator default
+    if (url != null && url.isNotEmpty) return url;
+
+    // Platform-specific fallback logic for mobile
+    if (Platform.isAndroid) {
+      return "http://10.0.2.2:5000"; // Android Emulator default
+    }
+
+    // Mobile platforms
+    if (Platform.isAndroid) {
+      return "http://10.0.2.2:5000"; // Android Emulator default
+    }
+
+    if (Platform.isIOS) {
+      return "http://127.0.0.1:5000"; // iOS Simulator default
+    }
+
+    // Default fallback
+    return "http://127.0.0.1:5000";
   }
 
   /// Current environment status
   static bool get isDevelopment => dotenv.env['APP_ENV'] != 'production';
 
+  // ==================== Platform Detection ====================
+
+  /// Check if running on Android Emulator
+  static bool get isAndroidEmulator {
+    if (!Platform.isAndroid) return false;
+    // Additional emulator detection can be added here if needed
+    return true; // For now, assume all Android is emulator unless .env is set
+  }
+
+  /// Check if running on Physical Android Device
+  static bool get isPhysicalAndroid {
+    return Platform.isAndroid && !isAndroidEmulator;
+  }
+
+  /// Check if running on iOS Simulator
+  static bool get isIOSSimulator {
+    if (!Platform.isIOS) return false;
+    // Additional simulator detection can be added here if needed
+    return true; // For now, assume all iOS is simulator unless .env is set
+  }
+
+  /// Get platform information for debugging
+  static String get platformInfo {
+    if (kIsWeb) return 'Web';
+    if (Platform.isAndroid)
+      return 'Android (${isAndroidEmulator ? 'Emulator' : 'Physical'})';
+    if (Platform.isIOS)
+      return 'iOS (${isIOSSimulator ? 'Simulator' : 'Physical'})';
+    return 'Unknown';
+  }
+
   // ==================== Cloudinary ====================
-  
-  static String get cloudinaryCloudName => dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? 'demo';
-  static String get cloudinaryUploadPreset => dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? 'ml_default';
-  static String get cloudinaryFolder => dotenv.env['CLOUDINARY_FOLDER'] ?? 'bunda_care/avatars';
+
+  static String get cloudinaryCloudName =>
+      dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? 'demo';
+  static String get cloudinaryUploadPreset =>
+      dotenv.env['CLOUDINARY_UPLOAD_PRESET'] ?? 'ml_default';
+  static String get cloudinaryFolder =>
+      dotenv.env['CLOUDINARY_FOLDER'] ?? 'bunda_care/avatars';
 
   // ==================== Auth Endpoints ====================
 
@@ -41,7 +96,6 @@ class ApiConstants {
   static const String scanFood = "/api/scan-food";
   static const String recommendation = "/api/recommendation";
   static const String mealLog = "/api/meal-log";
-
 
   // ==================== Timeouts ====================
 
@@ -72,5 +126,21 @@ class ApiConstants {
   static String getErrorMessage(String? errorCode) {
     if (errorCode == null) return errorMessages['UNKNOWN_ERROR']!;
     return errorMessages[errorCode] ?? errorMessages['UNKNOWN_ERROR']!;
+  }
+
+  // ==================== Debug Information ====================
+
+  /// Print current API configuration for debugging
+  static void debugPrintConfig() {
+    if (isDevelopment) {
+      print('🔧 API Configuration Debug:');
+      print('   Platform: $platformInfo');
+      print('   Base URL: $baseUrl');
+      print('   Environment: ${dotenv.env['APP_ENV'] ?? 'not set'}');
+      print(
+        '   API_BASE_URL from .env: ${dotenv.env['API_BASE_URL'] ?? 'not set'}',
+      );
+      print('   kIsWeb: $kIsWeb');
+    }
   }
 }
