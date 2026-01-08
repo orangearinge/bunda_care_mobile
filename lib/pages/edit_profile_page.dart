@@ -497,17 +497,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           builder: (context) {
                             final hasLocalImage = _avatarImage != null || _avatarImageBytes != null;
                             final hasRemoteImage = _avatarUrl != null && _avatarUrl!.isNotEmpty;
-                            
+
                             // Construct final remote URL if path is relative
                             String? finalRemoteUrl;
                             if (hasRemoteImage) {
                               if (_avatarUrl!.startsWith('http')) {
                                 finalRemoteUrl = _avatarUrl;
                               } else {
-                                final baseUrl = ApiConstants.baseUrl;
-                                finalRemoteUrl = _avatarUrl!.startsWith('/')
-                                    ? '$baseUrl$_avatarUrl'
-                                    : '$baseUrl/$_avatarUrl';
+                                finalRemoteUrl = '${ApiConstants.baseUrl}$_avatarUrl';
                               }
                             }
 

@@ -12,10 +12,14 @@ class UserPreferenceProvider with ChangeNotifier {
   UserPreference? _currentPreference;
   String? _errorMessage;
 
+  // Track profile updates for dashboard refresh
+  bool _profileUpdated = false;
+
   PreferenceStatus get status => _status;
   UserPreference? get currentPreference => _currentPreference;
   String? get errorMessage => _errorMessage;
   bool get isLoading => _status == PreferenceStatus.loading;
+  bool get profileUpdated => _profileUpdated;
 
   /// Update user preference through API
   Future<bool> updatePreference({
@@ -52,6 +56,7 @@ class UserPreferenceProvider with ChangeNotifier {
 
       final updatedPreference = await _userService.updatePreference(preference);
       _currentPreference = updatedPreference;
+      markProfileUpdated(); // Trigger dashboard refresh
       _status = PreferenceStatus.success;
 
       // Update name in AuthProvider if it was provided
@@ -129,6 +134,18 @@ class UserPreferenceProvider with ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  /// Mark profile as updated (for dashboard refresh)
+  void markProfileUpdated() {
+    _profileUpdated = true;
+    notifyListeners();
+  }
+
+  /// Reset profile update flag
+  void resetProfileUpdatedFlag() {
+    _profileUpdated = false;
+    notifyListeners();
   }
 
   /// Reset status

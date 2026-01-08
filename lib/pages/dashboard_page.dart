@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/user_preference_provider.dart';
 import '../services/user_service.dart';
 import '../models/dashboard_summary.dart';
 import '../utils/constants.dart';
@@ -32,6 +33,20 @@ class _DashboardPageState extends State<DashboardPage> {
     _fetchDashboardData();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Listen for profile updates
+    final preferenceProvider = Provider.of<UserPreferenceProvider>(
+      context,
+      listen: false,
+    );
+    if (preferenceProvider.profileUpdated) {
+      _fetchDashboardData();
+      preferenceProvider.resetProfileUpdatedFlag();
+    }
+  }
+
   Future<void> _fetchDashboardData() async {
     try {
       final summary = await _userService.getDashboardSummary();
@@ -59,11 +74,19 @@ class _DashboardPageState extends State<DashboardPage> {
     // GoRouter will automatically redirect to login
   }
 
-
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
+    final preferenceProvider = context.watch<UserPreferenceProvider>();
     final userName = authProvider.currentUser?.name ?? "Pengguna";
+
+    // Auto-refresh when profile is updated
+    if (preferenceProvider.profileUpdated) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _fetchDashboardData();
+        preferenceProvider.resetProfileUpdatedFlag();
+      });
+    }
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
@@ -118,7 +141,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ),
                               ),
                             IconButton(
-                              icon: const Icon(Icons.refresh, color: Colors.grey),
+                              icon: const Icon(
+                                Icons.refresh,
+                                color: Colors.grey,
+                              ),
                               onPressed: _fetchDashboardData,
                             ),
                             Container(
@@ -134,7 +160,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ],
                               ),
                               child: IconButton(
-                                icon: Icon(Icons.logout, color: Colors.pink[300]),
+                                icon: Icon(
+                                  Icons.logout,
+                                  color: Colors.pink[300],
+                                ),
                                 onPressed: () => _logout(context),
                               ),
                             ),
@@ -267,14 +296,15 @@ class _DashboardPageState extends State<DashboardPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         scrollDirection: Axis.horizontal,
                         physics: const BouncingScrollPhysics(),
-                        itemCount: _dashboardSummary?.recommendations.length ?? 0,
+                        itemCount:
+                            _dashboardSummary?.recommendations.length ?? 0,
                         itemBuilder: (context, index) {
                           final rec = _dashboardSummary!.recommendations[index];
                           final colors = [
                             Colors.green,
                             Colors.teal,
                             Colors.orange,
-                            Colors.amber
+                            Colors.amber,
                           ];
                           return _buildRekomendasiCard(
                             context,
@@ -286,7 +316,10 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
               // Nutrition Analysis Section
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 20,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -305,7 +338,9 @@ class _DashboardPageState extends State<DashboardPage> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => const MealLogPage()),
+                              MaterialPageRoute(
+                                builder: (_) => const MealLogPage(),
+                              ),
                             );
                           },
                           child: Text(
@@ -320,7 +355,10 @@ class _DashboardPageState extends State<DashboardPage> {
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 24,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(25),
@@ -339,11 +377,16 @@ class _DashboardPageState extends State<DashboardPage> {
                               Builder(
                                 builder: (context) {
                                   final consumed =
-                                      _dashboardSummary?.todayNutrition.calories ?? 0;
+                                      _dashboardSummary
+                                          ?.todayNutrition
+                                          .calories ??
+                                      0;
                                   final target =
                                       _dashboardSummary?.targets.calories ?? 1;
-                                  final percentage = (consumed / target * 100).clamp(0, 100).toInt();
-                                  
+                                  final percentage = (consumed / target * 100)
+                                      .clamp(0, 100)
+                                      .toInt();
+
                                   return SizedBox(
                                     height: 120,
                                     width: 120,
@@ -363,7 +406,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                               ),
                                               PieChartSectionData(
                                                 color: Colors.pink[50],
-                                                value: (100 - percentage).toDouble(),
+                                                value: (100 - percentage)
+                                                    .toDouble(),
                                                 showTitle: false,
                                                 radius: 12,
                                               ),
@@ -396,7 +440,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                       ],
                                     ),
                                   );
-                                }
+                                },
                               ),
                               const SizedBox(width: 20),
                               Expanded(
@@ -421,21 +465,28 @@ class _DashboardPageState extends State<DashboardPage> {
                                     const SizedBox(height: 12),
                                     _buildNutrientSmallProgress(
                                       "Protein",
-                                      _dashboardSummary?.todayNutrition.proteinG ?? 0,
+                                      _dashboardSummary
+                                              ?.todayNutrition
+                                              .proteinG ??
+                                          0,
                                       _dashboardSummary?.targets.proteinG ?? 1,
                                       Colors.orange,
                                     ),
                                     const SizedBox(height: 8),
                                     _buildNutrientSmallProgress(
                                       "Karbo",
-                                      _dashboardSummary?.todayNutrition.carbsG ?? 0,
+                                      _dashboardSummary
+                                              ?.todayNutrition
+                                              .carbsG ??
+                                          0,
                                       _dashboardSummary?.targets.carbsG ?? 1,
                                       Colors.blue,
                                     ),
                                     const SizedBox(height: 8),
                                     _buildNutrientSmallProgress(
                                       "Lemak",
-                                      _dashboardSummary?.todayNutrition.fatG ?? 0,
+                                      _dashboardSummary?.todayNutrition.fatG ??
+                                          0,
                                       _dashboardSummary?.targets.fatG ?? 1,
                                       Colors.teal,
                                     ),
@@ -485,7 +536,6 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-
   Widget _buildRekomendasiCard(
     BuildContext context,
     DashboardRecommendation rec,
@@ -516,7 +566,9 @@ class _DashboardPageState extends State<DashboardPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
                   child: Stack(
                     children: [
                       Image.network(
@@ -527,7 +579,10 @@ class _DashboardPageState extends State<DashboardPage> {
                         errorBuilder: (context, error, stackTrace) => Container(
                           height: 120,
                           color: Colors.grey[200],
-                          child: const Icon(Icons.restaurant, color: Colors.grey),
+                          child: const Icon(
+                            Icons.restaurant,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                       Positioned(
@@ -598,7 +653,11 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  void _showFoodDetail(BuildContext context, DashboardRecommendation rec, Color accentColor) {
+  void _showFoodDetail(
+    BuildContext context,
+    DashboardRecommendation rec,
+    Color accentColor,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -660,14 +719,21 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: accentColor.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.local_fire_department, color: accentColor, size: 18),
+                                    Icon(
+                                      Icons.local_fire_department,
+                                      color: accentColor,
+                                      size: 18,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       "${rec.calories} kkal",
@@ -711,7 +777,10 @@ class _DashboardPageState extends State<DashboardPage> {
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.info_outline, color: Colors.pink[400]),
+                                Icon(
+                                  Icons.info_outline,
+                                  color: Colors.pink[400],
+                                ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Text(
@@ -740,7 +809,10 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                               child: const Text(
                                 "Tutup",
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
@@ -757,6 +829,7 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
     );
   }
+
   Widget _buildNutrientSmallProgress(
     String label,
     double consumed,
@@ -820,13 +893,7 @@ class _DashboardPageState extends State<DashboardPage> {
             color: Colors.black87,
           ),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 9,
-            color: Colors.grey[500],
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 9, color: Colors.grey[500])),
       ],
     );
   }
@@ -841,10 +908,7 @@ class _DashboardPageState extends State<DashboardPage> {
         Container(
           width: 12,
           height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 12),
         Column(
@@ -860,10 +924,7 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
             Text(
               subText,
-              style: GoogleFonts.poppins(
-                fontSize: 11,
-                color: Colors.grey[500],
-              ),
+              style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey[500]),
             ),
           ],
         ),
