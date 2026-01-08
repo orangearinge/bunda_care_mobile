@@ -29,6 +29,27 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
   final Color primaryPink = Colors.pink[300]!;
   final Color secondaryBlue = Colors.blue[300]!;
 
+  // Required fields per role (excluding optional dietary preferences)
+  final Map<String, List<String>> _roleRequiredFields = {
+    'IbuHamil': [
+      'nama',
+      'usia',
+      'hpht',
+      'berat_badan',
+      'tinggi_badan',
+      'lingkar_perut',
+      'lingkar_lengan_atas',
+    ],
+    'IbuMenyusui': [
+      'nama',
+      'usia',
+      'lactation_ml',
+      'tinggi_badan',
+      'berat_badan',
+    ],
+    'AnakBatita': ['nama', 'berat_badan', 'tinggi_badan', 'usia'],
+  };
+
   // ===================== HELPER FUNCTIONS =====================
   /// Calculate gestational age from HPHT date
   /// Returns Map with 'weeks' and 'days' keys
@@ -171,7 +192,6 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           fields: [
             _buildTextField("Nama Lengkap", "nama", TextInputType.name),
             _buildTextField("Usia", "usia", TextInputType.number),
-            _buildTextField("Alamat", "alamat", TextInputType.streetAddress),
           ],
         );
 
@@ -250,7 +270,6 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           fields: [
             _buildTextField("Nama Lengkap", "nama", TextInputType.name),
             _buildTextField("Usia", "usia", TextInputType.number),
-            _buildTextField("Alamat", "alamat", TextInputType.streetAddress),
           ],
         );
 
@@ -269,25 +288,10 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              _buildDropdownField(
-                label: "Frekuensi Menyusui (berdasarkan Usia Bayi)",
-                keyName: "frekuensi_menyusui",
-                items: [
-                  "8-12 kali/hari",
-                  "7-9 kali/hari",
-                  "6-8 kali/hari",
-                  "5-7 kali/hari",
-                ],
-              ),
               _buildTextField(
                 "Volume ASI per hari (ml)",
                 "lactation_ml",
                 TextInputType.number,
-              ),
-              _buildTextField(
-                "ASI Eksklusif? (Ya/Tidak)",
-                "asi_eksklusif",
-                TextInputType.text,
               ),
             ],
           ),
@@ -325,9 +329,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           step: step,
           title: "Langkah 1: Data Dasar",
           titleColor: secondaryBlue,
-          fields: [
-            _buildTextField("Nama Anak", "nama", TextInputType.name),
-          ],
+          fields: [_buildTextField("Nama Anak", "nama", TextInputType.name)],
         );
 
       case 1:
@@ -422,41 +424,19 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         keyboardType: inputType,
         maxLines: maxLines ?? 1,
         validator: (value) {
-          if (!required) return null;
-          return value == null || value.isEmpty ? '$label wajib diisi' : null;
+          bool isRequired =
+              required ||
+              (_roleRequiredFields[widget.userRole]?.contains(key) ?? false);
+          if (!isRequired) return null;
+          if (value == null || value.isEmpty) return '$label wajib diisi';
+          // Additional validation for numeric fields
+          if (inputType == TextInputType.number) {
+            double? num = double.tryParse(value);
+            if (num == null || num <= 0) return '$label harus angka positif';
+          }
+          return null;
         },
         onSaved: (value) => formData[key] = value,
-      ),
-    );
-  }
-
-  // ===================== DROPDOWN =====================
-  Widget _buildDropdownField({
-    required String label,
-    required String keyName,
-    required List<String> items,
-    String? hintText,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: DropdownButtonFormField<String>(
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hintText,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          filled: true,
-          fillColor: Colors.grey[50],
-        ),
-        value: formData[keyName],
-        items: items
-            .map(
-              (item) =>
-                  DropdownMenuItem<String>(value: item, child: Text(item)),
-            )
-            .toList(),
-        onChanged: (value) => setState(() => formData[keyName] = value),
-        validator: (value) =>
-            value == null || value.isEmpty ? '$label wajib dipilih' : null,
       ),
     );
   }
@@ -552,6 +532,40 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
   }
 
   void _submitForm() async {
+    // Pre-submit validation
+    List<String> requiredFields = _roleRequiredFields[widget.userRole] ?? [];
+    for (String key in requiredFields) {
+      if (formData[key] == null || formData[key].toString().isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Field $key wajib diisi'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+      // Validate numeric fields
+      if ([
+        'berat_badan',
+        'tinggi_badan',
+        'usia',
+        'lingkar_perut',
+        'lingkar_lengan_atas',
+        'lactation_ml',
+      ].contains(key)) {
+        double? num = double.tryParse(formData[key]);
+        if (num == null || num <= 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Field $key harus angka positif'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+      }
+    }
+
     final preferenceProvider = Provider.of<UserPreferenceProvider>(
       context,
       listen: false,
