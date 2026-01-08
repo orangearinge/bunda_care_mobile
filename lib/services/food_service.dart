@@ -10,19 +10,16 @@ class FoodService {
 
   /// Scan food image
   /// POST /api/scan-food
-  Future<Map<String, dynamic>> scanFood(List<int> imageBytes, String fileName) async {
+  Future<Map<String, dynamic>> scanFood(
+    List<int> imageBytes,
+    String fileName,
+  ) async {
     try {
       FormData formData = FormData.fromMap({
-        "image": MultipartFile.fromBytes(
-          imageBytes,
-          filename: fileName,
-        ),
+        "image": MultipartFile.fromBytes(imageBytes, filename: fileName),
       });
 
-      final response = await _api.post(
-        ApiConstants.scanFood,
-        data: formData,
-      );
+      final response = await _api.post(ApiConstants.scanFood, data: formData);
 
       final data = response.data;
       if (data != null) {
@@ -33,13 +30,18 @@ class FoodService {
           return data as Map<String, dynamic>;
         }
       }
-      
+
       throw ApiError(
         code: 'SCAN_FAILED',
-        message: (data is Map) ? (data['message'] ?? 'Gagal memindai makanan') : 'Format respons tidak valid',
+        message: ApiConstants.getErrorMessage('SCAN_FAILED'),
       );
     } catch (e) {
-      if (e is ApiError) rethrow;
+      if (e is ApiError) {
+        throw ApiError(
+          code: e.code,
+          message: ApiConstants.getErrorMessage(e.code),
+        );
+      }
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -53,7 +55,7 @@ class FoodService {
     try {
       Map<String, dynamic> queryParams = {};
       if (mealType != null) queryParams['meal_type'] = mealType;
-      
+
       // If we have detected IDs, we can pass them in the query or body.
       // The backend handles both. Let's use query for simplicity if not too many.
       if (detectedIds != null && detectedIds.isNotEmpty) {
@@ -77,10 +79,15 @@ class FoodService {
 
       throw ApiError(
         code: 'RECOMMENDATION_FAILED',
-        message: (data is Map) ? (data['message'] ?? 'Gagal mendapatkan rekomendasi') : 'Format respons tidak valid',
+        message: ApiConstants.getErrorMessage('RECOMMENDATION_FAILED'),
       );
     } catch (e) {
-      if (e is ApiError) rethrow;
+      if (e is ApiError) {
+        throw ApiError(
+          code: e.code,
+          message: ApiConstants.getErrorMessage(e.code),
+        );
+      }
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -103,7 +110,12 @@ class FoodService {
       );
       return response.data;
     } catch (e) {
-      if (e is ApiError) rethrow;
+      if (e is ApiError) {
+        throw ApiError(
+          code: e.code,
+          message: ApiConstants.getErrorMessage(e.code),
+        );
+      }
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -124,7 +136,12 @@ class FoodService {
       }
       return [];
     } catch (e) {
-      if (e is ApiError) rethrow;
+      if (e is ApiError) {
+        throw ApiError(
+          code: e.code,
+          message: ApiConstants.getErrorMessage(e.code),
+        );
+      }
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -134,9 +151,15 @@ class FoodService {
   Future<bool> confirmMeal(int mealLogId) async {
     try {
       final response = await _api.post('/api/meal-log/$mealLogId/confirm');
-      return response.data?['status'] == 'success' || response.statusCode == 200;
+      return response.data?['status'] == 'success' ||
+          response.statusCode == 200;
     } catch (e) {
-      if (e is ApiError) rethrow;
+      if (e is ApiError) {
+        throw ApiError(
+          code: e.code,
+          message: ApiConstants.getErrorMessage(e.code),
+        );
+      }
       throw ApiError.fromException(Exception(e));
     }
   }

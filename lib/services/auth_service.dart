@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../models/auth_response.dart';
 import '../models/api_error.dart';
@@ -53,7 +52,12 @@ class AuthService {
 
       return authResponse;
     } catch (e) {
-      if (e is ApiError) rethrow;
+      if (e is ApiError) {
+        throw ApiError(
+          code: e.code,
+          message: ApiConstants.getErrorMessage(e.code),
+        );
+      }
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -81,7 +85,12 @@ class AuthService {
 
       return authResponse;
     } catch (e) {
-      if (e is ApiError) rethrow;
+      if (e is ApiError) {
+        throw ApiError(
+          code: e.code,
+          message: ApiConstants.getErrorMessage(e.code),
+        );
+      }
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -102,8 +111,8 @@ class AuthService {
       if (googleUser == null) {
         // User cancelled the sign-in
         throw ApiError(
-          code: 'GOOGLE_SIGNIN_CANCELLED',
-          message: 'Google sign-in was cancelled',
+          code: 'GOOGLE_AUTH_CANCELLED',
+          message: ApiConstants.getErrorMessage('GOOGLE_AUTH_CANCELLED'),
         );
       }
 
@@ -116,7 +125,7 @@ class AuthService {
       if (idToken == null) {
         throw ApiError(
           code: 'INVALID_TOKEN',
-          message: 'Failed to get ID token from Google',
+          message: ApiConstants.getErrorMessage('INVALID_TOKEN'),
         );
       }
 
@@ -142,7 +151,12 @@ class AuthService {
 
       print('Google sign-in error: $e'); // Debug log
 
-      if (e is ApiError) rethrow;
+      if (e is ApiError) {
+        throw ApiError(
+          code: e.code,
+          message: ApiConstants.getErrorMessage(e.code),
+        );
+      }
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -169,7 +183,10 @@ class AuthService {
       // Clear all local storage
       await _storage.clearAll();
     } catch (e) {
-      throw ApiError.fromException(Exception(e));
+      throw ApiError(
+        code: 'LOGOUT_FAILED',
+        message: ApiConstants.getErrorMessage('LOGOUT_FAILED'),
+      );
     }
   }
 

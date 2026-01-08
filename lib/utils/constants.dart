@@ -9,7 +9,7 @@ class ApiConstants {
   // Prevent instantiation
   ApiConstants._();
 
-  // ==================== Environment = :===================
+  // ==================== Environment ====================
 
   /// Base URL for the API
   /// Loaded from .env (API_BASE_URL)
@@ -25,11 +25,6 @@ class ApiConstants {
     if (url != null && url.isNotEmpty) return url;
 
     // Platform-specific fallback logic for mobile
-    if (Platform.isAndroid) {
-      return "http://10.0.2.2:5000"; // Android Emulator default
-    }
-
-    // Mobile platforms
     if (Platform.isAndroid) {
       return "http://10.0.2.2:5000"; // Android Emulator default
     }
@@ -120,6 +115,37 @@ class ApiConstants {
     'TIMEOUT_ERROR': 'Connection timeout. Please try again',
     'SERVER_ERROR': 'Something went wrong. Please try again later',
     'UNKNOWN_ERROR': 'An unexpected error occurred',
+
+    // Auth-specific additions
+    'ACCOUNT_NOT_VERIFIED': 'Please verify your email before logging in',
+    'PASSWORD_TOO_WEAK': 'Password must be at least 8 characters long',
+    'LOGOUT_FAILED': 'Logout failed. Please try again',
+    'GOOGLE_AUTH_CANCELLED': 'Google sign-in was cancelled. Please try again',
+
+    // Food scanning feature
+    'SCAN_FAILED':
+        'Food scanning failed. Please try again with a clearer image',
+    'FOOD_NOT_RECOGNIZED':
+        'We couldn\'t identify the food. Please try a different photo',
+    'SCAN_LIMIT_EXCEEDED': 'Too many scans today. Please try again tomorrow',
+
+    // Recommendation feature
+    'RECOMMENDATION_FAILED':
+        'Unable to generate recommendations. Please try again later',
+    'NO_RECOMMENDATIONS':
+        'No recommendations available right now. Check back soon',
+    'INVALID_FOOD_DATA': 'Food data is incomplete. Please scan again',
+
+    // Meal logging feature
+    'LOG_FAILED': 'Failed to save your meal. Please try again',
+    'LOG_LIMIT_EXCEEDED': 'You\'ve logged too many meals today. Take a break!',
+    'DUPLICATE_LOG': 'This meal was already logged. Try editing instead',
+
+    // Cloudinary upload feature
+    'UPLOAD_FAILED':
+        'Image upload failed. Please check your connection and try again',
+    'INVALID_FILE_TYPE': 'Only image files are allowed. Please choose a photo',
+    'FILE_TOO_LARGE': 'Image is too large. Please use a smaller file',
   };
 
   /// Get user-friendly error message from error code
