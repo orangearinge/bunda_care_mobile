@@ -7,6 +7,7 @@ import '../providers/user_preference_provider.dart';
 import '../providers/auth_provider.dart';
 import '../models/user_preference.dart';
 import 'edit_profile_page.dart';
+import '../utils/constants.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -71,24 +72,45 @@ class _ProfilePageState extends State<ProfilePage> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        CircleAvatar(
-                          radius: 34,
-                          backgroundImage:
-                              authProvider.currentUser?.avatar != null
-                              ? NetworkImage(authProvider.currentUser!.avatar!)
-                              : null,
-                          backgroundColor: Colors.pink[100],
-                          child: authProvider.currentUser?.avatar == null
-                              ? Text(
-                                  authProvider.currentUser?.getInitials() ??
-                                      'B',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.pink[400],
-                                  ),
-                                )
-                              : null,
+                        Builder(
+                          builder: (context) {
+                            final avatarUrl = authProvider.currentUser?.avatar;
+                            final hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
+                            
+                            // Construct full URL if relative
+                            String? finalUrl;
+                            if (hasAvatar) {
+                              if (avatarUrl.startsWith('http')) {
+                                finalUrl = avatarUrl;
+                              } else {
+                                final baseUrl = ApiConstants.baseUrl;
+                                finalUrl = avatarUrl.startsWith('/')
+                                    ? '$baseUrl$avatarUrl'
+                                    : '$baseUrl/$avatarUrl';
+                              }
+                            }
+
+                            return CircleAvatar(
+                              radius: 34,
+                              backgroundColor: Colors.pink[100],
+                              backgroundImage: hasAvatar ? NetworkImage(finalUrl!) : null,
+                              onBackgroundImageError: hasAvatar 
+                                ? (exception, stackTrace) {
+                                    debugPrint('Error loading avatar: $exception');
+                                  } 
+                                : null,
+                              child: !hasAvatar
+                                  ? Text(
+                                      authProvider.currentUser?.getInitials() ?? 'B',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.pink[400],
+                                      ),
+                                    )
+                                  : null,
+                            );
+                          },
                         ),
                         const SizedBox(width: 16),
                         Expanded(

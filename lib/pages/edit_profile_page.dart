@@ -493,31 +493,53 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   Center(
                     child: Stack(
                       children: [
-                        CircleAvatar(
-                          radius: 60,
-                          backgroundImage: _avatarImage != null
-                              ? FileImage(_avatarImage!)
-                              : _avatarImageBytes != null
-                              ? MemoryImage(_avatarImageBytes!)
-                              : _avatarUrl != null
-                              ? NetworkImage(_avatarUrl!)
-                              : null,
-                          backgroundColor: Colors.pink[100],
-                          child:
-                              _avatarImage == null &&
-                                  _avatarImageBytes == null &&
-                                  _avatarUrl == null
-                              ? Text(
-                                  _nameController.text.isNotEmpty
-                                      ? _nameController.text[0].toUpperCase()
-                                      : 'B',
-                                  style: const TextStyle(
-                                    fontSize: 36,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.pink,
-                                  ),
-                                )
-                              : null,
+                        Builder(
+                          builder: (context) {
+                            final hasLocalImage = _avatarImage != null || _avatarImageBytes != null;
+                            final hasRemoteImage = _avatarUrl != null && _avatarUrl!.isNotEmpty;
+                            
+                            // Construct final remote URL if path is relative
+                            String? finalRemoteUrl;
+                            if (hasRemoteImage) {
+                              if (_avatarUrl!.startsWith('http')) {
+                                finalRemoteUrl = _avatarUrl;
+                              } else {
+                                final baseUrl = ApiConstants.baseUrl;
+                                finalRemoteUrl = _avatarUrl!.startsWith('/')
+                                    ? '$baseUrl$_avatarUrl'
+                                    : '$baseUrl/$_avatarUrl';
+                              }
+                            }
+
+                            return CircleAvatar(
+                              radius: 60,
+                              backgroundColor: Colors.pink[100],
+                              backgroundImage: _avatarImage != null
+                                  ? FileImage(_avatarImage!)
+                                  : _avatarImageBytes != null
+                                      ? MemoryImage(_avatarImageBytes!)
+                                      : hasRemoteImage
+                                          ? NetworkImage(finalRemoteUrl!)
+                                          : null,
+                              onBackgroundImageError: (hasLocalImage || hasRemoteImage)
+                                  ? (exception, stackTrace) {
+                                      debugPrint('Error loading avatar preview: $exception');
+                                    }
+                                  : null,
+                              child: !hasLocalImage && !hasRemoteImage
+                                  ? Text(
+                                      _nameController.text.isNotEmpty
+                                          ? _nameController.text[0].toUpperCase()
+                                          : 'B',
+                                      style: const TextStyle(
+                                        fontSize: 36,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.pink,
+                                      ),
+                                    )
+                                  : null,
+                            );
+                          },
                         ),
                         Positioned(
                           bottom: 0,
