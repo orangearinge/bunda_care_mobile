@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'dart:io';
 import '../utils/constants.dart';
 import '../models/api_error.dart';
 import 'storage_service.dart';
@@ -42,7 +41,9 @@ class ApiService {
         onResponse: (response, handler) {
           // Log successful responses in debug mode
           if (ApiConstants.isDevelopment) {
-            print('✅ Response [${response.statusCode}]: ${response.requestOptions.path}');
+            print(
+              '✅ Response [${response.statusCode}]: ${response.requestOptions.path}',
+            );
           }
           return handler.next(response);
         },
@@ -154,15 +155,25 @@ class ApiService {
       case DioExceptionType.badResponse:
         // Parse backend error response
         final response = error.response;
-        if (response != null && response.data is Map<String, dynamic>) {
-          final data = response.data as Map<String, dynamic>;
-          
-          // Check if it's our backend error format
-          if (data['error'] != null) {
-            return ApiError.fromJson(data);
+        if (response != null) {
+          // Handle 401 Unauthorized specifically
+          if (response.statusCode == 401) {
+            return ApiError(
+              code: 'SESSION_EXPIRED',
+              message: 'Your session has expired. Please login again.',
+            );
+          }
+
+          if (response.data is Map<String, dynamic>) {
+            final data = response.data as Map<String, dynamic>;
+
+            // Check if it's our backend error format
+            if (data['error'] != null) {
+              return ApiError.fromJson(data);
+            }
           }
         }
-        
+
         // Generic server error
         return ApiError.serverError(
           'Server error: ${response?.statusCode ?? "Unknown"}',

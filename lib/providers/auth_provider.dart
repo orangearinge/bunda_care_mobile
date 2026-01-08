@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 import '../models/api_error.dart';
-import '../models/user_preference.dart';
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
 import '../utils/constants.dart';
@@ -104,19 +103,35 @@ class AuthProvider with ChangeNotifier {
 
     try {
       // Check if user has stored token
-      final isAuth = await _authService.isAuthenticated();
+      final hasToken = await _authService.isAuthenticated();
 
-      if (isAuth) {
-        // Load user data from storage first
-        final user = await _authService.getCurrentUser();
-        if (user != null) {
-          _currentUser = user;
-          _setState(AuthState.authenticated);
+      if (hasToken) {
+        // Validate token with server before setting authenticated
+        try {
+          final userProfile = await _userService.getUserProfile();
 
-          // Refresh user data from backend in background
-          // This ensures role and other data are up to date
-          _refreshUser();
-          return;
+          if (userProfile != null) {
+            // Token is valid, load user data and set authenticated
+            final user = await _authService.getCurrentUser();
+            if (user != null) {
+              _currentUser = user;
+              _setState(AuthState.authenticated);
+
+              // Refresh user data from backend in background
+              _refreshUser();
+              return;
+            }
+          }
+        } on ApiError catch (e) {
+          // Token is invalid/expired, clear session
+          if (_isAuthError(e)) {
+            print('Token validation failed: ${e.code}');
+            await _authService.logout();
+            _setState(AuthState.unauthenticated);
+            return;
+          }
+          // Re-throw other errors
+          rethrow;
         }
       }
 
@@ -162,6 +177,14 @@ class AuthProvider with ChangeNotifier {
           notifyListeners();
         }
       }
+    } on ApiError catch (e) {
+      // Handle authentication errors by logging out
+      if (_isAuthError(e)) {
+        print('Authentication error during user refresh: ${e.code}');
+        await logout();
+        return;
+      }
+      print('Error refreshing user data: $e');
     } catch (e) {
       print('Error refreshing user data: $e');
     }
@@ -189,6 +212,12 @@ class AuthProvider with ChangeNotifier {
       _setState(AuthState.authenticated);
       return true;
     } on ApiError catch (e) {
+      // Handle auth errors specifically
+      if (_isAuthError(e)) {
+        await logout();
+        _setError('Session expired. Please login again.');
+        return false;
+      }
       _setError(e.message);
       return false;
     } catch (e) {
@@ -214,6 +243,12 @@ class AuthProvider with ChangeNotifier {
       _setState(AuthState.authenticated);
       return true;
     } on ApiError catch (e) {
+      // Handle auth errors specifically
+      if (_isAuthError(e)) {
+        await logout();
+        _setError('Session expired. Please login again.');
+        return false;
+      }
       _setError(e.message);
       return false;
     } catch (e) {
@@ -241,6 +276,12 @@ class AuthProvider with ChangeNotifier {
       return true;
     } on ApiError catch (e) {
       _isGoogleSignInInProgress = false;
+      // Handle auth errors specifically
+      if (_isAuthError(e)) {
+        await logout();
+        _setError('Session expired. Please login again.');
+        return false;
+      }
       // Don't show error if user cancelled sign-in
       if (e.code != 'GOOGLE_SIGNIN_CANCELLED') {
         _setError(e.message);
@@ -272,6 +313,15 @@ class AuthProvider with ChangeNotifier {
   }
 
   // ==================== Helper Methods ====================
+
+  /// Check if error is authentication-related
+  bool _isAuthError(ApiError error) {
+    return error.code == 'SESSION_EXPIRED' ||
+        error.code == 'UNAUTHORIZED' ||
+        error.code == 'TOKEN_EXPIRED' ||
+        error.code == 'INVALID_TOKEN' ||
+        error.code == 'UNAUTHORIZED';
+  }
 
   /// Set authentication state
   void _setState(AuthState newState) {
