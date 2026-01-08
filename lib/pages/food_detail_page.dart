@@ -246,6 +246,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                   color: Colors.black87,
                 ),
               ),
+              if (_foodDetail!.tags != null && _foodDetail!.tags!.isNotEmpty)
+                _buildTags(),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -269,15 +271,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     final categoryColors = {
       'BREAKFAST': Colors.orange,
       'LUNCH': Colors.green,
-      'DINNER': Colors.blue,
-      'SNACK': Colors.purple,
+      'DINNER': Colors.blue
     };
 
     final categoryLabels = {
-      'BREAKFAST': 'Sarapan',
-      'LUNCH': 'Makan Siang',
-      'DINNER': 'Makan Malam',
-      'SNACK': 'Snack',
+      'BREAKFAST': 'BREAKFAST',
+      'LUNCH': 'LUNCH',
+      'DINNER': 'DINNER'
     };
 
     final color = categoryColors[_foodDetail!.category] ?? Colors.grey;
@@ -322,6 +322,38 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTags() {
+    final tagsList = _foodDetail!.tags!
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 8),
+      child: Wrap(
+        spacing: 6,
+        runSpacing: 6,
+        children: tagsList.map((tag) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.pink[50],
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.pink[100]!),
+          ),
+          child: Text(
+            tag,
+            style: TextStyle(
+              color: Colors.pink[400],
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        )).toList(),
       ),
     );
   }

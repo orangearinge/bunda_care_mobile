@@ -8,6 +8,8 @@ class FoodDetail {
   final List<FoodIngredient> ingredients;
   final String? cookingInstructions;
   final int? cookingTimeMinutes;
+  final String? tags;
+  final bool isActive;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -17,6 +19,8 @@ class FoodDetail {
     this.description,
     this.imageUrl,
     required this.category,
+    this.tags,
+    this.isActive = true,
     required this.nutrition,
     required this.ingredients,
     this.cookingInstructions,
@@ -32,6 +36,8 @@ class FoodDetail {
       description: json['description'],
       imageUrl: json['image_url'],
       category: json['category'] ?? 'LUNCH',
+      tags: json['tags'],
+      isActive: json['is_active'] ?? true,
       nutrition: FoodNutrition.fromJson(json['nutrition'] ?? {}),
       ingredients: (json['ingredients'] as List<dynamic>?)
               ?.map((i) => FoodIngredient.fromJson(i))
@@ -55,6 +61,8 @@ class FoodDetail {
       'description': description,
       'image_url': imageUrl,
       'category': category,
+      'tags': tags,
+      'is_active': isActive,
       'nutrition': nutrition.toJson(),
       'ingredients': ingredients.map((i) => i.toJson()).toList(),
       'cooking_instructions': cookingInstructions,
