@@ -36,12 +36,7 @@ class FoodService {
         message: ApiConstants.getErrorMessage('SCAN_FAILED'),
       );
     } catch (e) {
-      if (e is ApiError) {
-        throw ApiError(
-          code: e.code,
-          message: ApiConstants.getErrorMessage(e.code),
-        );
-      }
+      if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -82,12 +77,7 @@ class FoodService {
         message: ApiConstants.getErrorMessage('RECOMMENDATION_FAILED'),
       );
     } catch (e) {
-      if (e is ApiError) {
-        throw ApiError(
-          code: e.code,
-          message: ApiConstants.getErrorMessage(e.code),
-        );
-      }
+      if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -110,12 +100,7 @@ class FoodService {
       );
       return response.data;
     } catch (e) {
-      if (e is ApiError) {
-        throw ApiError(
-          code: e.code,
-          message: ApiConstants.getErrorMessage(e.code),
-        );
-      }
+      if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -136,12 +121,7 @@ class FoodService {
       }
       return [];
     } catch (e) {
-      if (e is ApiError) {
-        throw ApiError(
-          code: e.code,
-          message: ApiConstants.getErrorMessage(e.code),
-        );
-      }
+      if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));
     }
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
+import '../utils/constants.dart';
 
 /// Halaman Sign Up untuk pendaftaran user baru
 /// Stateful widget yang mengelola form registrasi dengan validasi
@@ -31,7 +32,9 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _agreeToTerms = false;
 
   // Konstanta warna untuk konsistensi desain di seluruh halaman
-  static const Color primaryColor = Color(0xFFE91E63); // Pink (disesuaikan dengan tema login)
+  static const Color primaryColor = Color(
+    0xFFE91E63,
+  ); // Pink (disesuaikan dengan tema login)
   static const Color secondaryColor = Color(0xFFF06292); // Pink Muda
 
   /// Fungsi helper untuk membuat dekorasi input field yang konsisten
@@ -102,7 +105,10 @@ class _SignUpPageState extends State<SignUpPage> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(authProvider.errorMessage ?? 'Registration failed'),
+              content: Text(
+                authProvider.errorMessage ??
+                    ApiConstants.getErrorMessage('EMAIL_IN_USE'),
+              ),
               backgroundColor: Colors.red[400],
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
@@ -229,7 +235,10 @@ class _SignUpPageState extends State<SignUpPage> {
                               top: 20,
                               left: 20,
                               child: IconButton(
-                                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                                icon: const Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                ),
                                 onPressed: () => Navigator.pop(context),
                               ),
                             ),
@@ -253,8 +262,10 @@ class _SignUpPageState extends State<SignUpPage> {
                               icon: Icons.person_outline,
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty) return 'Username tidak boleh kosong';
-                              if (value.length < 3) return 'Username minimal 3 karakter';
+                              if (value == null || value.isEmpty)
+                                return 'Username tidak boleh kosong';
+                              if (value.length < 3)
+                                return 'Username minimal 3 karakter';
                               return null;
                             },
                           ),
@@ -270,8 +281,12 @@ class _SignUpPageState extends State<SignUpPage> {
                             ),
                             keyboardType: TextInputType.emailAddress,
                             validator: (value) {
-                              if (value == null || value.isEmpty) return 'Masukkan email Anda';
-                              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) return 'Format email tidak valid';
+                              if (value == null || value.isEmpty)
+                                return 'Masukkan email Anda';
+                              if (!RegExp(
+                                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                              ).hasMatch(value))
+                                return 'Format email tidak valid';
                               return null;
                             },
                           ),
@@ -287,15 +302,21 @@ class _SignUpPageState extends State<SignUpPage> {
                               icon: Icons.lock_outline,
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                  _obscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                   color: Colors.grey,
                                 ),
-                                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                                onPressed: () => setState(
+                                  () => _obscurePassword = !_obscurePassword,
+                                ),
                               ),
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty) return 'Password tidak boleh kosong';
-                              if (value.length < 6) return 'Password minimal 6 karakter';
+                              if (value == null || value.isEmpty)
+                                return 'Password tidak boleh kosong';
+                              if (value.length < 6)
+                                return 'Password minimal 6 karakter';
                               return null;
                             },
                           ),
@@ -311,15 +332,22 @@ class _SignUpPageState extends State<SignUpPage> {
                               icon: Icons.lock_outline,
                               suffixIcon: IconButton(
                                 icon: Icon(
-                                  _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                                  _obscureConfirmPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                   color: Colors.grey,
                                 ),
-                                onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                                onPressed: () => setState(
+                                  () => _obscureConfirmPassword =
+                                      !_obscureConfirmPassword,
+                                ),
                               ),
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty) return 'Konfirmasi password Anda';
-                              if (value != _passwordController.text) return 'Password tidak cocok';
+                              if (value == null || value.isEmpty)
+                                return 'Konfirmasi password Anda';
+                              if (value != _passwordController.text)
+                                return 'Password tidak cocok';
                               return null;
                             },
                           ),
@@ -334,16 +362,23 @@ class _SignUpPageState extends State<SignUpPage> {
                                 width: 24,
                                 child: Checkbox(
                                   value: _agreeToTerms,
-                                  onChanged: (value) => setState(() => _agreeToTerms = value ?? false),
+                                  onChanged: (value) => setState(
+                                    () => _agreeToTerms = value ?? false,
+                                  ),
                                   activeColor: Colors.pink[400],
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),
                               const Expanded(
                                 child: Text(
                                   'Saya setuju dengan Syarat & Ketentuan',
-                                  style: TextStyle(fontSize: 13, color: Colors.grey),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                               ),
                             ],
@@ -356,7 +391,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             width: double.infinity,
                             height: 55,
                             child: ElevatedButton(
-                              onPressed: authProvider.isLoading ? null : () => _signUp(authProvider),
+                              onPressed: authProvider.isLoading
+                                  ? null
+                                  : () => _signUp(authProvider),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.pink[300],
                                 foregroundColor: Colors.white,
@@ -369,11 +406,18 @@ class _SignUpPageState extends State<SignUpPage> {
                                   ? const SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
                                     )
                                   : const Text(
                                       'DAFTAR',
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1,
+                                      ),
                                     ),
                             ),
                           ),
@@ -385,8 +429,16 @@ class _SignUpPageState extends State<SignUpPage> {
                             children: [
                               const Expanded(child: Divider()),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: Text('Atau daftar dengan', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: Text(
+                                  'Atau daftar dengan',
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ),
                               const Expanded(child: Divider()),
                             ],
@@ -401,7 +453,8 @@ class _SignUpPageState extends State<SignUpPage> {
                               _socialButton(
                                 icon: Icons.g_mobiledata,
                                 color: Colors.red,
-                                onPressed: () => _handleGoogleSignUp(authProvider),
+                                onPressed: () =>
+                                    _handleGoogleSignUp(authProvider),
                               ),
                               const SizedBox(width: 16),
                               _socialButton(
@@ -424,12 +477,22 @@ class _SignUpPageState extends State<SignUpPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text("Sudah punya akun? ", style: TextStyle(color: Colors.grey, fontSize: 14)),
+                              const Text(
+                                "Sudah punya akun? ",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                ),
+                              ),
                               TextButton(
                                 onPressed: () => context.go('/login'),
                                 child: const Text(
                                   'Login',
-                                  style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold, fontSize: 14),
+                                  style: TextStyle(
+                                    color: Colors.pink,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
                                 ),
                               ),
                             ],
@@ -448,13 +511,22 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _socialButton({required IconData icon, required Color color, required VoidCallback onPressed}) {
+  Widget _socialButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.white,
         boxShadow: [
-          BoxShadow(color: Colors.grey.withOpacity(0.2), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: IconButton(
@@ -480,7 +552,12 @@ class HeaderClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     var path = Path();
     path.lineTo(0, size.height - 80);
-    path.quadraticBezierTo(size.width / 2, size.height, size.width, size.height - 80);
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 80,
+    );
     path.lineTo(size.width, 0);
     path.close();
     return path;

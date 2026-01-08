@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../providers/food_provider.dart';
+import '../utils/constants.dart';
 import 'rekomendasi_page.dart';
 import 'scan_result_page.dart';
 
@@ -39,7 +40,9 @@ class _ScanPageState extends State<ScanPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal mengambil foto: $e')),
+          SnackBar(
+            content: Text(ApiConstants.getErrorMessage('UNKNOWN_ERROR')),
+          ),
         );
       }
     }
@@ -55,7 +58,7 @@ class _ScanPageState extends State<ScanPage> {
 
     final foodProvider = context.read<FoodProvider>();
     final success = await foodProvider.scanFood(
-      _webImageBytes!, 
+      _webImageBytes!,
       _selectedImage!.name,
     );
 
@@ -63,7 +66,7 @@ class _ScanPageState extends State<ScanPage> {
       final results = foodProvider.scanResults;
       if (results != null) {
         final candidates = results['candidates'] as List<dynamic>;
-        
+
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -78,7 +81,12 @@ class _ScanPageState extends State<ScanPage> {
       }
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(foodProvider.errorMessage ?? 'Gagal memindai makanan')),
+        SnackBar(
+          content: Text(
+            foodProvider.errorMessage ??
+                ApiConstants.getErrorMessage('SCAN_FAILED'),
+          ),
+        ),
       );
     }
   }
@@ -155,16 +163,26 @@ class _ScanPageState extends State<ScanPage> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.pink.withOpacity(0.3), width: 2),
+                          border: Border.all(
+                            color: Colors.pink.withOpacity(0.3),
+                            width: 2,
+                          ),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.fastfood, size: 60, color: Colors.pink[200]),
+                            Icon(
+                              Icons.fastfood,
+                              size: 60,
+                              color: Colors.pink[200],
+                            ),
                             const SizedBox(height: 12),
                             const Text(
                               "Pilih Foto Makanan",
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             const SizedBox(height: 4),
                             const Text(
@@ -210,14 +228,14 @@ class _ScanPageState extends State<ScanPage> {
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: Colors.pink, width: 2),
                           image: kIsWeb
-                            ? DecorationImage(
-                                image: MemoryImage(_webImageBytes!),
-                                fit: BoxFit.cover,
-                              )
-                            : DecorationImage(
-                                image: FileImage(File(_selectedImage!.path)),
-                                fit: BoxFit.cover,
-                              ),
+                              ? DecorationImage(
+                                  image: MemoryImage(_webImageBytes!),
+                                  fit: BoxFit.cover,
+                                )
+                              : DecorationImage(
+                                  image: FileImage(File(_selectedImage!.path)),
+                                  fit: BoxFit.cover,
+                                ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.pink.withOpacity(0.1),
@@ -233,7 +251,8 @@ class _ScanPageState extends State<ScanPage> {
                           backgroundColor: Colors.white,
                           child: IconButton(
                             icon: const Icon(Icons.close, color: Colors.red),
-                            onPressed: () => setState(() => _selectedImage = null),
+                            onPressed: () =>
+                                setState(() => _selectedImage = null),
                           ),
                         ),
                       ),
@@ -241,7 +260,6 @@ class _ScanPageState extends State<ScanPage> {
                   ),
 
                 const SizedBox(height: 20),
-
 
                 // === Info pencahayaan ===
                 Container(
@@ -286,7 +304,9 @@ class _ScanPageState extends State<ScanPage> {
                             width: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           )
                         : Row(
@@ -296,7 +316,10 @@ class _ScanPageState extends State<ScanPage> {
                               SizedBox(width: 10),
                               Text(
                                 "PINDAI MAKANAN",
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ],
                           ),

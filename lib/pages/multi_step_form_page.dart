@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_preference_provider.dart';
 import '../providers/auth_provider.dart';
+import '../utils/constants.dart';
 
 class MultiStepFormPage extends StatefulWidget {
   final String userRole; // 'IbuHamil', 'IbuMenyusui', atau 'AnakBatita'
@@ -681,7 +682,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            preferenceProvider.errorMessage ?? 'Gagal menyimpan data',
+            preferenceProvider.errorMessage ??
+                ApiConstants.getErrorMessage('SERVER_ERROR'),
           ),
           backgroundColor: Colors.red,
         ),

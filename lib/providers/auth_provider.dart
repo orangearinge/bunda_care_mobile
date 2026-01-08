@@ -4,6 +4,7 @@ import '../models/api_error.dart';
 import '../models/user_preference.dart';
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
+import '../utils/constants.dart';
 
 /// Authentication state enum
 enum AuthState {
@@ -191,7 +192,7 @@ class AuthProvider with ChangeNotifier {
       _setError(e.message);
       return false;
     } catch (e) {
-      _setError('Registration failed. Please try again.');
+      _setError(ApiConstants.getErrorMessage('SERVER_ERROR'));
       return false;
     }
   }
@@ -216,7 +217,7 @@ class AuthProvider with ChangeNotifier {
       _setError(e.message);
       return false;
     } catch (e) {
-      _setError('Login failed. Please try again.');
+      _setError(ApiConstants.getErrorMessage('SERVER_ERROR'));
       return false;
     }
   }
@@ -249,7 +250,7 @@ class AuthProvider with ChangeNotifier {
       return false;
     } catch (e) {
       _isGoogleSignInInProgress = false;
-      _setError('Google sign-in failed. Please try again.');
+      _setError(ApiConstants.getErrorMessage('SERVER_ERROR'));
       return false;
     }
   }

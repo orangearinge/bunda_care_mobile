@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/api_error.dart';
 import '../services/food_service.dart';
+import '../utils/constants.dart';
 
 enum FoodStatus { initial, loading, success, error }
 
@@ -39,7 +40,7 @@ class FoodProvider with ChangeNotifier {
       notifyListeners();
       return false;
     } catch (e) {
-      _errorMessage = 'Gagal memindai makanan. Silakan coba lagi.';
+      _errorMessage = ApiConstants.getErrorMessage('SCAN_FAILED');
       _status = FoodStatus.error;
       notifyListeners();
       return false;
@@ -47,7 +48,10 @@ class FoodProvider with ChangeNotifier {
   }
 
   /// Get recommendations
-  Future<void> fetchRecommendations({String? mealType, List<int>? detectedIds}) async {
+  Future<void> fetchRecommendations({
+    String? mealType,
+    List<int>? detectedIds,
+  }) async {
     _status = FoodStatus.loading;
     _errorMessage = null;
     notifyListeners();
@@ -65,7 +69,7 @@ class FoodProvider with ChangeNotifier {
       _status = FoodStatus.error;
       notifyListeners();
     } catch (e) {
-      _errorMessage = 'Gagal memuat rekomendasi makanan.';
+      _errorMessage = ApiConstants.getErrorMessage('RECOMMENDATION_FAILED');
       _status = FoodStatus.error;
       notifyListeners();
     }
@@ -80,8 +84,13 @@ class FoodProvider with ChangeNotifier {
       _status = FoodStatus.success;
       notifyListeners();
       return true;
+    } on ApiError catch (e) {
+      _errorMessage = e.message;
+      _status = FoodStatus.error;
+      notifyListeners();
+      return false;
     } catch (e) {
-      _errorMessage = 'Gagal menyimpan rencana makan.';
+      _errorMessage = ApiConstants.getErrorMessage('LOG_FAILED');
       _status = FoodStatus.error;
       notifyListeners();
       return false;
@@ -97,8 +106,12 @@ class FoodProvider with ChangeNotifier {
       _mealLogs = logs;
       _status = FoodStatus.success;
       notifyListeners();
+    } on ApiError catch (e) {
+      _errorMessage = e.message;
+      _status = FoodStatus.error;
+      notifyListeners();
     } catch (e) {
-      _errorMessage = 'Gagal memuat daftar makan.';
+      _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
       _status = FoodStatus.error;
       notifyListeners();
     }
@@ -110,7 +123,9 @@ class FoodProvider with ChangeNotifier {
       final success = await _foodService.confirmMeal(mealLogId);
       if (success) {
         // Update local list
-        final index = _mealLogs.indexWhere((l) => l['meal_log_id'] == mealLogId);
+        final index = _mealLogs.indexWhere(
+          (l) => l['meal_log_id'] == mealLogId,
+        );
         if (index != -1) {
           _mealLogs[index]['is_consumed'] = true;
           notifyListeners();

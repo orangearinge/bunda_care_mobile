@@ -36,18 +36,12 @@ class ChatService {
       if (response.data is Map<String, dynamic>) {
         final data = response.data as Map<String, dynamic>;
 
-        // Validasi response structure
-        if (data['status'] == 'success' && data['answer'] != null) {
+        if (data['answer'] != null) {
           return {
             'query': data['query'] ?? query,
             'answer': data['answer'],
             'status': 'success',
           };
-        } else {
-          throw ApiError(
-            code: 'INVALID_RESPONSE',
-            message: data['error'] ?? 'Format respons tidak valid',
-          );
         }
       }
 
@@ -55,16 +49,9 @@ class ChatService {
         code: 'INVALID_RESPONSE',
         message: 'Format respons tidak valid dari server',
       );
-    } on ApiError {
-      rethrow;
     } catch (e) {
-      if (e is DioException) {
-        throw ApiError.fromException(e as Exception);
-      }
-      throw ApiError(
-        code: 'UNKNOWN_ERROR',
-        message: 'Terjadi kesalahan: ${e.toString()}',
-      );
+      if (e is ApiError) rethrow;
+      throw ApiError.fromException(Exception(e));
     }
   }
 

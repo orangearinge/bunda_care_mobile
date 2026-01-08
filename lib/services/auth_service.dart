@@ -52,12 +52,7 @@ class AuthService {
 
       return authResponse;
     } catch (e) {
-      if (e is ApiError) {
-        throw ApiError(
-          code: e.code,
-          message: ApiConstants.getErrorMessage(e.code),
-        );
-      }
+      if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -85,12 +80,7 @@ class AuthService {
 
       return authResponse;
     } catch (e) {
-      if (e is ApiError) {
-        throw ApiError(
-          code: e.code,
-          message: ApiConstants.getErrorMessage(e.code),
-        );
-      }
+      if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));
     }
   }
@@ -151,12 +141,7 @@ class AuthService {
 
       print('Google sign-in error: $e'); // Debug log
 
-      if (e is ApiError) {
-        throw ApiError(
-          code: e.code,
-          message: ApiConstants.getErrorMessage(e.code),
-        );
-      }
+      if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));
     }
   }

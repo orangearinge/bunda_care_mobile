@@ -174,7 +174,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Gagal upload avatar: $e'),
+          content: Text(ApiConstants.getErrorMessage('UPLOAD_FAILED')),
           backgroundColor: Colors.red,
         ),
       );
@@ -418,8 +418,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
         );
         return;
       }
-      
-      if (_selectedRole == 'IBU_MENYUSUI' && _lactationController.text.isEmpty) {
+
+      if (_selectedRole == 'IBU_MENYUSUI' &&
+          _lactationController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Volume ASI wajib diisi untuk Ibu Menyusui'),
@@ -471,7 +472,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                provider.errorMessage ?? 'Gagal memperbarui profil',
+                provider.errorMessage ??
+                    ApiConstants.getErrorMessage('SERVER_ERROR'),
               ),
               backgroundColor: Colors.red,
             ),
@@ -488,7 +490,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     String ageLabel = "Usia (tahun)";
     String heightLabel = "Tinggi Badan (cm)";
     String weightLabel = "Berat Badan (kg)";
-    
+
     if (_selectedRole == 'ANAK_BATITA') {
       nameLabel = "Nama Anak";
       ageLabel = "Usia Anak (tahun)";
@@ -643,7 +645,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   children: [
                     _buildSectionTitle('Informasi Dasar'),
                     _buildDropdown(),
-                    
+
                     _buildTextField(
                       controller: _nameController,
                       label: nameLabel,
@@ -703,7 +705,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         return null;
                       },
                     ),
-                    
+
                     if (_selectedRole == 'IBU_HAMIL') ...[
                       const SizedBox(height: 16),
                       _buildSectionTitle('Informasi Kehamilan'),
@@ -753,8 +755,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         },
                       ),
                     ],
+
                     // ANAK_BATITA doesn't have extra fields beyond age/height/weight in backend
-                    
                     const SizedBox(height: 24),
                     _buildSectionTitle('Preferensi Makanan'),
                     _buildTagInput(
@@ -790,7 +792,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15),
-                                ),
+                              ),
                               elevation: 2,
                             ),
                             child: provider.isLoading

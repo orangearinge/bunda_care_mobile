@@ -158,7 +158,7 @@ class ApiService {
           final data = response.data as Map<String, dynamic>;
           
           // Check if it's our backend error format
-          if (data['success'] == false && data['error'] != null) {
+          if (data['error'] != null) {
             return ApiError.fromJson(data);
           }
         }

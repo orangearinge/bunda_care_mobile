@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
+import '../utils/constants.dart';
 
 /// Halaman Login untuk autentikasi user
 /// Stateful widget yang mengelola form login dengan validasi
@@ -38,19 +39,22 @@ class _LoginPageState extends State<LoginPage> {
         password: password,
       );
 
-       if (mounted) {
-         if (success) {
-           // Login berhasil - navigasi berdasarkan status user
-           if (authProvider.isUserComplete) {
-             context.go('/');
-           } else {
-             context.go('/role-selection');
-           }
-         } else {
+      if (mounted) {
+        if (success) {
+          // Login berhasil - navigasi berdasarkan status user
+          if (authProvider.isUserComplete) {
+            context.go('/');
+          } else {
+            context.go('/role-selection');
+          }
+        } else {
           // Login gagal: Tampilkan pesan error menggunakan SnackBar
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(authProvider.errorMessage ?? 'Login failed'),
+              content: Text(
+                authProvider.errorMessage ??
+                    ApiConstants.getErrorMessage('INVALID_CREDENTIALS'),
+              ),
               backgroundColor: Colors.red[400],
               behavior: SnackBarBehavior.floating, // SnackBar mengambang
               shape: RoundedRectangleBorder(
@@ -75,8 +79,7 @@ class _LoginPageState extends State<LoginPage> {
               key: _formKey,
               child: Column(
                 children: [
-
-                // Jarak di atas dikurangi secara signifikan
+                  // Jarak di atas dikurangi secara signifikan
                   // --- Header Section dengan Desain Modern ---
                   ClipPath(
                     clipper: HeaderClipper(),
@@ -93,7 +96,9 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(height: 20), // Padding tambahan agar konten tidak terlalu ke atas
+                          const SizedBox(
+                            height: 20,
+                          ), // Padding tambahan agar konten tidak terlalu ke atas
                           // Logo BundaCare
                           Container(
                             width: 90,
@@ -134,7 +139,9 @@ class _LoginPageState extends State<LoginPage> {
                               color: Colors.white70,
                             ),
                           ),
-                          const SizedBox(height: 40), // Spacer bawah untuk menjaga jarak dari lengkungan
+                          const SizedBox(
+                            height: 40,
+                          ), // Spacer bawah untuk menjaga jarak dari lengkungan
                         ],
                       ),
                     ),
@@ -142,158 +149,163 @@ class _LoginPageState extends State<LoginPage> {
 
                   // Container Form
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30.0,
+                      vertical: 10,
+                    ),
                     child: Column(
                       children: [
-                // --- Input Email ---
-                TextFormField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
-                    hintText: 'email',
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 18,
-                    ),
-
-                    // Border styling
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: Colors.pink[200]!,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Masukkan email Anda';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 16),
-
-                // --- Input Password ---
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    hintText: 'password',
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 18,
-                    ),
-
-                    // Tombol untuk toggle visibility password
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: Colors.grey,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-
-                    // Border styling
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(color: Colors.grey[300]!),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: Colors.pink[200]!,
-                        width: 2,
-                      ),
-                    ),
-                  ),
-
-                  // Validasi input password
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Masukkan password Anda';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 8),
-
-                // --- Link Forgot Password ---
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      // Handle forgot password
-                    },
-                    child: Text(
-                      'Forgot Password?',
-                      style: TextStyle(color: Colors.blue[400], fontSize: 12),
-                    ),
-                  ),
-                ),
-
-                // Spasi sebelum tombol login dikurangi
-                const SizedBox(height: 10), // Disesuaikan dari 20
-                // --- Tombol Login ---
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: authProvider.isLoading
-                        ? null
-                        : () => _login(authProvider),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pink[300],
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: authProvider.isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
+                        // --- Input Email ---
+                        TextFormField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            hintText: 'email',
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 18,
                             ),
-                          )
-                        : const Text(
-                            'LOGIN',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
+
+                            // Border styling
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: Colors.pink[200]!,
+                                width: 2,
+                              ),
                             ),
                           ),
-                  ),
-                ),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Masukkan email Anda';
+                            }
+                            return null;
+                          },
+                        ),
 
+                        const SizedBox(height: 16),
+
+                        // --- Input Password ---
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          decoration: InputDecoration(
+                            hintText: 'password',
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 18,
+                            ),
+
+                            // Tombol untuk toggle visibility password
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
+
+                            // Border styling
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: Colors.pink[200]!,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+
+                          // Validasi input password
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Masukkan password Anda';
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 8),
+
+                        // --- Link Forgot Password ---
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              // Handle forgot password
+                            },
+                            child: Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                color: Colors.blue[400],
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Spasi sebelum tombol login dikurangi
+                        const SizedBox(height: 10), // Disesuaikan dari 20
+                        // --- Tombol Login ---
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: authProvider.isLoading
+                                ? null
+                                : () => _login(authProvider),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.pink[300],
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            child: authProvider.isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Text(
+                                    'LOGIN',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -367,23 +379,23 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _handleGoogleSignIn(AuthProvider authProvider) async {
     final success = await authProvider.signInWithGoogle();
 
-     if (mounted) {
-       if (success) {
-         // Add longer delay to ensure Google UI is fully dismissed before navigating
-         Future.delayed(const Duration(milliseconds: 3000), () {
-           if (mounted) {
-             // Set authenticated state after navigation to prevent router conflicts
-             authProvider.completeGoogleSignIn();
+    if (mounted) {
+      if (success) {
+        // Add longer delay to ensure Google UI is fully dismissed before navigating
+        Future.delayed(const Duration(milliseconds: 3000), () {
+          if (mounted) {
+            // Set authenticated state after navigation to prevent router conflicts
+            authProvider.completeGoogleSignIn();
 
-             // Login berhasil - navigasi berdasarkan status user
-             if (authProvider.isUserComplete) {
-               context.go('/');
-             } else {
-               context.go('/role-selection');
-             }
-           }
-         });
-       } else if (authProvider.errorMessage != null) {
+            // Login berhasil - navigasi berdasarkan status user
+            if (authProvider.isUserComplete) {
+              context.go('/');
+            } else {
+              context.go('/role-selection');
+            }
+          }
+        });
+      } else if (authProvider.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(authProvider.errorMessage!),
@@ -441,21 +453,21 @@ class HeaderClipper extends CustomClipper<Path> {
     var path = Path();
     // Mulai dari kiri bawah (dengan offset)
     path.lineTo(0, size.height - 80);
-    
+
     // Buat kurva quadratic beizer ke kanan bawah
     // Control point ada di tengah paling bawah (size.width / 2, size.height)
     // End point ada di kanan bawah (size.width, size.height - 80)
     path.quadraticBezierTo(
-      size.width / 2, 
-      size.height, 
-      size.width, 
-      size.height - 80
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 80,
     );
-    
+
     // Garis ke kanan atas
     path.lineTo(size.width, 0);
     path.close();
-    
+
     return path;
   }
 

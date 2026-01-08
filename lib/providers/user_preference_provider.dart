@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/user_preference.dart';
 import '../models/api_error.dart';
 import '../services/user_service.dart';
+import '../utils/constants.dart';
 
 enum PreferenceStatus { initial, loading, success, error }
 
@@ -72,8 +73,7 @@ class UserPreferenceProvider with ChangeNotifier {
       notifyListeners();
       return (success: false, token: null);
     } catch (e) {
-      _errorMessage =
-          'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.';
+      _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
       _status = PreferenceStatus.error;
       notifyListeners();
       return (success: false, token: null);
@@ -109,7 +109,7 @@ class UserPreferenceProvider with ChangeNotifier {
       _status = PreferenceStatus.error;
       notifyListeners();
     } catch (e) {
-      _errorMessage = 'Gagal memuat data profil.';
+      _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
       _status = PreferenceStatus.error;
       notifyListeners();
     }
@@ -128,6 +128,11 @@ class UserPreferenceProvider with ChangeNotifier {
       _status = PreferenceStatus.success;
       notifyListeners();
       return true;
+    } on ApiError catch (e) {
+      _errorMessage = e.message;
+      _status = PreferenceStatus.error;
+      notifyListeners();
+      return false;
     } catch (e) {
       _errorMessage = e.toString();
       _status = PreferenceStatus.error;
