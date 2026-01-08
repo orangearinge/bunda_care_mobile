@@ -28,6 +28,82 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
   final Color primaryPink = Colors.pink[300]!;
   final Color secondaryBlue = Colors.blue[300]!;
 
+  // ===================== HELPER FUNCTIONS =====================
+  /// Calculate gestational age from HPHT date
+  /// Returns Map with 'weeks' and 'days' keys
+  Map<String, int> _calculateGestationalAge(String hphtDate) {
+    try {
+      final hpht = DateTime.parse(hphtDate);
+      final now = DateTime.now();
+      final difference = now.difference(hpht);
+
+      // Calculate total days and convert to weeks + days
+      final totalDays = difference.inDays;
+      final weeks = totalDays ~/ 7;
+      final days = totalDays % 7;
+
+      return {'weeks': weeks, 'days': days};
+    } catch (e) {
+      return {'weeks': 0, 'days': 0};
+    }
+  }
+
+  /// Check if gestational age exceeds 42 weeks
+  bool _isGestationalAgeValid(String hphtDate) {
+    final gestationalAge = _calculateGestationalAge(hphtDate);
+    return gestationalAge['weeks']! <= 42;
+  }
+
+  /// Get minimum allowed HPHT date (42 weeks ago from today)
+  DateTime _getMinHphtDate() {
+    final now = DateTime.now();
+    return now.subtract(const Duration(days: 42 * 7));
+  }
+
+  /// Build widget to display calculated gestational age
+  Widget _buildGestationalAgeDisplay() {
+    final gestationalAge = _calculateGestationalAge(formData['hpht']);
+    final weeks = gestationalAge['weeks']!;
+    final days = gestationalAge['days']!;
+
+    Color textColor = Colors.green;
+    String statusText = "Normal";
+
+    if (weeks > 42) {
+      textColor = Colors.red;
+      statusText = "Melebihi batas";
+    } else if (weeks > 40) {
+      textColor = Colors.orange;
+      statusText = "Mendekati batas";
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: textColor.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: textColor.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline, color: textColor, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              "Usia Kandungan: $weeks minggu $days hari ($statusText)",
+              style: TextStyle(
+                color: textColor,
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -119,6 +195,10 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
                 label: "HPHT (Tanggal Haid Terakhir)",
                 keyName: "hpht",
               ),
+
+              // Show calculated gestational age if HPHT is selected
+              if (formData['hpht'] != null && formData['hpht'].isNotEmpty)
+                _buildGestationalAgeDisplay(),
 
               _buildTextField(
                 "Berat Badan (kg)",
@@ -275,11 +355,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               keyName: "umur_anak_bulan",
               items: List<String>.generate(24, (index) => "${index + 1}"),
             ),
-            _buildTextField(
-              "Usia (tahun)",
-              "usia",
-              TextInputType.number,
-            ),
+            _buildTextField("Usia (tahun)", "usia", TextInputType.number),
             _buildTextField(
               "Berat Badan (kg)",
               "berat_badan",
@@ -388,7 +464,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           DateTime? pickedDate = await showDatePicker(
             context: context,
             initialDate: DateTime.now(),
-            firstDate: DateTime(2000),
+            firstDate: _getMinHphtDate(),
             lastDate: DateTime.now(),
           );
 
@@ -411,8 +487,18 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               suffixIcon: const Icon(Icons.calendar_today),
             ),
             controller: TextEditingController(text: formData[keyName] ?? ""),
-            validator: (value) =>
-                value == null || value.isEmpty ? '$label wajib dipilih' : null,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return '$label wajib dipilih';
+              }
+
+              // Check gestational age validation
+              if (!_isGestationalAgeValid(value)) {
+                return 'Usia kandungan tidak boleh melebihi 42 minggu';
+              }
+
+              return null;
+            },
           ),
         ),
       ),
@@ -460,8 +546,10 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
   }
 
   void _submitForm() async {
-    final preferenceProvider =
-        Provider.of<UserPreferenceProvider>(context, listen: false);
+    final preferenceProvider = Provider.of<UserPreferenceProvider>(
+      context,
+      listen: false,
+    );
 
     // Map UI role to backend role
     String backendRole = 'IBU_HAMIL';
@@ -514,17 +602,15 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     );
 
     if (success && mounted) {
-      final gestationalAge = preferenceProvider.currentPreference?.gestationalAgeWeeks;
+      final gestationalAge =
+          preferenceProvider.currentPreference?.gestationalAgeWeeks;
       String snackBarMessage = 'Pendaftaran berhasil!';
       if (gestationalAge != null) {
         snackBarMessage += ' Usia kandungan: $gestationalAge minggu.';
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(snackBarMessage),
-          backgroundColor: Colors.green,
-        ),
+        SnackBar(content: Text(snackBarMessage), backgroundColor: Colors.green),
       );
 
       String displayName = formData['nama'] ?? widget.userRole;
@@ -537,7 +623,9 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(preferenceProvider.errorMessage ?? 'Gagal menyimpan data'),
+          content: Text(
+            preferenceProvider.errorMessage ?? 'Gagal menyimpan data',
+          ),
           backgroundColor: Colors.red,
         ),
       );
