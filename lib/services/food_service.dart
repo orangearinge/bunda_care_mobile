@@ -1,8 +1,9 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import '../models/api_error.dart';
+import '../models/food_detail.dart';
 import '../utils/constants.dart';
 import 'api_service.dart';
+
 
 /// Service for food-related API calls
 class FoodService {
@@ -81,6 +82,33 @@ class FoodService {
       throw ApiError.fromException(Exception(e));
     }
   }
+
+  /// Get food/menu detail by ID
+  /// GET /api/menus/:id
+  Future<FoodDetail> getFoodDetail(int menuId) async {
+    try {
+      final response = await _api.get('/api/menus/$menuId');
+      final data = response.data;
+
+      if (data != null) {
+        // Handle both wrapped and unwrapped data
+        if (data['status'] == 'success' || data['success'] == true) {
+          return FoodDetail.fromJson(data['data']);
+        } else if (data.containsKey('id')) {
+          return FoodDetail.fromJson(data);
+        }
+      }
+
+      throw ApiError(
+        code: 'MENU_NOT_FOUND',
+        message: 'Detail makanan tidak ditemukan',
+      );
+    } catch (e) {
+      if (e is ApiError) rethrow;
+      throw ApiError.fromException(Exception(e));
+    }
+  }
+
 
   /// Log a meal (Wishlist or consumed)
   /// POST /api/meal-log

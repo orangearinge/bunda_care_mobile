@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/food_provider.dart';
 import 'meal_log_page.dart';
+import 'food_detail_page.dart';
+
 
 class RekomendasiPage extends StatefulWidget {
   final String mealType;
@@ -162,11 +164,23 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
     final nutrition = option['nutrition'];
     final ingredients = option['ingredients'] as List;
     final imageUrl = option['image_url'] as String?;
+    final menuId = option['menu_id'] as int;
 
-    return Container(
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => FoodDetailPage(menuId: menuId),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
+
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -311,8 +325,10 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
           ),
         ],
       ),
+      ),
     );
   }
+
 
   Widget _buildNutrientInfo(String label, String value) {
     return Column(
