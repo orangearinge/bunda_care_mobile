@@ -5,7 +5,7 @@ import '../providers/user_preference_provider.dart';
 import '../providers/auth_provider.dart';
 
 class MultiStepFormPage extends StatefulWidget {
-  final String userRole; // 'IbuHamil', 'IbuMenyusui', atau 'Batita'
+  final String userRole; // 'IbuHamil', 'IbuMenyusui', atau 'AnakBatita'
 
   const MultiStepFormPage({Key? key, required this.userRole}) : super(key: key);
 
@@ -17,6 +17,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   final int _totalSteps = 4;
+  bool _isLoadingSubmit = false;
 
   final List<GlobalKey<FormState>> _formKeys = List.generate(
     4,
@@ -124,8 +125,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         return _buildIbuHamilForm(step);
       case 'IbuMenyusui':
         return _buildIbuMenyusuiForm(step);
-      case 'Batita':
-        return _buildBatitaForm(step);
+      case 'AnakBatita':
+        return _buildAnakBatitaForm(step);
       default:
         return _buildDefaultForm(step);
     }
@@ -317,25 +318,29 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
   }
 
   // ===================== BATITA =====================
-  Widget _buildBatitaForm(int step) {
+  Widget _buildAnakBatitaForm(int step) {
     switch (step) {
       case 0:
         return _buildFormTemplate(
           step: step,
-          title: "Langkah 1: Data Pribadi",
+          title: "Langkah 1: Data Dasar",
           titleColor: secondaryBlue,
           fields: [
-            _buildTextField("Nama Lengkap", "nama", TextInputType.name),
-            _buildTextField("Alamat", "alamat", TextInputType.streetAddress),
+            _buildTextField("Nama Anak", "nama", TextInputType.name),
           ],
         );
 
       case 1:
         return _buildFormTemplate(
           step: step,
-          title: "Langkah 2: IMT Anak",
+          title: "Langkah 2: Antropometri Anak",
           titleColor: secondaryBlue,
           fields: [
+            _buildTextField(
+              "Berat Badan (kg)",
+              "berat_badan",
+              TextInputType.number,
+            ),
             _buildTextField(
               "Tinggi Badan (cm)",
               "tinggi_badan",
@@ -347,19 +352,14 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       case 2:
         return _buildFormTemplate(
           step: step,
-          title: "Langkah 3: Umur Anak",
+          title: "Langkah 3: Usia Anak",
           titleColor: secondaryBlue,
           fields: [
-            _buildDropdownField(
-              label: "Umur Anak (bulan)",
-              keyName: "umur_anak_bulan",
-              items: List<String>.generate(24, (index) => "${index + 1}"),
-            ),
-            _buildTextField("Usia (tahun)", "usia", TextInputType.number),
             _buildTextField(
-              "Berat Badan (kg)",
-              "berat_badan",
+              "Usia Anak (tahun)",
+              "usia",
               TextInputType.number,
+              hintText: "Contoh: 0 untuk bayi, 1 untuk anak 1 tahun",
             ),
           ],
         );
@@ -402,12 +402,15 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     String key,
     TextInputType inputType, {
     bool required = true,
+    String? hintText,
+    int? maxLines,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
+          hintText: hintText,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           filled: true,
           fillColor: Colors.grey[50],
@@ -417,6 +420,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           ),
         ),
         keyboardType: inputType,
+        maxLines: maxLines ?? 1,
         validator: (value) {
           if (!required) return null;
           return value == null || value.isEmpty ? '$label wajib diisi' : null;
@@ -431,12 +435,14 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     required String label,
     required String keyName,
     required List<String> items,
+    String? hintText,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
           labelText: label,
+          hintText: hintText,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           filled: true,
           fillColor: Colors.grey[50],
@@ -555,8 +561,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     String backendRole = 'IBU_HAMIL';
     if (widget.userRole == 'IbuMenyusui') {
       backendRole = 'IBU_MENYUSUI';
-    } else if (widget.userRole == 'Batita') {
-      backendRole = 'ANAK_BALITA';
+    } else if (widget.userRole == 'AnakBatita') {
+      backendRole = 'ANAK_BATITA';
     }
 
     // Helper to parse double safely
@@ -587,21 +593,54 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           .toList();
     }
 
-    final success = await preferenceProvider.updatePreference(
-      role: backendRole,
-      name: formData['nama'],
-      hpht: formData['hpht'],
-      heightCm: parseDouble(formData['tinggi_badan']) ?? 0.0,
-      weightKg: parseDouble(formData['berat_badan']) ?? 0.0,
-      ageYear: parseInt(formData['usia']) ?? 0,
-      bellyCircumferenceCm: parseDouble(formData['lingkar_perut']),
-      lilaCm: parseDouble(formData['lingkar_lengan_atas']),
-      lactationMl: parseDouble(formData['lactation_ml']),
-      foodProhibitions: parseList(formData['food_prohibitions']),
-      allergens: parseList(formData['allergens']),
+    // Prepare data based on role
+    Map<String, dynamic> preferenceData = {
+      'role': backendRole,
+      'name': formData['nama'],
+      'heightCm': parseDouble(formData['tinggi_badan']) ?? 0.0,
+      'weightKg': parseDouble(formData['berat_badan']) ?? 0.0,
+      'ageYear': parseInt(formData['usia']) ?? 0,
+      'foodProhibitions': parseList(formData['food_prohibitions']),
+      'allergens': parseList(formData['allergens']),
+    };
+
+    // Add role-specific data
+    if (backendRole == 'IBU_HAMIL') {
+      preferenceData['hpht'] = formData['hpht'];
+      preferenceData['bellyCircumferenceCm'] = parseDouble(
+        formData['lingkar_perut'],
+      );
+      preferenceData['lilaCm'] = parseDouble(formData['lingkar_lengan_atas']);
+    } else if (backendRole == 'IBU_MENYUSUI') {
+      preferenceData['lactationMl'] = parseDouble(formData['lactation_ml']);
+    } else if (backendRole == 'ANAK_BATITA') {
+      // For ANAK_BATITA, only basic fields are required
+      // Don't include hpht as it's not expected for this role
+      preferenceData.remove('hpht');
+      preferenceData['bellyCircumferenceCm'] = null;
+      preferenceData['lilaCm'] = null;
+    }
+
+    // Show loading state if possible
+    setState(() {
+      _isLoadingSubmit = true;
+    });
+
+    final result = await preferenceProvider.updatePreference(
+      role: preferenceData['role'],
+      name: preferenceData['name'],
+      hpht: preferenceData['hpht'],
+      heightCm: preferenceData['heightCm'],
+      weightKg: preferenceData['weightKg'],
+      ageYear: preferenceData['ageYear'],
+      bellyCircumferenceCm: preferenceData['bellyCircumferenceCm'],
+      lilaCm: preferenceData['lilaCm'],
+      lactationMl: preferenceData['lactationMl'],
+      foodProhibitions: preferenceData['foodProhibitions'],
+      allergens: preferenceData['allergens'],
     );
 
-    if (success && mounted) {
+    if (result.success && mounted) {
       final gestationalAge =
           preferenceProvider.currentPreference?.gestationalAgeWeeks;
       String snackBarMessage = 'Pendaftaran berhasil!';
@@ -617,10 +656,14 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
 
       // Ensure AuthProvider is updated with the real role from backend
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.updateUserRole(backendRole);
+      // Pass the new token if returned
+      await authProvider.updateUserRole(backendRole, token: result.token);
 
       context.go('/', extra: {'userName': displayName});
     } else if (mounted) {
+      setState(() {
+        _isLoadingSubmit = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -677,10 +720,14 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
                 backgroundColor: accentColor,
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: Text(
-                _currentPage == _totalSteps - 1 ? 'Selesai & Masuk' : 'Lanjut',
-                style: const TextStyle(fontSize: 18, color: Colors.white),
-              ),
+              child: _isLoadingSubmit
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : Text(
+                      _currentPage == _totalSteps - 1
+                          ? 'Selesai & Masuk'
+                          : 'Lanjut',
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
+                    ),
             ),
           ),
         ],

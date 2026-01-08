@@ -194,4 +194,9 @@ class AuthService {
   Future<void> updateUser(User user) async {
     await _storage.saveUser(user);
   }
+
+  /// Save authentication token
+  Future<void> saveToken(String token) async {
+    await _storage.saveToken(token);
+  }
 }

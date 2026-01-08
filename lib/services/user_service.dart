@@ -13,7 +13,9 @@ class UserService {
 
   /// Update user preferences
   /// POST /api/user/preference
-  Future<UserPreference> updatePreference(UserPreference preference) async {
+  Future<({UserPreference preference, String? token})> updatePreference(
+    UserPreference preference,
+  ) async {
     try {
       final response = await _api.post(
         _preferencePath,
@@ -27,13 +29,16 @@ class UserService {
 
       // Check for success status or if data looks like a preference object
       if (data != null &&
-          (data['status'] == 'success' || data['success'] == true)) {
-        return UserPreference.fromJson(data['data'] as Map<String, dynamic>);
-      } else if (data != null &&
-          (data.containsKey('role') || data['data'] != null)) {
-        // Handle direct response (no status wrapper) or traditional data wrapper
+          (data['status'] == 'success' ||
+              data['success'] == true ||
+              data.containsKey('role') ||
+              data['data'] != null)) {
         final preferenceData = data['data'] ?? data;
-        return UserPreference.fromJson(preferenceData as Map<String, dynamic>);
+        final pref = UserPreference.fromJson(
+          preferenceData as Map<String, dynamic>,
+        );
+        final token = data['token'] as String?;
+        return (preference: pref, token: token);
       } else {
         throw ApiError(
           code: 'UPDATE_FAILED',

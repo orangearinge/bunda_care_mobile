@@ -43,7 +43,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final List<Map<String, String>> _roles = [
     {'value': 'IBU_HAMIL', 'label': 'Ibu Hamil'},
     {'value': 'IBU_MENYUSUI', 'label': 'Ibu Menyusui'},
-    {'value': 'UMUM', 'label': 'Lainnya'},
+    {'value': 'ANAK_BATITA', 'label': 'Anak Batita (0-24 bulan)'},
   ];
 
   @override
@@ -212,12 +212,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    // 42 minggu yang lalu
+    final minDate = DateTime.now().subtract(const Duration(days: 42 * 7));
     DateTime initialDate =
         DateTime.tryParse(_hphtController.text) ?? DateTime.now();
+
+    if (initialDate.isBefore(minDate)) {
+      initialDate = minDate;
+    }
+
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(2020),
+      firstDate: minDate,
       lastDate: DateTime.now(),
       builder: (context, child) {
         return Theme(
@@ -262,6 +269,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     Widget? suffixIcon,
     bool readOnly = false,
     VoidCallback? onTap,
+    String? helperText,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
@@ -270,12 +278,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
+          helperText: helperText,
+          helperMaxLines: 2,
           suffixIcon: suffixIcon,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: Colors.grey[300]!),
           ),
+          filled: true,
+          fillColor: Colors.grey[50],
         ),
         keyboardType: keyboardType,
         validator: validator,
@@ -354,28 +366,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Widget _buildDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedRole,
-      decoration: InputDecoration(
-        labelText: 'Peran',
-        prefixIcon: Icon(Icons.people_outline, color: Colors.pink[300]),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey[300]!),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: DropdownButtonFormField<String>(
+        value: _selectedRole,
+        decoration: InputDecoration(
+          labelText: 'Peran',
+          prefixIcon: Icon(Icons.people_outline, color: Colors.pink[300]),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
+          filled: true,
+          fillColor: Colors.grey[50],
         ),
+        items: _roles.map((role) {
+          return DropdownMenuItem(
+            value: role['value'],
+            child: Text(role['label']!),
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            _selectedRole = value!;
+            // Optional: clear irrelevant fields when role changes?
+            // For now we keep them to avoid data loss if switched back.
+          });
+        },
       ),
-      items: _roles.map((role) {
-        return DropdownMenuItem(
-          value: role['value'],
-          child: Text(role['label']!),
-        );
-      }).toList(),
-      onChanged: (value) {
-        setState(() {
-          _selectedRole = value!;
-        });
-      },
     );
   }
 
@@ -389,7 +408,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
       final nameValue = _nameController.text.trim();
 
-      final success = await provider.updatePreference(
+      // Validate role-specific required fields
+      if (_selectedRole == 'IBU_HAMIL' && _hphtController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('HPHT wajib diisi untuk Ibu Hamil'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+      
+      if (_selectedRole == 'IBU_MENYUSUI' && _lactationController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Volume ASI wajib diisi untuk Ibu Menyusui'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      final result = await provider.updatePreference(
         role: _selectedRole,
         name: nameValue,
         ageYear: int.parse(_ageController.text),
@@ -410,15 +450,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
       );
 
       if (mounted) {
-        if (success) {
-          // Update name in AuthProvider if it was changed
+        if (result.success) {
+          // Update name, role, and token in AuthProvider
           if (nameValue.isNotEmpty &&
               nameValue != (widget.initialPreference.name ?? '')) {
             await authProvider.updateUserName(nameValue);
           }
 
-          // Avatar is already updated via updateAvatar and checkAuthStatus above
-          // No need to update again here
+          // Always update role and pass potential new token (e.g. if role changed)
+          await authProvider.updateUserRole(_selectedRole, token: result.token);
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -443,6 +483,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Dynamic labels based on role
+    String nameLabel = "Nama Lengkap";
+    String ageLabel = "Usia (tahun)";
+    String heightLabel = "Tinggi Badan (cm)";
+    String weightLabel = "Berat Badan (kg)";
+    
+    if (_selectedRole == 'ANAK_BATITA') {
+      nameLabel = "Nama Anak";
+      ageLabel = "Usia Anak (tahun)";
+      heightLabel = "Tinggi Anak (cm)";
+      weightLabel = "Berat Anak (kg)";
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -495,8 +548,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       children: [
                         Builder(
                           builder: (context) {
-                            final hasLocalImage = _avatarImage != null || _avatarImageBytes != null;
-                            final hasRemoteImage = _avatarUrl != null && _avatarUrl!.isNotEmpty;
+                            final hasLocalImage =
+                                _avatarImage != null ||
+                                _avatarImageBytes != null;
+                            final hasRemoteImage =
+                                _avatarUrl != null && _avatarUrl!.isNotEmpty;
 
                             // Construct final remote URL if path is relative
                             String? finalRemoteUrl;
@@ -504,7 +560,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               if (_avatarUrl!.startsWith('http')) {
                                 finalRemoteUrl = _avatarUrl;
                               } else {
-                                finalRemoteUrl = '${ApiConstants.baseUrl}$_avatarUrl';
+                                finalRemoteUrl =
+                                    '${ApiConstants.baseUrl}$_avatarUrl';
                               }
                             }
 
@@ -514,19 +571,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               backgroundImage: _avatarImage != null
                                   ? FileImage(_avatarImage!)
                                   : _avatarImageBytes != null
-                                      ? MemoryImage(_avatarImageBytes!)
-                                      : hasRemoteImage
-                                          ? NetworkImage(finalRemoteUrl!)
-                                          : null,
-                              onBackgroundImageError: (hasLocalImage || hasRemoteImage)
+                                  ? MemoryImage(_avatarImageBytes!)
+                                  : hasRemoteImage
+                                  ? NetworkImage(finalRemoteUrl!)
+                                  : null,
+                              onBackgroundImageError:
+                                  (hasLocalImage || hasRemoteImage)
                                   ? (exception, stackTrace) {
-                                      debugPrint('Error loading avatar preview: $exception');
+                                      debugPrint(
+                                        'Error loading avatar preview: $exception',
+                                      );
                                     }
                                   : null,
                               child: !hasLocalImage && !hasRemoteImage
                                   ? Text(
                                       _nameController.text.isNotEmpty
-                                          ? _nameController.text[0].toUpperCase()
+                                          ? _nameController.text[0]
+                                                .toUpperCase()
                                           : 'B',
                                       style: const TextStyle(
                                         fontSize: 36,
@@ -581,10 +642,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildSectionTitle('Informasi Dasar'),
+                    _buildDropdown(),
+                    
                     _buildTextField(
                       controller: _nameController,
-                      label: 'Nama',
-                      hint: 'Masukkan nama lengkap',
+                      label: nameLabel,
+                      hint: 'Masukkan nama',
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Nama tidak boleh kosong';
@@ -594,7 +657,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     _buildTextField(
                       controller: _ageController,
-                      label: 'Usia (tahun)',
+                      label: ageLabel,
                       hint: 'Masukkan usia',
                       keyboardType: TextInputType.number,
                       validator: (value) {
@@ -610,7 +673,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     _buildTextField(
                       controller: _heightController,
-                      label: 'Tinggi Badan (cm)',
+                      label: heightLabel,
                       hint: 'Masukkan tinggi badan',
                       keyboardType: TextInputType.number,
                       validator: (value) {
@@ -626,7 +689,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     _buildTextField(
                       controller: _weightController,
-                      label: 'Berat Badan (kg)',
+                      label: weightLabel,
                       hint: 'Masukkan berat badan',
                       keyboardType: TextInputType.number,
                       validator: (value) {
@@ -640,7 +703,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         return null;
                       },
                     ),
-                    _buildDropdown(),
+                    
                     if (_selectedRole == 'IBU_HAMIL') ...[
                       const SizedBox(height: 16),
                       _buildSectionTitle('Informasi Kehamilan'),
@@ -651,6 +714,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         readOnly: true,
                         onTap: () => _selectDate(context),
                         suffixIcon: const Icon(Icons.calendar_today),
+                        helperText: 'Otomatis menghitung usia kandungan',
                         validator: (value) {
                           if (_selectedRole == 'IBU_HAMIL' &&
                               (value == null || value.isEmpty)) {
@@ -680,8 +744,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         label: 'Volume ASI (ml)',
                         hint: 'Masukkan volume ASI per hari',
                         keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (_selectedRole == 'IBU_MENYUSUI' &&
+                              (value == null || value.isEmpty)) {
+                            return 'Volume ASI tidak boleh kosong';
+                          }
+                          return null;
+                        },
                       ),
                     ],
+                    // ANAK_BATITA doesn't have extra fields beyond age/height/weight in backend
+                    
                     const SizedBox(height: 24),
                     _buildSectionTitle('Preferensi Makanan'),
                     _buildTagInput(
@@ -717,7 +790,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15),
-                              ),
+                                ),
                               elevation: 2,
                             ),
                             child: provider.isLoading

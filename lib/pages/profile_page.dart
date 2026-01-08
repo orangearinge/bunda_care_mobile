@@ -75,8 +75,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         Builder(
                           builder: (context) {
                             final avatarUrl = authProvider.currentUser?.avatar;
-                            final hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
-                            
+                            final hasAvatar =
+                                avatarUrl != null && avatarUrl.isNotEmpty;
+
                             // Construct full URL if relative
                             String? finalUrl;
                             if (hasAvatar) {
@@ -93,15 +94,20 @@ class _ProfilePageState extends State<ProfilePage> {
                             return CircleAvatar(
                               radius: 34,
                               backgroundColor: Colors.pink[100],
-                              backgroundImage: hasAvatar ? NetworkImage(finalUrl!) : null,
-                              onBackgroundImageError: hasAvatar 
-                                ? (exception, stackTrace) {
-                                    debugPrint('Error loading avatar: $exception');
-                                  } 
-                                : null,
+                              backgroundImage: hasAvatar
+                                  ? NetworkImage(finalUrl!)
+                                  : null,
+                              onBackgroundImageError: hasAvatar
+                                  ? (exception, stackTrace) {
+                                      debugPrint(
+                                        'Error loading avatar: $exception',
+                                      );
+                                    }
+                                  : null,
                               child: !hasAvatar
                                   ? Text(
-                                      authProvider.currentUser?.getInitials() ?? 'B',
+                                      authProvider.currentUser?.getInitials() ??
+                                          'B',
                                       style: TextStyle(
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
@@ -205,7 +211,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Column(
                         children: [
                           _ProfileField(
-                            label: 'Usia',
+                            label: pref.role == 'ANAK_BATITA' ? 'Usia Anak' : 'Usia',
                             value: '${pref.ageYear} Tahun',
                           ),
                           const Divider(height: 24),
@@ -213,11 +219,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             label: 'Peran',
                             value: pref.role.replaceAll('_', ' '),
                           ),
-                          if (pref.hpht != null) ...[
+                          if (pref.role == 'IBU_HAMIL' && pref.hpht != null) ...[
                             const Divider(height: 24),
                             _ProfileField(label: 'HPHT', value: pref.hpht!),
                           ],
-                          if (pref.gestationalAgeWeeks != null) ...[
+                          if (pref.role == 'IBU_HAMIL' && pref.gestationalAgeWeeks != null) ...[
                             const Divider(height: 24),
                             _ProfileField(
                               label: 'Usia Kandungan',
@@ -247,18 +253,18 @@ class _ProfilePageState extends State<ProfilePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               _StatPill(
-                                title: 'Tinggi\nBadan',
+                                title: pref.role == 'ANAK_BATITA' ? 'Tinggi\nAnak' : 'Tinggi\nBadan',
                                 value: '${pref.heightCm} cm',
                               ),
                               _StatPill(
-                                title: 'Berat\nBadan',
+                                title: pref.role == 'ANAK_BATITA' ? 'Berat\nAnak' : 'Berat\nBadan',
                                 value: '${pref.weightKg} kg',
                               ),
                               _StatPill(
                                 title: 'BMI',
                                 valueBold:
                                     pref.nutritionalTargets?.bmi
-                                        .toStringAsFixed(2) ??
+                                        ?.toStringAsFixed(2) ??
                                     '-',
                               ),
                             ],
@@ -345,7 +351,31 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 _NutrientInfo(
                                   label: 'Protein',
-                                  value: '${pref.nutritionalTargets!.proteinG}',
+                                  value:
+                                      '${pref.nutritionalTargets!.proteinG.toInt()}',
+                                  unit: 'g',
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                _NutrientInfo(
+                                  label: 'Karbohidrat',
+                                  value:
+                                      '${pref.nutritionalTargets!.carbsG.toInt()}',
+                                  unit: 'g',
+                                ),
+                                Container(
+                                  width: 1,
+                                  height: 40,
+                                  color: Colors.white24,
+                                ),
+                                _NutrientInfo(
+                                  label: 'Lemak',
+                                  value:
+                                      '${pref.nutritionalTargets!.fatG.toInt()}',
                                   unit: 'g',
                                 ),
                               ],

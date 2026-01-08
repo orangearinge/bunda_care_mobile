@@ -36,17 +36,20 @@ class UserPreference {
       role: json['role'] as String,
       name: json['name'] as String? ?? json['nama'] as String?,
       hpht: json['hpht'] as String?,
-      heightCm: (json['height_cm'] as num).toInt(),
-      weightKg: (json['weight_kg'] as num).toDouble(),
-      ageYear: (json['age_year'] as num).toInt(),
-      bellyCircumferenceCm: (json['belly_circumference_cm'] as num?)?.toDouble(),
+      heightCm: (json['height_cm'] as num?)?.toInt() ?? 0,
+      weightKg: (json['weight_kg'] as num?)?.toDouble() ?? 0.0,
+      ageYear: (json['age_year'] as num?)?.toInt() ?? 0,
+      bellyCircumferenceCm: (json['belly_circumference_cm'] as num?)
+          ?.toDouble(),
       lilaCm: (json['lila_cm'] as num?)?.toDouble(),
       lactationMl: (json['lactation_ml'] as num?)?.toDouble(),
       foodProhibitions: List<String>.from(json['food_prohibitions'] ?? []),
       allergens: List<String>.from(json['allergens'] ?? []),
       gestationalAgeWeeks: (json['gestational_age_weeks'] as num?)?.toInt(),
       nutritionalTargets: json['nutritional_targets'] != null
-          ? NutritionalTargets.fromJson(json['nutritional_targets'] as Map<String, dynamic>)
+          ? NutritionalTargets.fromJson(
+              json['nutritional_targets'] as Map<String, dynamic>,
+            )
           : null,
     );
   }
@@ -79,19 +82,25 @@ class UserPreference {
 class NutritionalTargets {
   final double calories;
   final double proteinG;
-  final double bmi;
+  final double carbsG;
+  final double fatG;
+  final double? bmi;
 
   NutritionalTargets({
     required this.calories,
     required this.proteinG,
-    required this.bmi,
+    required this.carbsG,
+    required this.fatG,
+    this.bmi,
   });
 
   factory NutritionalTargets.fromJson(Map<String, dynamic> json) {
     return NutritionalTargets(
-      calories: (json['calories'] as num).toDouble(),
-      proteinG: (json['protein_g'] as num).toDouble(),
-      bmi: (json['bmi'] as num).toDouble(),
+      calories: (json['calories'] as num?)?.toDouble() ?? 0.0,
+      proteinG: (json['protein_g'] as num?)?.toDouble() ?? 0.0,
+      carbsG: (json['carbs_g'] as num?)?.toDouble() ?? 0.0,
+      fatG: (json['fat_g'] as num?)?.toDouble() ?? 0.0,
+      bmi: (json['bmi'] as num?)?.toDouble(),
     );
   }
 
@@ -99,7 +108,9 @@ class NutritionalTargets {
     return {
       'calories': calories,
       'protein_g': proteinG,
-      'bmi': bmi,
+      'carbs_g': carbsG,
+      'fat_g': fatG,
+      if (bmi != null) 'bmi': bmi,
     };
   }
 }

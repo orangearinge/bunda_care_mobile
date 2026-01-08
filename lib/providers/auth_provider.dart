@@ -44,9 +44,10 @@ class AuthProvider with ChangeNotifier {
       'IbuHamil',
       'IbuMenyusui',
       'Batita',
+      'AnakBatita',
       'IBU_HAMIL',
       'IBU_MENYUSUI',
-      'ANAK_BALITA',
+      'ANAK_BATITA',
     ];
     final role = _currentUser!.role?.trim() ?? '';
     return role.isNotEmpty && validRoles.contains(role);
@@ -58,11 +59,17 @@ class AuthProvider with ChangeNotifier {
   }
 
   /// Update current user role
-  Future<void> updateUserRole(String role) async {
+  Future<void> updateUserRole(String role, {String? token}) async {
     if (_currentUser != null) {
       _currentUser = _currentUser!.copyWith(role: role);
       // Save updated user to storage
       await _authService.updateUser(_currentUser!);
+
+      // Save new token if provided (role might have changed in backend)
+      if (token != null) {
+        await _authService.saveToken(token);
+      }
+
       notifyListeners();
     }
   }

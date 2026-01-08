@@ -22,7 +22,7 @@ class UserPreferenceProvider with ChangeNotifier {
   bool get profileUpdated => _profileUpdated;
 
   /// Update user preference through API
-  Future<bool> updatePreference({
+  Future<({bool success, String? token})> updatePreference({
     required String role,
     String? name,
     String? hpht,
@@ -54,8 +54,8 @@ class UserPreferenceProvider with ChangeNotifier {
         allergens: allergens,
       );
 
-      final updatedPreference = await _userService.updatePreference(preference);
-      _currentPreference = updatedPreference;
+      final result = await _userService.updatePreference(preference);
+      _currentPreference = result.preference;
       markProfileUpdated(); // Trigger dashboard refresh
       _status = PreferenceStatus.success;
 
@@ -65,18 +65,18 @@ class UserPreferenceProvider with ChangeNotifier {
       }
 
       notifyListeners();
-      return true;
+      return (success: true, token: result.token);
     } on ApiError catch (e) {
       _errorMessage = e.message;
       _status = PreferenceStatus.error;
       notifyListeners();
-      return false;
+      return (success: false, token: null);
     } catch (e) {
       _errorMessage =
           'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.';
       _status = PreferenceStatus.error;
       notifyListeners();
-      return false;
+      return (success: false, token: null);
     }
   }
 

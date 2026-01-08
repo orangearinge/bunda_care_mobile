@@ -27,9 +27,12 @@ class RegistrationFormPage extends StatelessWidget {
           icon: Icon(Icons.arrow_back),
           onPressed: () async {
             // Logout dulu supaya tidak terkena redirect otomatis kembali ke sini
-            final authProvider = Provider.of<AuthProvider>(context, listen: false);
+            final authProvider = Provider.of<AuthProvider>(
+              context,
+              listen: false,
+            );
             await authProvider.logout();
-            
+
             // Gunakan context.go untuk pindah ke halaman login
             if (context.mounted) {
               context.go('/login');
@@ -81,13 +84,13 @@ class RegistrationFormPage extends StatelessWidget {
             ),
             SizedBox(height: 20),
 
-            // Tombol 3: Batita
+            // Tombol 3: Anak Batita
             _buildRoleButton(
               context: context,
-              role: 'Batita',
-              label: 'Batita',
-              icon: Icons.child_friendly,
-              color: Colors.orange.shade400,
+              role: 'AnakBatita',
+              label: 'Anak Batita (0-24 bulan)',
+              icon: Icons.baby_changing_station,
+              color: Colors.cyan.shade400,
             ),
           ],
         ),
