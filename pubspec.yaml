@@ -30,6 +30,8 @@ dependencies:
   
   # Routing
   go_router: ^14.0.0
+  flutter_html: ^3.0.0
+  cached_network_image: ^3.4.1
 
 
 

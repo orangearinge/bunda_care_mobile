@@ -92,6 +92,9 @@ class ApiConstants {
   static const String recommendation = "/api/recommendation";
   static const String mealLog = "/api/meal-log";
 
+  // ==================== Article Endpoints ====================
+  static const String publicArticles = "/api/public/articles";
+
   // ==================== Timeouts ====================
 
   static const Duration connectionTimeout = Duration(seconds: 30);

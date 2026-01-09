@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'providers/auth_provider.dart';
 import 'providers/user_preference_provider.dart';
 import 'providers/food_provider.dart';
+import 'providers/article_provider.dart';
 import 'router/app_router.dart';
 import 'pages/main_navigation.dart';
 import 'utils/constants.dart';
@@ -34,6 +35,7 @@ class BundaCareApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => UserPreferenceProvider()),
         ChangeNotifierProvider(create: (_) => FoodProvider()),
+        ChangeNotifierProvider(create: (_) => ArticleProvider()),
       ],
       // Menggunakan Builder agar context bisa mengakses provider di level yang sama
       child: const AppContent(),
