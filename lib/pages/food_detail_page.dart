@@ -685,11 +685,12 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           child: ElevatedButton.icon(
             onPressed: () => _addToMealPlan(false),
             icon: const Icon(Icons.add_circle_outline),
-            label: const Text(
+            label: Text(
               'TAMBAH KE RENCANA MAKAN',
-              style: TextStyle(
-                fontSize: 15,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
               ),
             ),
             style: ElevatedButton.styleFrom(
@@ -698,7 +699,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
-              elevation: 2,
+              elevation: 4,
+              shadowColor: Colors.pink.withOpacity(0.3),
             ),
           ),
         ),
@@ -709,11 +711,12 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           child: OutlinedButton.icon(
             onPressed: () => _addToMealPlan(true),
             icon: const Icon(Icons.check_circle_outline),
-            label: const Text(
+            label: Text(
               'TANDAI SUDAH DIKONSUMSI',
-              style: TextStyle(
-                fontSize: 15,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
               ),
             ),
             style: OutlinedButton.styleFrom(

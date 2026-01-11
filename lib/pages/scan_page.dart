@@ -143,9 +143,21 @@ class _ScanPageState extends State<ScanPage> {
     return Scaffold(
       backgroundColor: Colors.pink[50],
       appBar: AppBar(
-        title: const Text("Scan Makanan"),
-        backgroundColor: Colors.pink[300],
-        foregroundColor: Colors.white,
+        title: const Text(
+          "Scan Makanan",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.pink[400]!, Colors.pink[200]!],
+            ),
+          ),
+        ),
+        elevation: 0,
       ),
       body: Consumer<FoodProvider>(
         builder: (context, foodProvider, child) {

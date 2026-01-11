@@ -67,29 +67,9 @@ class _MainNavigationState extends State<MainNavigation> {
   Widget _buildNavItem(IconData iconOutlined, IconData iconFilled, int index) {
     bool isSelected = _selectedIndex == index;
 
-    List<Color> gradientColors;
-    switch (index) {
-      case 0:
-        gradientColors = [Colors.pink[300]!, Colors.pink[400]!];
-        break;
-      case 1:
-        gradientColors = [Colors.purple[300]!, Colors.purple[400]!];
-        break;
-      case 2:
-        gradientColors = [Colors.blue[300]!, Colors.blue[400]!];
-        break;
-      case 3:
-        gradientColors = [Colors.orange[300]!, Colors.orange[400]!];
-        break;
-      case 4:
-        gradientColors = [
-          Colors.pink[300]!,
-          Colors.pink[400]!,
-        ]; // Matched with ProfilePage
-        break;
-      default:
-        gradientColors = [Colors.grey[300]!, Colors.grey[400]!];
-    }
+    List<Color> gradientColors = [Colors.pink[300]!, Colors.pink[400]!];
+    // All items now use the same pink gradient for consistency
+
 
     return GestureDetector(
       onTap: () => _onItemTapped(index),
