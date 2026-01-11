@@ -285,31 +285,27 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
 
                           // Additional metrics for detailed view
-                          if (pref.bellyCircumferenceCm != null ||
-                              pref.lilaCm != null) ...[
+                          if (pref.lilaCm != null) ...[
                             const SizedBox(height: 12),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                if (pref.bellyCircumferenceCm != null)
-                                  _StatPillSmall(
-                                    label: 'Lingkar Perut',
-                                    value: '${pref.bellyCircumferenceCm} cm',
-                                  ),
-                                if (pref.lilaCm != null)
-                                  _StatPillSmall(
-                                    label: 'LiLA',
-                                    value: '${pref.lilaCm} cm',
-                                  ),
+                                _StatPillSmall(
+                                  label: 'LiLA',
+                                  value: '${pref.lilaCm} cm',
+                                ),
                               ],
                             ),
                           ],
 
-                          if (pref.lactationMl != null) ...[
+                          if (pref.role == 'IBU_MENYUSUI' &&
+                              pref.lactationPhase != null) ...[
                             const SizedBox(height: 12),
                             _ProfileField(
-                              label: 'Volume ASI',
-                              value: '${pref.lactationMl} ml/hari',
+                              label: 'Fase Menyusui',
+                              value: pref.lactationPhase == '0-6'
+                                  ? '6 Bulan Pertama'
+                                  : '6 Bulan Kedua',
                             ),
                           ],
                         ],

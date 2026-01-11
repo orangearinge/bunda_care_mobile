@@ -27,9 +27,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _heightController;
   late TextEditingController _weightController;
   late TextEditingController _hphtController;
-  late TextEditingController _bellyController;
   late TextEditingController _lilaController;
-  late TextEditingController _lactationController;
+  String? _selectedLactationPhase;
 
   String _selectedRole = '';
   List<String> _allergens = [];
@@ -55,15 +54,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _heightController = TextEditingController(text: pref.heightCm.toString());
     _weightController = TextEditingController(text: pref.weightKg.toString());
     _hphtController = TextEditingController(text: pref.hpht ?? '');
-    _bellyController = TextEditingController(
-      text: pref.bellyCircumferenceCm?.toString() ?? '',
-    );
     _lilaController = TextEditingController(
       text: pref.lilaCm?.toString() ?? '',
     );
-    _lactationController = TextEditingController(
-      text: pref.lactationMl?.toString() ?? '',
-    );
+    _selectedLactationPhase = pref.lactationPhase;
     _selectedRole = pref.role;
     _allergens = List.from(pref.allergens);
     _foodProhibitions = List.from(pref.foodProhibitions);
@@ -83,9 +77,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _heightController.dispose();
     _weightController.dispose();
     _hphtController.dispose();
-    _bellyController.dispose();
     _lilaController.dispose();
-    _lactationController.dispose();
     super.dispose();
   }
 
@@ -420,10 +412,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
       }
 
       if (_selectedRole == 'IBU_MENYUSUI' &&
-          _lactationController.text.isEmpty) {
+          (_selectedLactationPhase == null ||
+              _selectedLactationPhase!.isEmpty)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Volume ASI wajib diisi untuk Ibu Menyusui'),
+            content: Text('Fase menyusui wajib dipilih'),
             backgroundColor: Colors.red,
           ),
         );
@@ -437,14 +430,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
         heightCm: double.parse(_heightController.text),
         weightKg: double.parse(_weightController.text),
         hpht: _selectedRole == 'IBU_HAMIL' ? _hphtController.text : null,
-        bellyCircumferenceCm: _selectedRole == 'IBU_HAMIL'
-            ? double.tryParse(_bellyController.text)
-            : null,
         lilaCm: _selectedRole == 'IBU_HAMIL'
             ? double.tryParse(_lilaController.text)
             : null,
-        lactationMl: _selectedRole == 'IBU_MENYUSUI'
-            ? double.tryParse(_lactationController.text)
+        lactationPhase: _selectedRole == 'IBU_MENYUSUI'
+            ? _selectedLactationPhase
             : null,
         allergens: _allergens,
         foodProhibitions: _foodProhibitions,
@@ -726,12 +716,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         },
                       ),
                       _buildTextField(
-                        controller: _bellyController,
-                        label: 'Lingkar Perut (cm)',
-                        hint: 'Masukkan lingkar perut',
-                        keyboardType: TextInputType.number,
-                      ),
-                      _buildTextField(
                         controller: _lilaController,
                         label: 'LiLA (cm)',
                         hint: 'Masukkan LiLA',
@@ -741,18 +725,45 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     if (_selectedRole == 'IBU_MENYUSUI') ...[
                       const SizedBox(height: 16),
                       _buildSectionTitle('Informasi Menyusui'),
-                      _buildTextField(
-                        controller: _lactationController,
-                        label: 'Volume ASI (ml)',
-                        hint: 'Masukkan volume ASI per hari',
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (_selectedRole == 'IBU_MENYUSUI' &&
-                              (value == null || value.isEmpty)) {
-                            return 'Volume ASI tidak boleh kosong';
-                          }
-                          return null;
-                        },
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: DropdownButtonFormField<String>(
+                          value: _selectedLactationPhase,
+                          decoration: InputDecoration(
+                            labelText: 'Fase Menyusui',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: '0-6',
+                              child: Text('6 Bulan Pertama'),
+                            ),
+                            DropdownMenuItem(
+                              value: '6-12',
+                              child: Text('6 Bulan Kedua'),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedLactationPhase = value;
+                            });
+                          },
+                          validator: (value) {
+                            if (_selectedRole == 'IBU_MENYUSUI' &&
+                                (value == null || value.isEmpty)) {
+                              return 'Fase menyusui wajib dipilih';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
                     ],
 

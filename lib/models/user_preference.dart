@@ -6,9 +6,8 @@ class UserPreference {
   final int heightCm;
   final double weightKg;
   final int ageYear;
-  final double? bellyCircumferenceCm;
   final double? lilaCm;
-  final double? lactationMl;
+  final String? lactationPhase; // "0-6" or "6-12"
   final List<String> foodProhibitions;
   final List<String> allergens;
   final int? gestationalAgeWeeks; // Read-only from response
@@ -21,9 +20,8 @@ class UserPreference {
     required this.heightCm,
     required this.weightKg,
     required this.ageYear,
-    this.bellyCircumferenceCm,
     this.lilaCm,
-    this.lactationMl,
+    this.lactationPhase,
     this.foodProhibitions = const [],
     this.allergens = const [],
     this.gestationalAgeWeeks,
@@ -39,10 +37,8 @@ class UserPreference {
       heightCm: (json['height_cm'] as num?)?.toInt() ?? 0,
       weightKg: (json['weight_kg'] as num?)?.toDouble() ?? 0.0,
       ageYear: (json['age_year'] as num?)?.toInt() ?? 0,
-      bellyCircumferenceCm: (json['belly_circumference_cm'] as num?)
-          ?.toDouble(),
       lilaCm: (json['lila_cm'] as num?)?.toDouble(),
-      lactationMl: (json['lactation_ml'] as num?)?.toDouble(),
+      lactationPhase: json['lactation_phase'] as String?,
       foodProhibitions: List<String>.from(json['food_prohibitions'] ?? []),
       allergens: List<String>.from(json['allergens'] ?? []),
       gestationalAgeWeeks: (json['gestational_age_weeks'] as num?)?.toInt(),
@@ -68,10 +64,9 @@ class UserPreference {
 
     if (role == 'IBU_HAMIL') {
       data['hpht'] = hpht;
-      data['belly_circumference_cm'] = bellyCircumferenceCm;
       data['lila_cm'] = lilaCm;
     } else if (role == 'IBU_MENYUSUI') {
-      data['lactation_ml'] = lactationMl;
+      data['lactation_phase'] = lactationPhase;
     }
 
     return data;

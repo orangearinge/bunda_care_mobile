@@ -30,9 +30,8 @@ class UserPreferenceProvider with ChangeNotifier {
     required double heightCm,
     required double weightKg,
     required int ageYear,
-    double? bellyCircumferenceCm,
     double? lilaCm,
-    double? lactationMl,
+    String? lactationPhase,
     List<String> foodProhibitions = const [],
     List<String> allergens = const [],
   }) async {
@@ -48,9 +47,8 @@ class UserPreferenceProvider with ChangeNotifier {
         heightCm: heightCm.toInt(),
         weightKg: weightKg,
         ageYear: ageYear,
-        bellyCircumferenceCm: bellyCircumferenceCm,
         lilaCm: lilaCm,
-        lactationMl: lactationMl,
+        lactationPhase: lactationPhase,
         foodProhibitions: foodProhibitions,
         allergens: allergens,
       );

@@ -38,13 +38,12 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       'hpht',
       'berat_badan',
       'tinggi_badan',
-      'lingkar_perut',
       'lingkar_lengan_atas',
     ],
     'IbuMenyusui': [
       'nama',
       'usia',
-      'lactation_ml',
+      'lactation_phase',
       'tinggi_badan',
       'berat_badan',
     ],
@@ -243,11 +242,6 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           titleColor: primaryPink,
           fields: [
             _buildTextField(
-              "Lingkar Perut (cm)",
-              "lingkar_perut",
-              TextInputType.number,
-            ),
-            _buildTextField(
               "Lingkar Lengan Atas (cm)",
               "lingkar_lengan_atas",
               TextInputType.number,
@@ -289,10 +283,13 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              _buildTextField(
-                "Volume ASI per hari (ml)",
-                "lactation_ml",
-                TextInputType.number,
+              _buildDropdownField(
+                label: "Fase Menyusui",
+                keyName: "lactation_phase",
+                items: [
+                  {'value': '0-6', 'label': '6 Bulan Pertama'},
+                  {'value': '6-12', 'label': '6 Bulan Kedua'},
+                ],
               ),
             ],
           ),
@@ -492,6 +489,43 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     );
   }
 
+  // ===================== DROPDOWN FIELD =====================
+  Widget _buildDropdownField({
+    required String label,
+    required String keyName,
+    required List<Map<String, String>> items,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: DropdownButtonFormField<String>(
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          filled: true,
+          fillColor: Colors.grey[50],
+        ),
+        value: formData[keyName],
+        items: items.map((item) {
+          return DropdownMenuItem<String>(
+            value: item['value'],
+            child: Text(item['label']!),
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            formData[keyName] = value;
+          });
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return '$label wajib dipilih';
+          }
+          return null;
+        },
+      ),
+    );
+  }
+
   Widget _buildDefaultForm(int step) {
     return _buildFormTemplate(
       step: step,
@@ -550,9 +584,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         'berat_badan',
         'tinggi_badan',
         'usia',
-        'lingkar_perut',
         'lingkar_lengan_atas',
-        'lactation_ml',
       ].contains(key)) {
         double? num = double.tryParse(formData[key]);
         if (num == null || num <= 0) {
@@ -622,17 +654,13 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     // Add role-specific data
     if (backendRole == 'IBU_HAMIL') {
       preferenceData['hpht'] = formData['hpht'];
-      preferenceData['bellyCircumferenceCm'] = parseDouble(
-        formData['lingkar_perut'],
-      );
       preferenceData['lilaCm'] = parseDouble(formData['lingkar_lengan_atas']);
     } else if (backendRole == 'IBU_MENYUSUI') {
-      preferenceData['lactationMl'] = parseDouble(formData['lactation_ml']);
+      preferenceData['lactationPhase'] = formData['lactation_phase'];
     } else if (backendRole == 'ANAK_BATITA') {
       // For ANAK_BATITA, only basic fields are required
       // Don't include hpht as it's not expected for this role
       preferenceData.remove('hpht');
-      preferenceData['bellyCircumferenceCm'] = null;
       preferenceData['lilaCm'] = null;
     }
 
@@ -648,9 +676,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       heightCm: preferenceData['heightCm'],
       weightKg: preferenceData['weightKg'],
       ageYear: preferenceData['ageYear'],
-      bellyCircumferenceCm: preferenceData['bellyCircumferenceCm'],
       lilaCm: preferenceData['lilaCm'],
-      lactationMl: preferenceData['lactationMl'],
+      lactationPhase: preferenceData['lactationPhase'],
       foodProhibitions: preferenceData['foodProhibitions'],
       allergens: preferenceData['allergens'],
     );

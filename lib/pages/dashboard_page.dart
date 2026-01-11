@@ -76,6 +76,29 @@ class _DashboardPageState extends State<DashboardPage> {
     // GoRouter will automatically redirect to login
   }
 
+  String _getStatusText() {
+    if (_dashboardSummary == null) return "Kesehatan Ibu & Bayi";
+
+    final role = _dashboardSummary!.user.role;
+    final prefs = _dashboardSummary!.user.preferences;
+
+    if (role == 'IBU_HAMIL') {
+      final weeks = prefs['gestational_age_weeks'];
+      if (weeks != null) return "Hamil: $weeks Minggu";
+      return "Kesehatan Ibu Hamil";
+    } else if (role == 'IBU_MENYUSUI') {
+      final phase = prefs['lactation_phase'];
+      if (phase == '0-6') return "Menyusui: 6 Bulan Pertama";
+      if (phase == '6-12') return "Menyusui: 6 Bulan Kedua";
+      return "Kesehatan Ibu Menyusui";
+    } else if (role == 'ANAK_BATITA') {
+      final age = prefs['age_year'];
+      return "Anak Batita: $age Tahun";
+    }
+
+    return "Kesehatan Ibu & Bayi";
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
@@ -225,9 +248,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     color: Colors.white.withOpacity(0.3),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  child: const Text(
-                                    "Kesehatan Ibu & Bayi",
-                                    style: TextStyle(
+                                  child: Text(
+                                    _getStatusText(),
+                                    style: const TextStyle(
                                       fontSize: 11,
                                       color: Colors.white,
                                       fontWeight: FontWeight.w600,
