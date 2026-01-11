@@ -190,7 +190,7 @@ class _ScanPageState extends State<ScanPage> {
                             ),
                             const SizedBox(height: 12),
                             const Text(
-                              "Pilih Foto Makanan",
+                              "Pilih Foto Bahan Makanan",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
