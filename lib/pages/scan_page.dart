@@ -327,7 +327,7 @@ class _ScanPageState extends State<ScanPage> {
                               Icon(Icons.search),
                               SizedBox(width: 10),
                               Text(
-                                "PINDAI MAKANAN",
+                                "PINDAI BAHAN MAKANAN",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
