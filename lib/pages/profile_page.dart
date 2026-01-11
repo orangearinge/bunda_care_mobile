@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'chatbot_page.dart';
 import 'scan_page.dart';
 import 'edukasi_page.dart';
@@ -211,11 +212,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Column(
                         children: [
                           _ProfileField(
-                            label: pref.role == 'ANAK_BATITA' ? 'Usia Anak' : 'Usia',
+                            label: pref.role == 'ANAK_BATITA'
+                                ? 'Usia Anak'
+                                : 'Usia',
                             value: pref.role == 'ANAK_BATITA'
-                                ? (pref.ageYear > 0 
-                                    ? '${pref.ageYear} Tahun ${pref.ageMonth ?? 0} Bulan' 
-                                    : '${pref.ageMonth ?? 0} Bulan')
+                                ? (pref.ageYear > 0
+                                      ? '${pref.ageYear} Tahun ${pref.ageMonth ?? 0} Bulan'
+                                      : '${pref.ageMonth ?? 0} Bulan')
                                 : '${pref.ageYear} Tahun',
                           ),
                           const Divider(height: 24),
@@ -223,11 +226,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             label: 'Peran',
                             value: pref.role.replaceAll('_', ' '),
                           ),
-                          if (pref.role == 'IBU_HAMIL' && pref.hpht != null) ...[
+                          if (pref.role == 'IBU_HAMIL' &&
+                              pref.hpht != null) ...[
                             const Divider(height: 24),
                             _ProfileField(label: 'HPHT', value: pref.hpht!),
                           ],
-                          if (pref.role == 'IBU_HAMIL' && pref.gestationalAgeWeeks != null) ...[
+                          if (pref.role == 'IBU_HAMIL' &&
+                              pref.gestationalAgeWeeks != null) ...[
                             const Divider(height: 24),
                             _ProfileField(
                               label: 'Usia Kandungan',
@@ -257,11 +262,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               _StatPill(
-                                title: pref.role == 'ANAK_BATITA' ? 'Tinggi\nAnak' : 'Tinggi\nBadan',
+                                title: pref.role == 'ANAK_BATITA'
+                                    ? 'Tinggi\nAnak'
+                                    : 'Tinggi\nBadan',
                                 value: '${pref.heightCm} cm',
                               ),
                               _StatPill(
-                                title: pref.role == 'ANAK_BATITA' ? 'Berat\nAnak' : 'Berat\nBadan',
+                                title: pref.role == 'ANAK_BATITA'
+                                    ? 'Berat\nAnak'
+                                    : 'Berat\nBadan',
                                 value: '${pref.weightKg} kg',
                               ),
                               _StatPill(
@@ -399,8 +408,15 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
+                            onPressed: () async {
+                              final authProvider = Provider.of<AuthProvider>(
+                                context,
+                                listen: false,
+                              );
+                              await authProvider.logout();
+                              if (context.mounted) {
+                                context.go('/login');
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.pink[50],
