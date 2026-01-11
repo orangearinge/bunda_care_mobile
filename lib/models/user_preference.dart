@@ -6,6 +6,7 @@ class UserPreference {
   final int heightCm;
   final double weightKg;
   final int ageYear;
+  final int? ageMonth;
   final double? lilaCm;
   final String? lactationPhase; // "0-6" or "6-12"
   final List<String> foodProhibitions;
@@ -20,6 +21,7 @@ class UserPreference {
     required this.heightCm,
     required this.weightKg,
     required this.ageYear,
+    this.ageMonth,
     this.lilaCm,
     this.lactationPhase,
     this.foodProhibitions = const [],
@@ -37,6 +39,9 @@ class UserPreference {
       heightCm: (json['height_cm'] as num?)?.toInt() ?? 0,
       weightKg: (json['weight_kg'] as num?)?.toDouble() ?? 0.0,
       ageYear: (json['age_year'] as num?)?.toInt() ?? 0,
+      ageMonth: json['age_month'] != null 
+          ? int.tryParse(json['age_month'].toString()) 
+          : null,
       lilaCm: (json['lila_cm'] as num?)?.toDouble(),
       lactationPhase: json['lactation_phase'] as String?,
       foodProhibitions: List<String>.from(json['food_prohibitions'] ?? []),
@@ -60,6 +65,7 @@ class UserPreference {
       'age_year': ageYear,
       'food_prohibitions': foodProhibitions,
       'allergens': allergens,
+      'age_month': ageMonth,
     };
 
     if (role == 'IBU_HAMIL') {

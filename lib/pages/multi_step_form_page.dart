@@ -47,7 +47,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       'tinggi_badan',
       'berat_badan',
     ],
-    'AnakBatita': ['nama', 'berat_badan', 'tinggi_badan', 'usia'],
+    'AnakBatita': ['nama', 'berat_badan', 'tinggi_badan', 'usia', 'usia_bulan'],
   };
 
   // ===================== HELPER FUNCTIONS =====================
@@ -361,6 +361,12 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               TextInputType.number,
               hintText: "Contoh: 0 untuk bayi, 1 untuk anak 1 tahun",
             ),
+            _buildTextField(
+              "Usia Anak (bulan)",
+              "usia_bulan",
+              TextInputType.number,
+              hintText: "Contoh: 6 untuk usia 6 bulan",
+            ),
           ],
         );
 
@@ -430,7 +436,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           // Additional validation for numeric fields
           if (inputType == TextInputType.number) {
             double? num = double.tryParse(value);
-            if (num == null || num <= 0) return '$label harus angka positif';
+            if (num == null || num < 0) return '$label harus angka positif';
           }
           return null;
         },
@@ -584,13 +590,14 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         'berat_badan',
         'tinggi_badan',
         'usia',
+        'usia_bulan',
         'lingkar_lengan_atas',
       ].contains(key)) {
-        double? num = double.tryParse(formData[key]);
-        if (num == null || num <= 0) {
+        double? num = double.tryParse(formData[key].toString());
+        if (num == null || num < 0) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Field $key harus angka positif'),
+              content: Text('Field $key harus angka nol atau positif'),
               backgroundColor: Colors.red,
             ),
           );
@@ -647,6 +654,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       'heightCm': parseDouble(formData['tinggi_badan']) ?? 0.0,
       'weightKg': parseDouble(formData['berat_badan']) ?? 0.0,
       'ageYear': parseInt(formData['usia']) ?? 0,
+      'ageMonth': parseInt(formData['usia_bulan']),
       'foodProhibitions': parseList(formData['food_prohibitions']),
       'allergens': parseList(formData['allergens']),
     };
@@ -676,6 +684,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       heightCm: preferenceData['heightCm'],
       weightKg: preferenceData['weightKg'],
       ageYear: preferenceData['ageYear'],
+      ageMonth: preferenceData['ageMonth'],
       lilaCm: preferenceData['lilaCm'],
       lactationPhase: preferenceData['lactationPhase'],
       foodProhibitions: preferenceData['foodProhibitions'],

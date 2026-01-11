@@ -24,6 +24,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   late TextEditingController _nameController;
   late TextEditingController _ageController;
+  late TextEditingController _ageMonthController;
   late TextEditingController _heightController;
   late TextEditingController _weightController;
   late TextEditingController _hphtController;
@@ -51,6 +52,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final pref = widget.initialPreference;
     _nameController = TextEditingController(text: pref.name);
     _ageController = TextEditingController(text: pref.ageYear.toString());
+    _ageMonthController =
+        TextEditingController(text: pref.ageMonth?.toString() ?? '0');
     _heightController = TextEditingController(text: pref.heightCm.toString());
     _weightController = TextEditingController(text: pref.weightKg.toString());
     _hphtController = TextEditingController(text: pref.hpht ?? '');
@@ -74,6 +77,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void dispose() {
     _nameController.dispose();
     _ageController.dispose();
+    _ageMonthController.dispose();
     _heightController.dispose();
     _weightController.dispose();
     _hphtController.dispose();
@@ -427,6 +431,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         role: _selectedRole,
         name: nameValue,
         ageYear: int.parse(_ageController.text),
+        ageMonth: int.tryParse(_ageMonthController.text),
         heightCm: double.parse(_heightController.text),
         weightKg: double.parse(_weightController.text),
         hpht: _selectedRole == 'IBU_HAMIL' ? _hphtController.text : null,
@@ -657,12 +662,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           return 'Usia tidak boleh kosong';
                         }
                         final age = int.tryParse(value);
-                        if (age == null || age <= 0) {
+                        if (age == null || age < 0) {
                           return 'Usia harus berupa angka positif';
                         }
                         return null;
                       },
                     ),
+                    if (_selectedRole == 'ANAK_BATITA')
+                      _buildTextField(
+                        controller: _ageMonthController,
+                        label: 'Usia Anak (bulan)',
+                        hint: 'Masukkan usia dalam bulan',
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Usia bulan tidak boleh kosong';
+                          }
+                          final months = int.tryParse(value);
+                          if (months == null || months < 0) {
+                            return 'Usia bulan harus berupa angka positif';
+                          }
+                          return null;
+                        },
+                      ),
                     _buildTextField(
                       controller: _heightController,
                       label: heightLabel,

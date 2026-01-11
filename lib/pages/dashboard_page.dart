@@ -92,8 +92,10 @@ class _DashboardPageState extends State<DashboardPage> {
       if (phase == '6-12') return "Menyusui: 6 Bulan Kedua";
       return "Kesehatan Ibu Menyusui";
     } else if (role == 'ANAK_BATITA') {
-      final age = prefs['age_year'];
-      return "Anak Batita: $age Tahun";
+      final years = prefs['age_year'] ?? 0;
+      final months = prefs['age_month'] ?? 0;
+      if (years > 0) return "Anak Batita: $years Thn $months Bln";
+      return "Anak Batita: $months Bulan";
     }
 
     return "Kesehatan Ibu & Bayi";

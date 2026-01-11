@@ -212,7 +212,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         children: [
                           _ProfileField(
                             label: pref.role == 'ANAK_BATITA' ? 'Usia Anak' : 'Usia',
-                            value: '${pref.ageYear} Tahun',
+                            value: pref.role == 'ANAK_BATITA'
+                                ? (pref.ageYear > 0 
+                                    ? '${pref.ageYear} Tahun ${pref.ageMonth ?? 0} Bulan' 
+                                    : '${pref.ageMonth ?? 0} Bulan')
+                                : '${pref.ageYear} Tahun',
                           ),
                           const Divider(height: 24),
                           _ProfileField(
