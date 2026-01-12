@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/food_provider.dart';
 import '../utils/constants.dart';
 import 'rekomendasi_page.dart';
@@ -144,7 +145,7 @@ class _ScanPageState extends State<ScanPage> {
       backgroundColor: Colors.pink[50],
       appBar: AppBar(
         title: const Text(
-          "Scan Makanan",
+          "Scan Bahan Pangan",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -183,14 +184,25 @@ class _ScanPageState extends State<ScanPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.fastfood,
-                              size: 60,
-                              color: Colors.pink[200],
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                FaIcon(
+                                  FontAwesomeIcons.appleWhole,
+                                  size: 40,
+                                  color: Colors.pink[200],
+                                ),
+                                const SizedBox(width: 15),
+                                FaIcon(
+                                  FontAwesomeIcons.carrot,
+                                  size: 40,
+                                  color: Colors.pink[200],
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 12),
                             const Text(
-                              "Pilih Foto Bahan Makanan",
+                              "Pilih Foto Bahan Pangan",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -327,7 +339,7 @@ class _ScanPageState extends State<ScanPage> {
                               Icon(Icons.search),
                               SizedBox(width: 10),
                               Text(
-                                "PINDAI BAHAN MAKANAN",
+                                "PINDAI BAHAN PANGAN",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

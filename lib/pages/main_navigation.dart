@@ -53,7 +53,7 @@ class _MainNavigationState extends State<MainNavigation> {
               children: [
                 _buildNavItem(Icons.home_outlined, Icons.home, 0),
                 _buildNavItem(Icons.chat_bubble_outline, Icons.chat_bubble, 1),
-                _buildNavItem(Icons.qr_code_scanner, Icons.qr_code_scanner, 2),
+                _buildNavItem(Icons.photo_camera_outlined, Icons.photo_camera, 2),
                 _buildNavItem(Icons.menu_book_outlined, Icons.menu_book, 3),
                 _buildNavItem(Icons.person_outline, Icons.person, 4),
               ],

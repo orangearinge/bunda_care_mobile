@@ -134,7 +134,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Halo, Bunda 👋",
+                              "Halo, Bunda",
                               style: GoogleFonts.poppins(
                                 fontSize: 16,
                                 color: Colors.grey[600],
