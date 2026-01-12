@@ -24,7 +24,7 @@ class UserPreference {
     this.ageMonth,
     this.lilaCm,
     this.lactationPhase,
-    this.foodProhibitions = const [],
+    this.foodProhibitionemastikan data minimal selalu s = const [],
     this.allergens = const [],
     this.gestationalAgeWeeks,
     this.nutritionalTargets,

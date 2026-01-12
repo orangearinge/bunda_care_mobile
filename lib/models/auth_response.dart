@@ -29,18 +29,12 @@ class AuthResponse {
 
     final token = data['token'];
     if (token == null || token is! String) {
-      throw ApiError(
-        code: 'INVALID_TOKEN',
-        message: 'Invalid token in response',
-      );
+      throw ApiError(code: 'INVALID_TOKEN');
     }
-
+ 
     final userData = data['user'];
     if (userData == null || userData is! Map<String, dynamic>) {
-      throw ApiError(
-        code: 'INVALID_USER_DATA',
-        message: 'Invalid user data in response',
-      );
+      throw ApiError(code: 'INVALID_USER_DATA');
     }
 
     return AuthResponse(

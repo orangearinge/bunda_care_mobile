@@ -41,18 +41,18 @@ class ApiService {
         onResponse: (response, handler) {
           // Log successful responses in debug mode
           if (ApiConstants.isDevelopment) {
-            print(
-              '✅ Response [${response.statusCode}]: ${response.requestOptions.path}',
-            );
+            print('✅ [${response.statusCode}] ${response.requestOptions.method} ${response.requestOptions.path}');
           }
           return handler.next(response);
         },
         onError: (error, handler) async {
           // Log errors in debug mode
           if (ApiConstants.isDevelopment) {
-            print('❌ Error: ${error.message}');
-            print('   URI: ${error.requestOptions.uri}');
-            print('   Response: ${error.response?.data}');
+            print('❌ [${error.response?.statusCode ?? "ERR"}] ${error.requestOptions.method} ${error.requestOptions.path}');
+            print('   Message: ${error.message}');
+            if (error.response?.data != null) {
+              print('   Data: ${error.response?.data}');
+            }
           }
           return handler.next(error);
         },
@@ -153,40 +153,39 @@ class ApiService {
         return ApiError.networkError();
 
       case DioExceptionType.badResponse:
-        // Parse backend error response
         final response = error.response;
         if (response != null) {
-          // Handle 401 Unauthorized specifically
-          if (response.statusCode == 401) {
-            return ApiError(
-              code: 'SESSION_EXPIRED',
-              message: 'Your session has expired. Please login again.',
-            );
-          }
-
+          // 1. Try to parse backend error format first
           if (response.data is Map<String, dynamic>) {
             final data = response.data as Map<String, dynamic>;
-
-            // Check if it's our backend error format
             if (data['error'] != null) {
               return ApiError.fromJson(data);
             }
           }
-        }
 
-        // Generic server error
+          // 2. Handle specific HTTP status codes if no backend error format
+          switch (response.statusCode) {
+            case 400:
+              return ApiError(code: 'VALIDATION_ERROR');
+            case 401:
+              return ApiError(code: 'SESSION_EXPIRED');
+            case 403:
+              return ApiError(code: 'UNAUTHORIZED');
+            case 404:
+              return ApiError(code: 'DATA_NOT_FOUND');
+            case 500:
+              return ApiError(code: 'SERVER_ERROR');
+          }
+        }
         return ApiError.serverError(
-          'Server error: ${response?.statusCode ?? "Unknown"}',
+          'Error ${response?.statusCode}: ${error.message}',
         );
 
       case DioExceptionType.cancel:
-        return ApiError(
-          code: 'REQUEST_CANCELLED',
-          message: 'Request was cancelled',
-        );
+        return ApiError(code: 'REQUEST_CANCELLED');
 
       default:
-        return ApiError.fromException(Exception(error.message));
+        return ApiError.fromException(error);
     }
   }
 }

@@ -215,7 +215,7 @@ class AuthProvider with ChangeNotifier {
       // Handle auth errors specifically
       if (_isAuthError(e)) {
         await logout();
-        _setError('Session expired. Please login again.');
+        _setError(e.message);
         return false;
       }
       _setError(e.message);
@@ -246,7 +246,7 @@ class AuthProvider with ChangeNotifier {
       // Handle auth errors specifically
       if (_isAuthError(e)) {
         await logout();
-        _setError('Session expired. Please login again.');
+        _setError(e.message);
         return false;
       }
       _setError(e.message);
@@ -279,7 +279,7 @@ class AuthProvider with ChangeNotifier {
       // Handle auth errors specifically
       if (_isAuthError(e)) {
         await logout();
-        _setError('Session expired. Please login again.');
+        _setError(e.message);
         return false;
       }
       // Don't show error if user cancelled sign-in

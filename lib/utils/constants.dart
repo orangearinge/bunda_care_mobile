@@ -110,45 +110,47 @@ class ApiConstants {
 
   /// Map backend error codes to user-friendly messages
   static const Map<String, String> errorMessages = {
-    'VALIDATION_ERROR': 'Please fill all required fields',
-    'INVALID_CREDENTIALS': 'Email or password incorrect',
-    'EMAIL_IN_USE': 'This email is already registered',
-    'INVALID_TOKEN': 'Google sign-in failed. Please try again',
-    'NETWORK_ERROR': 'No internet connection. Please check your network',
-    'TIMEOUT_ERROR': 'Connection timeout. Please try again',
-    'SERVER_ERROR': 'Something went wrong. Please try again later',
-    'UNKNOWN_ERROR': 'An unexpected error occurred',
+    // Auth Errors
+    'VALIDATION_ERROR': 'Harap isi semua kolom dengan benar',
+    'INVALID_CREDENTIALS': 'Email atau password salah',
+    'EMAIL_IN_USE': 'Email ini sudah terdaftar',
+    'INVALID_TOKEN': 'Sesi tidak valid, silakan login kembali',
+    'SESSION_EXPIRED': 'Sesi Anda telah berakhir, silakan login kembali',
+    'UNAUTHORIZED': 'Anda tidak memiliki akses ke fitur ini',
+    'ACCOUNT_NOT_VERIFIED': 'Harap verifikasi email Anda sebelum login',
+    'PASSWORD_TOO_WEAK': 'Password minimal harus 8 karakter',
+    'LOGOUT_FAILED': 'Gagal keluar, silakan coba lagi',
+    'GOOGLE_AUTH_CANCELLED': 'Pendaftaran Google dibatalkan',
+    'GOOGLE_SIGNIN_CANCELLED': 'Login Google dibatalkan',
 
-    // Auth-specific additions
-    'ACCOUNT_NOT_VERIFIED': 'Please verify your email before logging in',
-    'PASSWORD_TOO_WEAK': 'Password must be at least 8 characters long',
-    'LOGOUT_FAILED': 'Logout failed. Please try again',
-    'GOOGLE_AUTH_CANCELLED': 'Google sign-in was cancelled. Please try again',
+    // Network / Server Errors
+    'NETWORK_ERROR': 'Tidak ada koneksi internet. Periksa jaringan Anda',
+    'TIMEOUT_ERROR': 'Koneksi terputus. Silakan coba lagi',
+    'SERVER_ERROR': 'Terjadi gangguan pada server. Coba lagi nanti',
+    'UNKNOWN_ERROR': 'Terjadi kesalahan yang tidak terduga',
+    'REQUEST_CANCELLED': 'Permintaan dibatalkan',
 
-    // Food scanning feature
-    'SCAN_FAILED':
-        'Food scanning failed. Please try again with a clearer image',
-    'FOOD_NOT_RECOGNIZED':
-        'We couldn\'t identify the food. Please try a different photo',
-    'SCAN_LIMIT_EXCEEDED': 'Too many scans today. Please try again tomorrow',
+    // Food scanning & Recommendation
+    'SCAN_FAILED': 'Gagal memindai makanan. Coba lagi dengan gambar yang lebih jelas',
+    'FOOD_NOT_RECOGNIZED': 'Makanan tidak dikenali. Coba foto yang lain',
+    'SCAN_LIMIT_EXCEEDED': 'Batas pindaian harian tercapai. Coba lagi besok',
+    'RECOMMENDATION_FAILED': 'Gagal memuat rekomendasi. Coba lagi nanti',
+    'NO_RECOMMENDATIONS': 'Belum ada rekomendasi yang tersedia',
+    'INVALID_FOOD_DATA': 'Data makanan tidak lengkap',
 
-    // Recommendation feature
-    'RECOMMENDATION_FAILED':
-        'Unable to generate recommendations. Please try again later',
-    'NO_RECOMMENDATIONS':
-        'No recommendations available right now. Check back soon',
-    'INVALID_FOOD_DATA': 'Food data is incomplete. Please scan again',
+    // Meal logging
+    'LOG_FAILED': 'Gagal menyimpan catatan makan. Coba lagi',
+    'LOG_LIMIT_EXCEEDED': 'Anda sudah mencatat terlalu banyak hari ini',
+    'DUPLICATE_LOG': 'Makanan ini sudah dicatat sebelumnya',
 
-    // Meal logging feature
-    'LOG_FAILED': 'Failed to save your meal. Please try again',
-    'LOG_LIMIT_EXCEEDED': 'You\'ve logged too many meals today. Take a break!',
-    'DUPLICATE_LOG': 'This meal was already logged. Try editing instead',
+    // Cloudinary & Files
+    'UPLOAD_FAILED': 'Gagal mengunggah gambar. Periksa koneksi Anda',
+    'INVALID_FILE_TYPE': 'Hanya file gambar yang diizinkan',
+    'FILE_TOO_LARGE': 'Ukuran gambar terlalu besar',
 
-    // Cloudinary upload feature
-    'UPLOAD_FAILED':
-        'Image upload failed. Please check your connection and try again',
-    'INVALID_FILE_TYPE': 'Only image files are allowed. Please choose a photo',
-    'FILE_TOO_LARGE': 'Image is too large. Please use a smaller file',
+    // Data Errors
+    'INVALID_USER_DATA': 'Data pengguna tidak valid',
+    'DATA_NOT_FOUND': 'Data tidak ditemukan',
   };
 
   /// Get user-friendly error message from error code
