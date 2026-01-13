@@ -41,10 +41,8 @@ class AuthService {
         },
       );
 
-      // Parse response
-      final authResponse = AuthResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      final data = _api.unwrap(response);
+      final authResponse = AuthResponse.fromJson(data);
 
       // Save token and user data
       await _storage.saveToken(authResponse.token);
@@ -69,10 +67,8 @@ class AuthService {
         data: {'email': email.trim().toLowerCase(), 'password': password},
       );
 
-      // Parse response
-      final authResponse = AuthResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      final data = _api.unwrap(response);
+      final authResponse = AuthResponse.fromJson(data);
 
       // Save token and user data
       await _storage.saveToken(authResponse.token);
@@ -125,10 +121,8 @@ class AuthService {
         data: {'token': idToken},
       );
 
-      // Parse response
-      final authResponse = AuthResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      final data = _api.unwrap(response);
+      final authResponse = AuthResponse.fromJson(data);
 
       // Save token and user data
       await _storage.saveToken(authResponse.token);
@@ -139,7 +133,9 @@ class AuthService {
       // Sign out from Google on error
       await _googleSignIn.signOut();
 
-      print('Google sign-in error: $e'); // Debug log
+      if (ApiConstants.isDevelopment) {
+        print('Google sign-in error: $e');
+      }
 
       if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));

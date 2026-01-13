@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/chat_service.dart';
+import 'package:provider/provider.dart';
 import '../models/chat_message.dart';
-import '../models/api_error.dart';
+import '../providers/chat_provider.dart';
 
 /// Halaman Chatbot Gizi dengan integrasi RAG
 /// Respons bersifat temporary dan tidak disimpan ke database
@@ -15,68 +15,27 @@ class ChatbotPage extends StatefulWidget {
 class _ChatbotPageState extends State<ChatbotPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final ChatService _chatService = ChatService();
-  
-  // List of messages (temporary, tidak disimpan ke database)
-  final List<ChatMessage> _messages = [];
-  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    // Tambahkan welcome message
-    _messages.add(ChatMessage.bot(
-      'Halo Bunda! 👋\n\nSaya Bunda Care AI Assistant, siap membantu menjawab pertanyaan seputar kesehatan ibu dan anak.\n\nSilakan tanyakan tentang:\n• Nutrisi kehamilan\n• ASI dan menyusui\n• MPASI\n• Menu harian\n• Dan topik kesehatan lainnya',
-    ));
   }
 
   /// Kirim pesan ke RAG chatbot
   Future<void> _sendMessage() async {
     final text = _messageController.text.trim();
-    
     if (text.isEmpty) return;
 
-    // Tambahkan user message
-    setState(() {
-      _messages.add(ChatMessage.user(text));
-      _isLoading = true;
-    });
+    final chatProvider = context.read<ChatProvider>();
 
     // Clear input
     _messageController.clear();
 
-    // Scroll to bottom
+    // Send via provider
+    await chatProvider.sendMessage(text);
+
+    // Scroll after message sent and response received
     _scrollToBottom();
-
-    try {
-      // Kirim ke RAG API
-      final response = await _chatService.sendQuery(text);
-      
-      // Tambahkan bot response
-      setState(() {
-        _messages.add(ChatMessage.bot(response['answer']));
-        _isLoading = false;
-      });
-
-      // Scroll to bottom lagi setelah dapat response
-      _scrollToBottom();
-    } on ApiError catch (e) {
-      setState(() {
-        _messages.add(ChatMessage.bot(
-          '❌ Maaf, terjadi kesalahan: ${e.message}\n\nSilakan coba lagi.',
-        ));
-        _isLoading = false;
-      });
-      _scrollToBottom();
-    } catch (e) {
-      setState(() {
-        _messages.add(ChatMessage.bot(
-          '❌ Terjadi kesalahan yang tidak terduga.\n\nSilakan coba lagi.',
-        ));
-        _isLoading = false;
-      });
-      _scrollToBottom();
-    }
   }
 
   /// Scroll to bottom of chat
@@ -112,6 +71,13 @@ class _ChatbotPageState extends State<ChatbotPage> {
         ),
         elevation: 0,
         actions: [
+          // Clear chat button
+          IconButton(
+            icon: const Icon(Icons.delete_outline),
+            onPressed: () {
+              context.read<ChatProvider>().clearChat();
+            },
+          ),
           // Info button
           IconButton(
             icon: const Icon(Icons.info_outline),
@@ -137,34 +103,41 @@ class _ChatbotPageState extends State<ChatbotPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Chat messages area
-          Expanded(
-            child: _messages.isEmpty
-                ? _buildEmptyState()
-                : ListView.builder(
-                    controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: _messages.length + (_isLoading ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      // Show loading indicator
-                      if (index == _messages.length && _isLoading) {
-                        return _buildLoadingBubble();
-                      }
-                      
-                      final message = _messages[index];
-                      return _buildMessageBubble(message);
-                    },
-                  ),
-          ),
+      body: Consumer<ChatProvider>(
+        builder: (context, chatProvider, child) {
+          final messages = chatProvider.messages;
+          final isLoading = chatProvider.isLoading;
 
-          // Divider
-          const Divider(height: 1),
+          return Column(
+            children: [
+              // Chat messages area
+              Expanded(
+                child: messages.isEmpty
+                    ? _buildEmptyState()
+                    : ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.all(16),
+                        itemCount: messages.length + (isLoading ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          // Show loading indicator
+                          if (index == messages.length && isLoading) {
+                            return _buildLoadingBubble();
+                          }
 
-          // Input area
-          _buildInputArea(),
-        ],
+                          final message = messages[index];
+                          return _buildMessageBubble(message);
+                        },
+                      ),
+              ),
+
+              // Divider
+              const Divider(height: 1),
+
+              // Input area
+              _buildInputArea(isLoading),
+            ],
+          );
+        },
       ),
     );
   }
@@ -302,7 +275,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
   }
 
   /// Build input area
-  Widget _buildInputArea() {
+  Widget _buildInputArea(bool isLoading) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       color: Colors.white,
@@ -328,7 +301,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                 ),
                 maxLines: null,
                 textCapitalization: TextCapitalization.sentences,
-                enabled: !_isLoading,
+                enabled: !isLoading,
                 onSubmitted: (_) => _sendMessage(),
               ),
             ),
@@ -348,7 +321,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                 ],
               ),
               child: IconButton(
-                icon: _isLoading
+                icon: isLoading
                     ? const SizedBox(
                         width: 20,
                         height: 20,
@@ -358,7 +331,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                         ),
                       )
                     : const Icon(Icons.send, color: Colors.white),
-                onPressed: _isLoading ? null : _sendMessage,
+                onPressed: isLoading ? null : _sendMessage,
               ),
             ),
           ],

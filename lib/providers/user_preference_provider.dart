@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user_preference.dart';
+import '../models/dashboard_summary.dart';
 import '../models/api_error.dart';
 import '../services/user_service.dart';
 import '../utils/constants.dart';
@@ -11,6 +12,7 @@ class UserPreferenceProvider with ChangeNotifier {
 
   PreferenceStatus _status = PreferenceStatus.initial;
   UserPreference? _currentPreference;
+  DashboardSummary? _dashboardSummary;
   String? _errorMessage;
 
   // Track profile updates for dashboard refresh
@@ -18,6 +20,7 @@ class UserPreferenceProvider with ChangeNotifier {
 
   PreferenceStatus get status => _status;
   UserPreference? get currentPreference => _currentPreference;
+  DashboardSummary? get dashboardSummary => _dashboardSummary;
   String? get errorMessage => _errorMessage;
   bool get isLoading => _status == PreferenceStatus.loading;
   bool get profileUpdated => _profileUpdated;
@@ -102,6 +105,29 @@ class UserPreferenceProvider with ChangeNotifier {
     try {
       final preference = await _userService.getPreference();
       _currentPreference = preference;
+      _status = PreferenceStatus.success;
+      notifyListeners();
+    } on ApiError catch (e) {
+      _errorMessage = e.message;
+      _status = PreferenceStatus.error;
+      notifyListeners();
+    } catch (e) {
+      _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
+      _status = PreferenceStatus.error;
+      notifyListeners();
+    }
+  }
+
+  /// Fetch dashboard summary
+  Future<void> fetchDashboardSummary() async {
+    // Only set loading if we don't have data yet
+    if (_dashboardSummary == null) {
+      _status = PreferenceStatus.loading;
+      notifyListeners();
+    }
+
+    try {
+      _dashboardSummary = await _userService.getDashboardSummary();
       _status = PreferenceStatus.success;
       notifyListeners();
     } on ApiError catch (e) {

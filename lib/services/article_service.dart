@@ -18,11 +18,7 @@ class ArticleService {
         },
       );
 
-      final data = response.data;
-      // Standard backend response is flat: { items: [], pagination: {} }
-      // But ApiService.get converts bad responses to ApiError.
-      // So if we are here, it's a 2xx response.
-      
+      final data = _api.unwrap(response);
       return ArticleListResponse.fromJson(data);
     } catch (e) {
       rethrow;
@@ -32,8 +28,9 @@ class ArticleService {
   Future<Article> getArticleDetail(String slug) async {
     try {
       final response = await _api.get('${ApiConstants.publicArticles}/$slug');
+      final data = _api.unwrap(response);
       
-      return Article.fromJson(response.data);
+      return Article.fromJson(data);
     } catch (e) {
       rethrow;
     }

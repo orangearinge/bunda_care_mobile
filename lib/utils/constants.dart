@@ -91,6 +91,18 @@ class ApiConstants {
   static const String scanFood = "/api/scan-food";
   static const String recommendation = "/api/recommendation";
   static const String mealLog = "/api/meal-log";
+  static const String menuDetail = "/api/menus";
+
+  // ==================== User Endpoints ====================
+  static const String userPreference = "/api/user/preference";
+  static const String userDashboard = "/api/user/dashboard";
+  static const String userProfile = "/api/user/profile";
+  static const String userAvatar = "/api/user/avatar";
+  static const String userHistory = "/api/user/history";
+
+  // ==================== Chat Endpoints ====================
+  static const String chat = "/api/chat";
+  static const String chatRebuild = "/api/chat/rebuild";
 
   // ==================== Article Endpoints ====================
   static const String publicArticles = "/api/public/articles";

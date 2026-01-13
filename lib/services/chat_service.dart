@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'api_service.dart';
 import '../models/api_error.dart';
+import '../utils/constants.dart';
 
 /// Service untuk interaksi dengan RAG Chatbot
 /// Menangani komunikasi dengan backend chat API tanpa menyimpan ke database
@@ -9,13 +10,6 @@ class ChatService {
 
   /// Kirim pertanyaan ke RAG chatbot dan dapatkan jawaban
   /// Respons bersifat temporary dan tidak disimpan ke database
-  ///
-  /// [query] - Pertanyaan dari user
-  ///
-  /// Returns Map dengan struktur:
-  /// - query: String (pertanyaan yang dikirim)
-  /// - answer: String (jawaban dari RAG)
-  /// - status: String (success/failed)
   Future<Map<String, dynamic>> sendQuery(String query) async {
     try {
       // Validasi input
@@ -26,23 +20,19 @@ class ChatService {
         );
       }
 
-      // Kirim POST request ke endpoint /api/chat
       final response = await _apiService.post(
-        '/api/chat',
+        ApiConstants.chat,
         data: {'query': query},
       );
 
-      // Parse response
-      if (response.data is Map<String, dynamic>) {
-        final data = response.data as Map<String, dynamic>;
+      final data = _apiService.unwrap(response);
 
-        if (data['answer'] != null) {
-          return {
-            'query': data['query'] ?? query,
-            'answer': data['answer'],
-            'status': 'success',
-          };
-        }
+      if (data is Map<String, dynamic> && data['answer'] != null) {
+        return {
+          'query': data['query'] ?? query,
+          'answer': data['answer'],
+          'status': 'success',
+        };
       }
 
       throw ApiError(
@@ -56,10 +46,9 @@ class ChatService {
   }
 
   /// Rebuild RAG index (untuk admin/maintenance)
-  /// Ini akan memperbarui index di server jika ada dataset baru
   Future<void> rebuildIndex() async {
     try {
-      final response = await _apiService.post('/api/chat/rebuild');
+      final response = await _apiService.post(ApiConstants.chatRebuild);
 
       if (response.statusCode != 200) {
         throw ApiError(

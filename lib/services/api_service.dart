@@ -139,6 +139,21 @@ class ApiService {
     }
   }
 
+  // ==================== Data Parsing ====================
+
+  /// Standardize data extraction from potential wrapped responses
+  /// Backend often returns: { "status": "success", "data": ... }
+  /// This helper extracts the 'data' part if it exists, or returns the raw data
+  dynamic unwrap(Response response) {
+    final data = response.data;
+    if (data is Map<String, dynamic>) {
+      if (data['status'] == 'success' || data['success'] == true) {
+        return data['data'] ?? data;
+      }
+    }
+    return data;
+  }
+
   // ==================== Error Handling ====================
 
   /// Handle Dio errors and convert to ApiError

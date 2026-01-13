@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/food_provider.dart';
+import '../providers/user_preference_provider.dart';
 
 class MealLogPage extends StatefulWidget {
   const MealLogPage({super.key});
@@ -175,8 +176,59 @@ class _MealLogPageState extends State<MealLogPage> {
           if (!isConsumed)
             InkWell(
               onTap: () async {
+                final prefProvider = context.read<UserPreferenceProvider>();
+                final summary = prefProvider.dashboardSummary;
+
+                if (summary != null) {
+                  final currentCalories = summary.todayNutrition.calories;
+                  final targetCalories = summary.targets.calories;
+                  final menuCalories = log['total']['calories'] ?? 0;
+
+                  if (currentCalories >= targetCalories || (currentCalories + menuCalories) > targetCalories) {
+                    final bool? proceed = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        title: Row(
+                          children: [
+                            Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
+                            const SizedBox(width: 8),
+                            const Text("Target Terpenuhi"),
+                          ],
+                        ),
+                        content: Text(
+                          currentCalories >= targetCalories
+                              ? "Bunda sudah memenuhi target kalori hari ini. Tetap ingin mengonfirmasi makanan ini?"
+                              : "Mengonfirmasi makanan ini akan membuat asupan kalori Bunda melebihi target harian. Tetap simpan?",
+                          style: GoogleFonts.poppins(),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: Text("Batal", style: TextStyle(color: Colors.grey[600])),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.pink[400],
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            child: const Text("Tetap Konfirmasi"),
+                          ),
+                        ],
+                      ),
+                    );
+
+                    if (proceed != true) return;
+                  }
+                }
+
                 final success = await provider.confirmMeal(logId);
                 if (success && mounted) {
+                  // Refresh global nutritional data
+                  context.read<UserPreferenceProvider>().fetchDashboardSummary();
+                  
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Selamat Makan! Gizi Anda telah diperbarui.')),
                   );

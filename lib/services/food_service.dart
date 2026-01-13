@@ -20,16 +20,19 @@ class FoodService {
         "image": MultipartFile.fromBytes(imageBytes, filename: fileName),
       });
 
-      final response = await _api.post(ApiConstants.scanFood, data: formData);
+      // Food scanning might take longer, use 60s timeout
+      final response = await _api.post(
+        ApiConstants.scanFood,
+        data: formData,
+        options: Options(
+          sendTimeout: const Duration(seconds: 60),
+          receiveTimeout: const Duration(seconds: 60),
+        ),
+      );
 
-      final data = response.data;
-      if (data != null) {
-        // Handle both wrapped and unwrapped data
-        if (data['status'] == 'success' || data['success'] == true) {
-          return data['data'] as Map<String, dynamic>;
-        } else if (data.containsKey('candidates')) {
-          return data as Map<String, dynamic>;
-        }
+      final data = _api.unwrap(response);
+      if (data != null && data is Map<String, dynamic>) {
+        return data;
       }
 
       throw ApiError(
@@ -52,8 +55,6 @@ class FoodService {
       Map<String, dynamic> queryParams = {};
       if (mealType != null) queryParams['meal_type'] = mealType;
 
-      // If we have detected IDs, we can pass them in the query or body.
-      // The backend handles both. Let's use query for simplicity if not too many.
       if (detectedIds != null && detectedIds.isNotEmpty) {
         queryParams['detected_ids'] = detectedIds.join(',');
       }
@@ -63,14 +64,9 @@ class FoodService {
         queryParameters: queryParams,
       );
 
-      final data = response.data;
-      if (data != null) {
-        // Handle both wrapped and unwrapped data
-        if (data['status'] == 'success' || data['success'] == true) {
-          return data['data'] as Map<String, dynamic>;
-        } else if (data.containsKey('recommendations')) {
-          return data as Map<String, dynamic>;
-        }
+      final data = _api.unwrap(response);
+      if (data != null && data is Map<String, dynamic>) {
+        return data;
       }
 
       throw ApiError(
@@ -87,16 +83,11 @@ class FoodService {
   /// GET /api/menus/:id
   Future<FoodDetail> getFoodDetail(int menuId) async {
     try {
-      final response = await _api.get('/api/menus/$menuId');
-      final data = response.data;
+      final response = await _api.get('${ApiConstants.menuDetail}/$menuId');
+      final data = _api.unwrap(response);
 
-      if (data != null) {
-        // Handle both wrapped and unwrapped data
-        if (data['status'] == 'success' || data['success'] == true) {
-          return FoodDetail.fromJson(data['data']);
-        } else if (data.containsKey('id')) {
-          return FoodDetail.fromJson(data);
-        }
+      if (data != null && data is Map<String, dynamic>) {
+        return FoodDetail.fromJson(data);
       }
 
       throw ApiError(
@@ -109,7 +100,6 @@ class FoodService {
     }
   }
 
-
   /// Log a meal (Wishlist or consumed)
   /// POST /api/meal-log
   Future<Map<String, dynamic>> logMeal({
@@ -119,14 +109,14 @@ class FoodService {
   }) async {
     try {
       final response = await _api.post(
-        '/api/meal-log',
+        ApiConstants.mealLog,
         data: {
           "menu_id": menuId,
           "servings": servings,
           "is_consumed": isConsumed,
         },
       );
-      return response.data;
+      return _api.unwrap(response);
     } catch (e) {
       if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));
@@ -138,14 +128,15 @@ class FoodService {
   Future<List<dynamic>> getMealLogs({int limit = 50}) async {
     try {
       final response = await _api.get(
-        '/api/meal-log',
+        ApiConstants.mealLog,
         queryParameters: {"limit": limit},
       );
-      final data = response.data;
-      if (data != null && data['status'] == 'success' && data['data'] != null) {
-        return (data['data'] as Map<String, dynamic>)['items'] ?? [];
-      } else if (data != null && data['items'] != null) {
-        return data['items'];
+      final data = _api.unwrap(response);
+      
+      if (data != null && data is Map<String, dynamic>) {
+        return data['items'] ?? [];
+      } else if (data is List) {
+        return data;
       }
       return [];
     } catch (e) {
@@ -158,9 +149,8 @@ class FoodService {
   /// POST /api/meal-log/:id/confirm
   Future<bool> confirmMeal(int mealLogId) async {
     try {
-      final response = await _api.post('/api/meal-log/$mealLogId/confirm');
-      return response.data?['status'] == 'success' ||
-          response.statusCode == 200;
+      final response = await _api.post('${ApiConstants.mealLog}/$mealLogId/confirm');
+      return response.statusCode == 200;
     } catch (e) {
       if (e is ApiError) {
         throw ApiError(

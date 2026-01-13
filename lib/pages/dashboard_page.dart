@@ -6,7 +6,6 @@ import '../providers/auth_provider.dart';
 import '../providers/user_preference_provider.dart';
 import '../services/user_service.dart';
 import '../models/dashboard_summary.dart';
-import '../utils/constants.dart';
 import 'rekomendasi_page.dart';
 import 'meal_log_page.dart';
 import 'food_detail_page.dart';
@@ -21,11 +20,6 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  int _selectedIndex = 0;
-  DashboardSummary? _dashboardSummary;
-  bool _isLoading = true;
-  final UserService _userService = UserService();
-
   @override
   void initState() {
     super.initState();
@@ -47,24 +41,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _fetchDashboardData() async {
-    try {
-      final summary = await _userService.getDashboardSummary();
-      if (mounted) {
-        setState(() {
-          _dashboardSummary = summary;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (ApiConstants.isDevelopment) {
-        print('DASHBOARD FETCH ERROR: $e');
-      }
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+    await context.read<UserPreferenceProvider>().fetchDashboardSummary();
   }
 
   void _logout(BuildContext context) async {
@@ -73,11 +50,11 @@ class _DashboardPageState extends State<DashboardPage> {
     // GoRouter will automatically redirect to login
   }
 
-  String _getStatusText() {
-    if (_dashboardSummary == null) return "Kesehatan Ibu & Bayi";
+  String _getStatusText(DashboardSummary? dashboardSummary) {
+    if (dashboardSummary == null) return "Kesehatan Ibu & Bayi";
 
-    final role = _dashboardSummary!.user.role;
-    final prefs = _dashboardSummary!.user.preferences;
+    final role = dashboardSummary.user.role;
+    final prefs = dashboardSummary.user.preferences;
 
     if (role == 'IBU_HAMIL') {
       final weeks = prefs['gestational_age_weeks'];
@@ -103,6 +80,8 @@ class _DashboardPageState extends State<DashboardPage> {
     final authProvider = context.watch<AuthProvider>();
     final preferenceProvider = context.watch<UserPreferenceProvider>();
     final userName = authProvider.currentUser?.name ?? "Pengguna";
+    final dashboardSummary = preferenceProvider.dashboardSummary;
+    final isLoading = preferenceProvider.isLoading;
 
     // Auto-refresh when profile is updated
     if (preferenceProvider.profileUpdated) {
@@ -143,7 +122,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              _dashboardSummary?.user.name ?? userName,
+                              dashboardSummary?.user.name ?? userName,
                               style: GoogleFonts.poppins(
                                 fontSize: 27,
                                 fontWeight: FontWeight.bold,
@@ -154,7 +133,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                         Row(
                           children: [
-                            if (_isLoading)
+                            if (isLoading)
                               const Padding(
                                 padding: EdgeInsets.only(right: 8.0),
                                 child: SizedBox(
@@ -266,7 +245,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
-                                    _getStatusText(),
+                                    _getStatusText(dashboardSummary),
                                     style: const TextStyle(
                                       fontSize: 11,
                                       color: Colors.white,
@@ -332,16 +311,16 @@ class _DashboardPageState extends State<DashboardPage> {
               // Horizontal Recommendations List
               SizedBox(
                 height: 220,
-                child: _isLoading && _dashboardSummary == null
+                child: isLoading && dashboardSummary == null
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         scrollDirection: Axis.horizontal,
                         physics: const BouncingScrollPhysics(),
                         itemCount:
-                            _dashboardSummary?.recommendations.length ?? 0,
+                            dashboardSummary?.recommendations.length ?? 0,
                         itemBuilder: (context, index) {
-                          final rec = _dashboardSummary!.recommendations[index];
+                          final rec = dashboardSummary!.recommendations[index];
                           final colors = [
                             Colors.green,
                             Colors.teal,
@@ -419,12 +398,12 @@ class _DashboardPageState extends State<DashboardPage> {
                               Builder(
                                 builder: (context) {
                                   final consumed =
-                                      _dashboardSummary
+                                      dashboardSummary
                                           ?.todayNutrition
                                           .calories ??
                                       0;
                                   final target =
-                                      _dashboardSummary?.targets.calories ?? 1;
+                                      dashboardSummary?.targets.calories ?? 1;
                                   final percentage = (consumed / target * 100)
                                       .clamp(0, 100)
                                       .toInt();
@@ -507,29 +486,29 @@ class _DashboardPageState extends State<DashboardPage> {
                                     const SizedBox(height: 12),
                                     _buildNutrientSmallProgress(
                                       "Protein",
-                                      _dashboardSummary
+                                      dashboardSummary
                                               ?.todayNutrition
                                               .proteinG ??
                                           0,
-                                      _dashboardSummary?.targets.proteinG ?? 1,
+                                      dashboardSummary?.targets.proteinG ?? 1,
                                       Colors.orange,
                                     ),
                                     const SizedBox(height: 8),
                                     _buildNutrientSmallProgress(
                                       "Karbo",
-                                      _dashboardSummary
+                                      dashboardSummary
                                               ?.todayNutrition
                                               .carbsG ??
                                           0,
-                                      _dashboardSummary?.targets.carbsG ?? 1,
+                                      dashboardSummary?.targets.carbsG ?? 1,
                                       Colors.blue,
                                     ),
                                     const SizedBox(height: 8),
                                     _buildNutrientSmallProgress(
                                       "Lemak",
-                                      _dashboardSummary?.todayNutrition.fatG ??
+                                      dashboardSummary?.todayNutrition.fatG ??
                                           0,
-                                      _dashboardSummary?.targets.fatG ?? 1,
+                                      dashboardSummary?.targets.fatG ?? 1,
                                       Colors.teal,
                                     ),
                                   ],
@@ -537,7 +516,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                             ],
                           ),
-                          if (_dashboardSummary != null) ...[
+                          if (dashboardSummary != null) ...[
                             const SizedBox(height: 20),
                             const Divider(),
                             const SizedBox(height: 10),
@@ -546,19 +525,19 @@ class _DashboardPageState extends State<DashboardPage> {
                               children: [
                                 _buildRemainingItem(
                                   "Sisa Kalori",
-                                  "${_dashboardSummary!.remaining.calories} kkal",
+                                  "${dashboardSummary.remaining.calories} kkal",
                                   Icons.local_fire_department,
                                   Colors.pink[300]!,
                                 ),
                                 _buildRemainingItem(
                                   "Protein",
-                                  "${_dashboardSummary!.remaining.proteinG.toStringAsFixed(1)}g",
+                                  "${dashboardSummary.remaining.proteinG.toStringAsFixed(1)}g",
                                   Icons.egg_outlined,
                                   Colors.orange[300]!,
                                 ),
                                 _buildRemainingItem(
                                   "Karbo",
-                                  "${_dashboardSummary!.remaining.carbsG.toStringAsFixed(1)}g",
+                                  "${dashboardSummary.remaining.carbsG.toStringAsFixed(1)}g",
                                   Icons.bakery_dining_outlined,
                                   Colors.blue[300]!,
                                 ),

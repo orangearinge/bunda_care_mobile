@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../models/history_entry.dart';
-import '../services/user_service.dart';
+import '../providers/history_provider.dart';
 
 class HistoryDetailPage extends StatefulWidget {
   final String date;
@@ -18,33 +19,12 @@ class HistoryDetailPage extends StatefulWidget {
 }
 
 class _HistoryDetailPageState extends State<HistoryDetailPage> {
-  final UserService _userService = UserService();
-  bool _isLoading = true;
-  List<HistoryDetailItem> _items = [];
-
   @override
   void initState() {
     super.initState();
-    _fetchDetail();
-  }
-
-  Future<void> _fetchDetail() async {
-    try {
-      final items = await _userService.getHistoryDetail(widget.date);
-      setState(() {
-        _items = items;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memuat detail: $e')),
-        );
-      }
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HistoryProvider>().fetchHistoryDetail(widget.date);
+    });
   }
 
   @override
@@ -64,17 +44,66 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black87),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Colors.pink))
-          : _items.isEmpty
-              ? _buildEmptyState()
-              : ListView.builder(
-                  padding: const EdgeInsets.all(20),
-                  itemCount: _items.length,
-                  itemBuilder: (context, index) {
-                    return _buildLogCard(_items[index]);
-                  },
-                ),
+      body: Consumer<HistoryProvider>(
+        builder: (context, historyProvider, child) {
+          final items = historyProvider.historyDetails;
+          final isLoading = historyProvider.isLoading;
+          final errorMessage = historyProvider.errorMessage;
+
+          if (isLoading && items.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.pink),
+            );
+          }
+
+          if (errorMessage != null && items.isEmpty) {
+            return _buildErrorState(errorMessage);
+          }
+
+          if (items.isEmpty) {
+            return _buildEmptyState();
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(20),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              return _buildLogCard(items[index]);
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String errorMessage) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+            const SizedBox(height: 16),
+            Text(
+              errorMessage,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(color: Colors.red[700]),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => context
+                  .read<HistoryProvider>()
+                  .fetchHistoryDetail(widget.date),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.pink,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text("Coba Lagi"),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

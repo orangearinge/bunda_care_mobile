@@ -5,6 +5,7 @@ import '../models/food_detail.dart';
 import '../models/api_error.dart';
 import '../services/food_service.dart';
 import '../providers/food_provider.dart';
+import '../providers/user_preference_provider.dart';
 import 'meal_log_page.dart';
 
 class FoodDetailPage extends StatefulWidget {
@@ -20,52 +21,98 @@ class FoodDetailPage extends StatefulWidget {
 }
 
 class _FoodDetailPageState extends State<FoodDetailPage> {
-  final FoodService _foodService = FoodService();
-  FoodDetail? _foodDetail;
-  bool _isLoading = true;
-  String? _errorMessage;
-
   @override
   void initState() {
     super.initState();
-    _fetchFoodDetail();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchFoodDetail();
+      _fetchDashboardData();
+    });
+  }
+
+  Future<void> _fetchDashboardData() async {
+    final prefProvider = context.read<UserPreferenceProvider>();
+    // Refresh dashboard data to get current consumption
+    await prefProvider.fetchDashboardSummary();
   }
 
   Future<void> _fetchFoodDetail() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final detail = await _foodService.getFoodDetail(widget.menuId);
-      setState(() {
-        _foodDetail = detail;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = e is ApiError ? e.message : 'Gagal memuat detail makanan';
-      });
-    }
+    context.read<FoodProvider>().fetchFoodDetail(widget.menuId);
   }
 
   Future<void> _addToMealPlan(bool isConsumed) async {
-    if (_foodDetail == null) return;
+    final foodProvider = context.read<FoodProvider>();
+    final foodDetail = foodProvider.selectedFoodDetail;
+    if (foodDetail == null) return;
 
-    final success = await context.read<FoodProvider>().logMeal(
-          menuId: _foodDetail!.id,
+    if (isConsumed) {
+      final prefProvider = context.read<UserPreferenceProvider>();
+      final summary = prefProvider.dashboardSummary;
+
+      if (summary != null) {
+        final currentCalories = summary.todayNutrition.calories;
+        final targetCalories = summary.targets.calories;
+        final newCalories = foodDetail.nutrition.calories;
+
+        // Jika sudah melebihi atau akan melebihi target
+        if (currentCalories >= targetCalories || (currentCalories + newCalories) > targetCalories) {
+          final bool? proceed = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: Row(
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
+                  const SizedBox(width: 8),
+                  const Text("Target Terpenuhi"),
+                ],
+              ),
+              content: Text(
+                currentCalories >= targetCalories
+                    ? "Bunda sudah memenuhi target kalori hari ini. Tetap ingin mencatat makanan ini?"
+                    : "Mencatat makanan ini akan membuat asupan kalori Bunda melebihi target harian. Tetap simpan?",
+                style: GoogleFonts.poppins(),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: Text("Batal", style: TextStyle(color: Colors.grey[600])),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (context.mounted) Navigator.pop(context, true);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.pink[400],
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: const Text("Tetap Simpan"),
+                ),
+              ],
+            ),
+          );
+
+          if (proceed != true) return;
+        }
+      }
+    }
+
+    final success = await foodProvider.logMeal(
+          menuId: foodDetail.id,
           isConsumed: isConsumed,
         );
 
     if (mounted && success) {
+      // Refresh dashboard summary in provider after logging
+      context.read<UserPreferenceProvider>().fetchDashboardSummary();
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             isConsumed
-                ? '${_foodDetail!.name} ditandai sudah dikonsumsi'
-                : '${_foodDetail!.name} ditambahkan ke rencana makan',
+                ? '${foodDetail.name} ditandai sudah dikonsumsi'
+                : '${foodDetail.name} ditambahkan ke rencana makan',
           ),
           action: SnackBarAction(
             label: 'Lihat',
@@ -83,26 +130,34 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.pink[50],
-      appBar: AppBar(
-        backgroundColor: Colors.pink[300],
-        foregroundColor: Colors.white,
-        title: Text(
-          _foodDetail?.name ?? 'Detail Makanan',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        elevation: 0,
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _errorMessage != null
-              ? _buildErrorState()
-              : _buildContent(),
+    return Consumer<FoodProvider>(
+      builder: (context, foodProvider, child) {
+        final foodDetail = foodProvider.selectedFoodDetail;
+        final isLoading = foodProvider.isLoading;
+        final errorMessage = foodProvider.errorMessage;
+
+        return Scaffold(
+          backgroundColor: Colors.pink[50],
+          appBar: AppBar(
+            backgroundColor: Colors.pink[300],
+            foregroundColor: Colors.white,
+            title: Text(
+              foodDetail?.name ?? 'Detail Makanan',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            elevation: 0,
+          ),
+          body: isLoading && foodDetail == null
+              ? const Center(child: CircularProgressIndicator())
+              : errorMessage != null
+                  ? _buildErrorState(errorMessage)
+                  : _buildContent(foodDetail),
+        );
+      },
     );
   }
 
-  Widget _buildErrorState() {
+  Widget _buildErrorState(String errorMessage) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -116,7 +171,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              _errorMessage!,
+              errorMessage,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.red[700],
@@ -143,40 +198,40 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-  Widget _buildContent() {
-    if (_foodDetail == null) return const SizedBox.shrink();
+  Widget _buildContent(FoodDetail? foodDetail) {
+    if (foodDetail == null) return const SizedBox.shrink();
 
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeroImage(),
+          _buildHeroImage(foodDetail),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(),
+                _buildHeader(foodDetail),
                 const SizedBox(height: 16),
                 const Divider(),
                 const SizedBox(height: 16),
-                if (_foodDetail!.description != null &&
-                    _foodDetail!.description!.isNotEmpty)
-                  _buildDescription(),
+                if (foodDetail.description != null &&
+                    foodDetail.description!.isNotEmpty)
+                  _buildDescription(foodDetail),
                 const SizedBox(height: 20),
                 _buildInfoCard(),
                 const SizedBox(height: 24),
-                _buildNutritionSection(),
+                _buildNutritionSection(foodDetail),
                 const SizedBox(height: 24),
-                _buildIngredientsSection(),
-                if (_foodDetail!.cookingInstructions != null &&
-                    _foodDetail!.cookingInstructions!.isNotEmpty) ...[
+                _buildIngredientsSection(foodDetail),
+                if (foodDetail.cookingInstructions != null &&
+                    foodDetail.cookingInstructions!.isNotEmpty) ...[
                   const SizedBox(height: 24),
-                  _buildCookingInstructions(),
+                  _buildCookingInstructions(foodDetail),
                 ],
                 const SizedBox(height: 32),
-                _buildActionButtons(),
+                _buildActionButtons(foodDetail),
                 const SizedBox(height: 40),
               ],
             ),
@@ -186,7 +241,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-  Widget _buildHeroImage() {
+  Widget _buildHeroImage(FoodDetail foodDetail) {
     return Container(
       height: 250,
       width: double.infinity,
@@ -196,13 +251,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           bottom: Radius.circular(30),
         ),
       ),
-      child: _foodDetail!.imageUrl != null && _foodDetail!.imageUrl!.isNotEmpty
+      child: foodDetail.imageUrl != null && foodDetail.imageUrl!.isNotEmpty
           ? ClipRRect(
               borderRadius: const BorderRadius.vertical(
                 bottom: Radius.circular(30),
               ),
               child: Image.network(
-                _foodDetail!.imageUrl!,
+                foodDetail.imageUrl!,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Icon(
                   Icons.restaurant,
@@ -230,7 +285,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(FoodDetail foodDetail) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -239,22 +294,22 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _foodDetail!.name,
+                foodDetail.name,
                 style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
-              if (_foodDetail!.tags != null && _foodDetail!.tags!.isNotEmpty)
-                _buildTags(),
+              if (foodDetail.tags != null && foodDetail.tags!.isNotEmpty)
+                _buildTags(foodDetail),
               const SizedBox(height: 8),
               Row(
                 children: [
-                  _buildCategoryBadge(),
-                  if (_foodDetail!.cookingTimeMinutes != null) ...[
+                  _buildCategoryBadge(foodDetail),
+                  if (foodDetail.cookingTimeMinutes != null) ...[
                     const SizedBox(width: 8),
-                    _buildTimeBadge(),
+                    _buildTimeBadge(foodDetail),
                   ],
                 ],
               ),
@@ -262,12 +317,12 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           ),
         ),
         const SizedBox(width: 12),
-        _buildCalorieBadge(),
+        _buildCalorieBadge(foodDetail),
       ],
     );
   }
 
-  Widget _buildCategoryBadge() {
+  Widget _buildCategoryBadge(FoodDetail foodDetail) {
     final categoryColors = {
       'BREAKFAST': Colors.orange,
       'LUNCH': Colors.green,
@@ -280,8 +335,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       'DINNER': 'DINNER'
     };
 
-    final color = categoryColors[_foodDetail!.category] ?? Colors.grey;
-    final label = categoryLabels[_foodDetail!.category] ?? _foodDetail!.category;
+    final color = categoryColors[foodDetail.category] ?? Colors.grey;
+    final label = categoryLabels[foodDetail.category] ?? foodDetail.category;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -301,7 +356,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-  Widget _buildTimeBadge() {
+  Widget _buildTimeBadge(FoodDetail foodDetail) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -314,7 +369,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           Icon(Icons.access_time, size: 14, color: Colors.grey[700]),
           const SizedBox(width: 4),
           Text(
-            '${_foodDetail!.cookingTimeMinutes} mnt',
+            '${foodDetail.cookingTimeMinutes} mnt',
             style: TextStyle(
               color: Colors.grey[700],
               fontSize: 12,
@@ -326,8 +381,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-  Widget _buildTags() {
-    final tagsList = _foodDetail!.tags!
+  Widget _buildTags(FoodDetail foodDetail) {
+    final tagsList = foodDetail.tags!
         .split(',')
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty)
@@ -358,7 +413,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-  Widget _buildCalorieBadge() {
+  Widget _buildCalorieBadge(FoodDetail foodDetail) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -384,7 +439,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           ),
           const SizedBox(width: 4),
           Text(
-            '${_foodDetail!.nutrition.calories.toInt()} kkal',
+            '${foodDetail.nutrition.calories.toInt()} kkal',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -396,7 +451,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-  Widget _buildDescription() {
+  Widget _buildDescription(FoodDetail foodDetail) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -410,7 +465,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         ),
         const SizedBox(height: 8),
         Text(
-          _foodDetail!.description!,
+          foodDetail.description!,
           style: GoogleFonts.poppins(
             fontSize: 15,
             color: Colors.grey[700],
@@ -452,7 +507,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-  Widget _buildNutritionSection() {
+  Widget _buildNutritionSection(FoodDetail foodDetail) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -482,7 +537,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             children: [
               _buildNutrientRow(
                 'Kalori',
-                '${_foodDetail!.nutrition.calories.toInt()}',
+                '${foodDetail.nutrition.calories.toInt()}',
                 'kkal',
                 Icons.local_fire_department,
                 Colors.pink,
@@ -490,7 +545,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               const Divider(height: 24),
               _buildNutrientRow(
                 'Protein',
-                _foodDetail!.nutrition.proteinG.toStringAsFixed(1),
+                foodDetail.nutrition.proteinG.toStringAsFixed(1),
                 'g',
                 Icons.egg_outlined,
                 Colors.orange,
@@ -498,7 +553,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               const Divider(height: 24),
               _buildNutrientRow(
                 'Karbohidrat',
-                _foodDetail!.nutrition.carbsG.toStringAsFixed(1),
+                foodDetail.nutrition.carbsG.toStringAsFixed(1),
                 'g',
                 Icons.bakery_dining_outlined,
                 Colors.blue,
@@ -506,7 +561,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               const Divider(height: 24),
               _buildNutrientRow(
                 'Lemak',
-                _foodDetail!.nutrition.fatG.toStringAsFixed(1),
+                foodDetail.nutrition.fatG.toStringAsFixed(1),
                 'g',
                 Icons.water_drop_outlined,
                 Colors.teal,
@@ -558,8 +613,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-  Widget _buildIngredientsSection() {
-    if (_foodDetail!.ingredients.isEmpty) return const SizedBox.shrink();
+  Widget _buildIngredientsSection(FoodDetail foodDetail) {
+    if (foodDetail.ingredients.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -588,10 +643,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: _foodDetail!.ingredients.asMap().entries.map((entry) {
+            children: foodDetail.ingredients.asMap().entries.map((entry) {
               final index = entry.key;
               final ingredient = entry.value;
-              final isLast = index == _foodDetail!.ingredients.length - 1;
+              final isLast = index == foodDetail.ingredients.length - 1;
 
               return Column(
                 children: [
@@ -637,7 +692,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-  Widget _buildCookingInstructions() {
+  Widget _buildCookingInstructions(FoodDetail foodDetail) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -664,7 +719,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             ],
           ),
           child: Text(
-            _foodDetail!.cookingInstructions!,
+            foodDetail.cookingInstructions!,
             style: GoogleFonts.poppins(
               fontSize: 15,
               color: Colors.grey[700],
@@ -676,7 +731,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(FoodDetail foodDetail) {
     return Column(
       children: [
         SizedBox(

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../models/history_entry.dart';
-import '../services/user_service.dart';
+import '../providers/history_provider.dart';
 import 'history_detail_page.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -13,33 +14,12 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  final UserService _userService = UserService();
-  bool _isLoading = true;
-  List<HistoryEntry> _history = [];
-
   @override
   void initState() {
     super.initState();
-    _fetchHistory();
-  }
-
-  Future<void> _fetchHistory() async {
-    try {
-      final history = await _userService.getHistory();
-      setState(() {
-        _history = history;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memuat histori: $e')),
-        );
-      }
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<HistoryProvider>().fetchHistory();
+    });
   }
 
   @override
@@ -58,20 +38,68 @@ class _HistoryPageState extends State<HistoryPage> {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black87),
       ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Colors.pink))
-          : _history.isEmpty
-              ? _buildEmptyState()
-              : RefreshIndicator(
-                  onRefresh: _fetchHistory,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(20),
-                    itemCount: _history.length,
-                    itemBuilder: (context, index) {
-                      return _buildHistoryCard(_history[index]);
-                    },
-                  ),
-                ),
+      body: Consumer<HistoryProvider>(
+        builder: (context, historyProvider, child) {
+          final history = historyProvider.history;
+          final isLoading = historyProvider.isLoading;
+          final errorMessage = historyProvider.errorMessage;
+
+          if (isLoading && history.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.pink),
+            );
+          }
+
+          if (errorMessage != null && history.isEmpty) {
+            return _buildErrorState(errorMessage);
+          }
+
+          if (history.isEmpty) {
+            return _buildEmptyState();
+          }
+
+          return RefreshIndicator(
+            onRefresh: () => context.read<HistoryProvider>().fetchHistory(),
+            color: Colors.pink,
+            child: ListView.builder(
+              padding: const EdgeInsets.all(20),
+              itemCount: history.length,
+              itemBuilder: (context, index) {
+                return _buildHistoryCard(history[index]);
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String errorMessage) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+            const SizedBox(height: 16),
+            Text(
+              errorMessage,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(color: Colors.red[700]),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => context.read<HistoryProvider>().fetchHistory(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.pink,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text("Coba Lagi"),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

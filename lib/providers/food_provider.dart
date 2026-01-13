@@ -13,12 +13,14 @@ class FoodProvider with ChangeNotifier {
   Map<String, dynamic>? _scanResults;
   Map<String, dynamic>? _recommendations;
   List<dynamic> _mealLogs = [];
+  dynamic _selectedFoodDetail;
   String? _errorMessage;
 
   FoodStatus get status => _status;
   Map<String, dynamic>? get scanResults => _scanResults;
   Map<String, dynamic>? get recommendations => _recommendations;
   List<dynamic> get mealLogs => _mealLogs;
+  dynamic get selectedFoodDetail => _selectedFoodDetail;
   String? get errorMessage => _errorMessage;
   bool get isLoading => _status == FoodStatus.loading;
 
@@ -112,6 +114,29 @@ class FoodProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
+      _status = FoodStatus.error;
+      notifyListeners();
+    }
+  }
+
+  /// Fetch food detail
+  Future<void> fetchFoodDetail(int menuId) async {
+    _status = FoodStatus.loading;
+    _errorMessage = null;
+    _selectedFoodDetail = null;
+    notifyListeners();
+
+    try {
+      final detail = await _foodService.getFoodDetail(menuId);
+      _selectedFoodDetail = detail;
+      _status = FoodStatus.success;
+      notifyListeners();
+    } on ApiError catch (e) {
+      _errorMessage = e.message;
+      _status = FoodStatus.error;
+      notifyListeners();
+    } catch (e) {
+      _errorMessage = 'Gagal memuat detail makanan';
       _status = FoodStatus.error;
       notifyListeners();
     }

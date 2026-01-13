@@ -9,9 +9,6 @@ import 'api_service.dart';
 class UserService {
   final ApiService _api = ApiService();
 
-  /// Constants for preference endpoint
-  static const String _preferencePath = '/api/user/preference';
-
   /// Update user preferences
   /// POST /api/user/preference
   Future<({UserPreference preference, String? token})> updatePreference(
@@ -19,7 +16,7 @@ class UserService {
   ) async {
     try {
       final response = await _api.post(
-        _preferencePath,
+        ApiConstants.userPreference,
         data: preference.toJson(),
       );
 
@@ -28,22 +25,15 @@ class UserService {
         print('BACKEND RESPONSE: $data');
       }
 
-      // Check for success status or if data looks like a preference object
-      if (data != null &&
-          (data['status'] == 'success' ||
-              data['success'] == true ||
-              data.containsKey('role') ||
-              data['data'] != null)) {
-        final preferenceData = data['data'] ?? data;
-        final pref = UserPreference.fromJson(
-          preferenceData as Map<String, dynamic>,
-        );
+      final unwrapped = _api.unwrap(response);
+      if (unwrapped is Map<String, dynamic>) {
+        final pref = UserPreference.fromJson(unwrapped);
         final token = data['token'] as String?;
         return (preference: pref, token: token);
       } else {
         throw ApiError(
           code: 'UPDATE_FAILED',
-          message: data?['message'] ?? 'Gagal memperbarui preferensi',
+          message: 'Format respons tidak valid',
         );
       }
     } catch (e) {
@@ -56,20 +46,14 @@ class UserService {
   /// GET /api/user/preference
   Future<UserPreference?> getPreference() async {
     try {
-      final response = await _api.get(_preferencePath);
-
-      final data = response.data;
-      if (data != null) {
-        if (data['status'] == 'success' && data['data'] != null) {
-          return UserPreference.fromJson(data['data'] as Map<String, dynamic>);
-        } else if (data.containsKey('role')) {
-          // Direct response
-          return UserPreference.fromJson(data as Map<String, dynamic>);
-        }
+      final response = await _api.get(ApiConstants.userPreference);
+      final data = _api.unwrap(response);
+      
+      if (data != null && data is Map<String, dynamic> && data.containsKey('role')) {
+        return UserPreference.fromJson(data);
       }
       return null;
     } catch (e) {
-      // If no preference set yet, return null instead of throwing
       if (ApiConstants.isDevelopment) {
         print('GET PREFERENCE ERROR: $e');
       }
@@ -81,8 +65,8 @@ class UserService {
   /// GET /api/user/dashboard
   Future<DashboardSummary> getDashboardSummary() async {
     try {
-      final response = await _api.get('/api/user/dashboard');
-      final data = response.data;
+      final response = await _api.get(ApiConstants.userDashboard);
+      final data = _api.unwrap(response);
 
       if (data == null) {
         throw ApiError(
@@ -91,18 +75,14 @@ class UserService {
         );
       }
 
-      // Handle both wrapped and direct responses
-      if (data['status'] == 'success' && data['data'] != null) {
-        return DashboardSummary.fromJson(data['data'] as Map<String, dynamic>);
-      } else if (data.containsKey('user') || data.containsKey('targets')) {
-        // Direct response
-        return DashboardSummary.fromJson(data as Map<String, dynamic>);
-      } else {
-        throw ApiError(
-          code: 'FETCH_FAILED',
-          message: data['message'] ?? 'Gagal mengambil data dashboard',
-        );
+      if (data is Map<String, dynamic>) {
+        return DashboardSummary.fromJson(data);
       }
+      
+      throw ApiError(
+        code: 'FETCH_FAILED',
+        message: 'Format data dashboard tidak valid',
+      );
     } catch (e) {
       if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));
@@ -113,16 +93,13 @@ class UserService {
   /// GET /api/user/profile
   Future<Map<String, dynamic>> getUserProfile() async {
     try {
-      final response = await _api.get('/api/user/profile');
-      final data = response.data;
-      if (data != null) {
-        if (data['status'] == 'success' && data['data'] != null) {
-          return data['data'] as Map<String, dynamic>;
-        } else if (data.containsKey('id')) {
-          // Direct response
-          return data as Map<String, dynamic>;
-        }
+      final response = await _api.get(ApiConstants.userProfile);
+      final data = _api.unwrap(response);
+
+      if (data != null && data is Map<String, dynamic>) {
+        return data;
       }
+      
       throw ApiError(
         code: 'PROFILE_FETCH_FAILED',
         message: 'Gagal mengambil data profil pengguna',
@@ -138,16 +115,17 @@ class UserService {
   Future<String> updateAvatar(String avatarUrl) async {
     try {
       final response = await _api.put(
-        '/api/user/avatar',
+        ApiConstants.userAvatar,
         data: {'avatar': avatarUrl},
       );
-      final data = response.data;
-      if (data != null && data['avatar'] != null) {
+      final data = _api.unwrap(response);
+      
+      if (data != null && data is Map<String, dynamic> && data['avatar'] != null) {
         return data['avatar'] as String;
       }
       throw ApiError(
         code: 'AVATAR_UPDATE_FAILED',
-        message: data?['message'] ?? 'Gagal memperbarui avatar',
+        message: 'Gagal memperbarui avatar',
       );
     } catch (e) {
       if (e is ApiError) rethrow;
@@ -159,15 +137,12 @@ class UserService {
   /// GET /api/user/history
   Future<List<HistoryEntry>> getHistory() async {
     try {
-      final response = await _api.get('/api/user/history');
-      final data = response.data;
+      final response = await _api.get(ApiConstants.userHistory);
+      final data = _api.unwrap(response);
 
       if (data == null) return [];
 
-      final List<dynamic> listData =
-          (data is Map && data['status'] == 'success' && data['data'] != null)
-              ? data['data']
-              : (data is List ? data : []);
+      final List<dynamic> listData = data is List ? data : [];
 
       return listData
           .map((e) => HistoryEntry.fromJson(e as Map<String, dynamic>))
@@ -182,15 +157,12 @@ class UserService {
   /// GET /api/user/history/<date_str>
   Future<List<HistoryDetailItem>> getHistoryDetail(String dateStr) async {
     try {
-      final response = await _api.get('/api/user/history/$dateStr');
-      final data = response.data;
+      final response = await _api.get('${ApiConstants.userHistory}/$dateStr');
+      final data = _api.unwrap(response);
 
       if (data == null) return [];
 
-      final List<dynamic> listData =
-          (data is Map && data['status'] == 'success' && data['data'] != null)
-              ? data['data']
-              : (data is List ? data : []);
+      final List<dynamic> listData = data is List ? data : [];
 
       return listData
           .map((e) => HistoryDetailItem.fromJson(e as Map<String, dynamic>))
