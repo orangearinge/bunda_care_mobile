@@ -23,7 +23,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    // Fetch data on init
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserPreferenceProvider>(
         context,
@@ -79,7 +78,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             final hasAvatar =
                                 avatarUrl != null && avatarUrl.isNotEmpty;
 
-                            // Construct full URL if relative
                             String? finalUrl;
                             if (hasAvatar) {
                               if (avatarUrl.startsWith('http')) {
@@ -155,7 +153,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             );
 
-                            // Refresh data when returning from edit page
                             if (result == true || result == null) {
                               if (mounted) {
                                 final userPreferenceProvider =
@@ -191,7 +188,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                     const SizedBox(height: 24),
 
-                    // Profil Saya Section
                     _buildSectionHeader('Profil Saya'),
                     const SizedBox(height: 12),
                     Container(
@@ -245,7 +241,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                     const SizedBox(height: 24),
 
-                    // Rekam Medis Section
                     _buildSectionHeader('Rekam Medis'),
                     const SizedBox(height: 12),
                     Container(
@@ -296,8 +291,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               title: 'Alergi',
                               items: pref.allergens,
                             ),
-
-                          // Additional metrics for detailed view
                           if (pref.lilaCm != null) ...[
                             const SizedBox(height: 12),
                             Row(
@@ -310,7 +303,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               ],
                             ),
                           ],
-
                           if (pref.role == 'IBU_MENYUSUI' &&
                               pref.lactationPhase != null) ...[
                             const SizedBox(height: 12),
@@ -327,7 +319,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                     const SizedBox(height: 24),
 
-                    // Nutritional Target Section
                     if (pref.nutritionalTargets != null) ...[
                       _buildSectionHeader('Target Nutrisi Harian'),
                       const SizedBox(height: 12),
