@@ -1,5 +1,6 @@
 import '../models/user_preference.dart';
 import '../models/dashboard_summary.dart';
+import '../models/history_entry.dart';
 import '../models/api_error.dart';
 import '../utils/constants.dart';
 import 'api_service.dart';
@@ -148,6 +149,52 @@ class UserService {
         code: 'AVATAR_UPDATE_FAILED',
         message: data?['message'] ?? 'Gagal memperbarui avatar',
       );
+    } catch (e) {
+      if (e is ApiError) rethrow;
+      throw ApiError.fromException(Exception(e));
+    }
+  }
+
+  /// Get nutritional history
+  /// GET /api/user/history
+  Future<List<HistoryEntry>> getHistory() async {
+    try {
+      final response = await _api.get('/api/user/history');
+      final data = response.data;
+
+      if (data == null) return [];
+
+      final List<dynamic> listData =
+          (data is Map && data['status'] == 'success' && data['data'] != null)
+              ? data['data']
+              : (data is List ? data : []);
+
+      return listData
+          .map((e) => HistoryEntry.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      if (e is ApiError) rethrow;
+      throw ApiError.fromException(Exception(e));
+    }
+  }
+
+  /// Get nutritional history detail
+  /// GET /api/user/history/<date_str>
+  Future<List<HistoryDetailItem>> getHistoryDetail(String dateStr) async {
+    try {
+      final response = await _api.get('/api/user/history/$dateStr');
+      final data = response.data;
+
+      if (data == null) return [];
+
+      final List<dynamic> listData =
+          (data is Map && data['status'] == 'success' && data['data'] != null)
+              ? data['data']
+              : (data is List ? data : []);
+
+      return listData
+          .map((e) => HistoryDetailItem.fromJson(e as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       if (e is ApiError) rethrow;
       throw ApiError.fromException(Exception(e));

@@ -8,12 +8,9 @@ import '../services/user_service.dart';
 import '../models/dashboard_summary.dart';
 import '../utils/constants.dart';
 import 'rekomendasi_page.dart';
-import 'scan_page.dart';
-import 'chatbot_page.dart';
-import 'edukasi_page.dart';
-import 'profile_page.dart';
 import 'meal_log_page.dart';
 import 'food_detail_page.dart';
+import 'history_page.dart';
 
 
 class DashboardPage extends StatefulWidget {
@@ -117,10 +114,14 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        child: RefreshIndicator(
+          onRefresh: _fetchDashboardData,
+          color: Colors.pink,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
               // Header & Welcome Section
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -173,6 +174,20 @@ class _DashboardPageState extends State<DashboardPage> {
                                 color: Colors.grey,
                               ),
                               onPressed: _fetchDashboardData,
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.history,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const HistoryPage(),
+                                  ),
+                                );
+                              },
                             ),
                             Container(
                               decoration: BoxDecoration(
@@ -560,8 +575,9 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildRekomendasiCard(
     BuildContext context,

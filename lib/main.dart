@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'providers/auth_provider.dart';
 import 'providers/user_preference_provider.dart';
 import 'providers/food_provider.dart';
@@ -12,6 +13,9 @@ import 'utils/constants.dart';
 void main() async {
   // Menangkap error flutter di luar zone (misalnya saat inisialisasi)
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Inisialisasi format tanggal (untuk Bahasa Indonesia)
+  await initializeDateFormatting('id_ID', null);
 
   try {
     await dotenv.load(fileName: ".env");
