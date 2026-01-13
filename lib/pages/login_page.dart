@@ -322,8 +322,7 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _socialLoginButton(
-                        icon: Icons.g_mobiledata,
-                        color: Colors.red,
+                        image: 'lib/assets/images/google_logo.png',
                         onPressed: authProvider.isLoading
                             ? null
                             : () => _handleGoogleSignIn(authProvider),
@@ -400,8 +399,9 @@ class _LoginPageState extends State<LoginPage> {
 
   /// Widget untuk membuat tombol social media login
   Widget _socialLoginButton({
-    required IconData icon,
-    required Color color,
+    IconData? icon,
+    Color? color,
+    String? image,
     required VoidCallback? onPressed,
   }) {
     return Container(
@@ -418,7 +418,9 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
       child: IconButton(
-        icon: Icon(icon, size: 28),
+        icon: image != null
+            ? Image.asset(image, width: 28, height: 28)
+            : Icon(icon, size: 28),
         color: color,
         onPressed: onPressed,
       ),
