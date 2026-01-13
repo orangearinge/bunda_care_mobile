@@ -328,18 +328,6 @@ class _LoginPageState extends State<LoginPage> {
                             ? null
                             : () => _handleGoogleSignIn(authProvider),
                       ),
-                      const SizedBox(width: 16),
-                      _socialLoginButton(
-                        icon: Icons.facebook,
-                        color: Colors.blue[700]!,
-                        onPressed: () {},
-                      ),
-                      const SizedBox(width: 16),
-                      _socialLoginButton(
-                        icon: Icons.apple,
-                        color: Colors.black,
-                        onPressed: () {},
-                      ),
                     ],
                   ),
 
