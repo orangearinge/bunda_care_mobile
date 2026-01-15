@@ -15,14 +15,14 @@ class ApiConstants {
   /// Loaded from .env (API_BASE_URL)
   /// Automatically detects platform and uses appropriate URL
   static String get baseUrl {
-    // For web, always use localhost regardless of .env
-    if (kIsWeb) {
-      return "http://127.0.0.1:5000"; // Web localhost
-    }
-
-    // For mobile platforms, check .env first
+    // Check .env first for all platforms
     final url = dotenv.env['API_BASE_URL'];
     if (url != null && url.isNotEmpty) return url;
+
+    // Fallback for web
+    if (kIsWeb) {
+      return "http://127.0.0.1:5000";
+    }
 
     // Platform-specific fallback logic for mobile
     if (Platform.isAndroid) {
