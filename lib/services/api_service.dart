@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
@@ -12,6 +13,7 @@ class ApiService {
   CacheStore? _cacheStore;
   final StorageService _storage = StorageService();
   bool _cacheInitialized = false;
+  bool _isCacheInitializing = false;
   final Completer<void> _cacheCompleter = Completer<void>();
 
   static final ApiService _instance = ApiService._internal();
@@ -72,10 +74,18 @@ class ApiService {
   }
 
   Future<void> _setupCache() async {
+    if (_cacheInitialized || _isCacheInitializing) return;
+    _isCacheInitializing = true;
+
     try {
-      final cacheDir = await getTemporaryDirectory();
+      String? cachePath;
+      if (!kIsWeb) {
+        final cacheDir = await getTemporaryDirectory();
+        cachePath = cacheDir.path;
+      }
+      
       _cacheStore = HiveCacheStore(
-        cacheDir.path,
+        cachePath,
         hiveBoxName: 'bunda_care_cache',
       );
 
@@ -93,12 +103,14 @@ class ApiService {
         ),
       );
       _cacheInitialized = true;
-      _cacheCompleter.complete();
     } catch (e) {
       if (ApiConstants.isDevelopment) {
         print('⚠️ Failed to initialize cache: $e');
       }
-      _cacheCompleter.complete();
+    } finally {
+      if (!_cacheCompleter.isCompleted) {
+        _cacheCompleter.complete();
+      }
     }
   }
 
