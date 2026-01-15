@@ -3,6 +3,7 @@ import '../models/dashboard_summary.dart';
 import '../models/history_entry.dart';
 import '../models/api_error.dart';
 import '../utils/constants.dart';
+import '../utils/cache_config.dart';
 import 'api_service.dart';
 
 /// Service for user-related API calls
@@ -29,6 +30,11 @@ class UserService {
       if (unwrapped is Map<String, dynamic>) {
         final pref = UserPreference.fromJson(unwrapped);
         final token = data['token'] as String?;
+        
+        // Invalidate user preference cache after update
+        await _api.clearCacheForUrl(ApiConstants.userPreference);
+        await _api.clearCacheForUrl(ApiConstants.userProfile);
+        
         return (preference: pref, token: token);
       } else {
         throw ApiError(
@@ -44,9 +50,16 @@ class UserService {
 
   /// Get current user preferences
   /// GET /api/user/preference
-  Future<UserPreference?> getPreference() async {
+  Future<UserPreference?> getPreference({bool forceRefresh = false}) async {
     try {
-      final response = await _api.get(ApiConstants.userPreference);
+      final cacheOptions = forceRefresh
+          ? _api.getCacheOptions(CacheConfig.forceRefresh)
+          : _api.getCacheOptions(CacheConfig.userProfile);
+
+      final response = await _api.get(
+        ApiConstants.userPreference,
+        options: _api.applyCacheOptions(cacheOptions),
+      );
       final data = _api.unwrap(response);
       
       if (data != null && data is Map<String, dynamic> && data.containsKey('role')) {
@@ -63,9 +76,16 @@ class UserService {
 
   /// Get dashboard summary
   /// GET /api/user/dashboard
-  Future<DashboardSummary> getDashboardSummary() async {
+  Future<DashboardSummary> getDashboardSummary({bool forceRefresh = false}) async {
     try {
-      final response = await _api.get(ApiConstants.userDashboard);
+      final cacheOptions = forceRefresh
+          ? _api.getCacheOptions(CacheConfig.forceRefresh)
+          : _api.getCacheOptions(CacheConfig.dashboard);
+
+      final response = await _api.get(
+        ApiConstants.userDashboard,
+        options: _api.applyCacheOptions(cacheOptions),
+      );
       final data = _api.unwrap(response);
 
       if (data == null) {
@@ -91,9 +111,16 @@ class UserService {
 
   /// Get user profile
   /// GET /api/user/profile
-  Future<Map<String, dynamic>> getUserProfile() async {
+  Future<Map<String, dynamic>> getUserProfile({bool forceRefresh = false}) async {
     try {
-      final response = await _api.get(ApiConstants.userProfile);
+      final cacheOptions = forceRefresh
+          ? _api.getCacheOptions(CacheConfig.forceRefresh)
+          : _api.getCacheOptions(CacheConfig.userProfile);
+
+      final response = await _api.get(
+        ApiConstants.userProfile,
+        options: _api.applyCacheOptions(cacheOptions),
+      );
       final data = _api.unwrap(response);
 
       if (data != null && data is Map<String, dynamic>) {
@@ -121,6 +148,8 @@ class UserService {
       final data = _api.unwrap(response);
       
       if (data != null && data is Map<String, dynamic> && data['avatar'] != null) {
+        // Invalidate profile cache after avatar update
+        await _api.clearCacheForUrl(ApiConstants.userProfile);
         return data['avatar'] as String;
       }
       throw ApiError(

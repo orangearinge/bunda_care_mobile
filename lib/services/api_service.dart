@@ -1,15 +1,21 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
+import 'package:path_provider/path_provider.dart';
 import '../utils/constants.dart';
 import '../models/api_error.dart';
 import 'storage_service.dart';
 
-/// Base API service with Dio HTTP client
-/// Provides interceptors for authentication and error handling
 class ApiService {
   late final Dio _dio;
+  CacheStore? _cacheStore;
   final StorageService _storage = StorageService();
+  bool _cacheInitialized = false;
+  bool _isCacheInitializing = false;
+  final Completer<void> _cacheCompleter = Completer<void>();
 
-  // Singleton pattern
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
 
@@ -28,11 +34,9 @@ class ApiService {
       ),
     );
 
-    // Add request interceptor to attach JWT token
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Add token to headers if it exists
           final token = await _storage.getToken();
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
@@ -40,20 +44,21 @@ class ApiService {
           return handler.next(options);
         },
         onResponse: (response, handler) {
-          // Log successful responses in debug mode
           if (ApiConstants.isDevelopment) {
-            print('✅ [${response.statusCode}] ${response.requestOptions.method} ${response.requestOptions.path}');
+            final fromCache =
+                response.extra['dio_cache_interceptor_response'] == true;
+            final cacheIndicator = fromCache ? '💾' : '🌐';
+            print(
+              '✅ $cacheIndicator [${response.statusCode}] ${response.requestOptions.method} ${response.requestOptions.path}',
+            );
           }
           return handler.next(response);
         },
-        onError: (error, handler) async {
-          // Log errors in debug mode
+        onError: (error, handler) {
           if (ApiConstants.isDevelopment) {
-            print('❌ [${error.response?.statusCode ?? "ERR"}] ${error.requestOptions.method} ${error.requestOptions.path}');
-            print('   Message: ${error.message}');
-            if (error.response?.data != null) {
-              print('   Data: ${error.response?.data}');
-            }
+            print(
+              '❌ [${error.response?.statusCode ?? "ERR"}] ${error.requestOptions.method} ${error.requestOptions.path}',
+            );
           }
           return handler.next(error);
         },
@@ -61,17 +66,64 @@ class ApiService {
     );
   }
 
-  /// Get the Dio instance
+  Future<void> _ensureCacheInitialized() async {
+    if (_cacheInitialized) return;
+    if (!_cacheCompleter.isCompleted) {
+      await _cacheCompleter.future;
+    }
+  }
+
+  Future<void> _setupCache() async {
+    if (_cacheInitialized || _isCacheInitializing) return;
+    _isCacheInitializing = true;
+
+    try {
+      String? cachePath;
+      if (!kIsWeb) {
+        final cacheDir = await getTemporaryDirectory();
+        cachePath = cacheDir.path;
+      }
+      
+      _cacheStore = HiveCacheStore(
+        cachePath,
+        hiveBoxName: 'bunda_care_cache',
+      );
+
+      _dio.interceptors.insert(
+        0,
+        DioCacheInterceptor(
+          options: CacheOptions(
+            store: _cacheStore,
+            policy: CachePolicy.request,
+            hitCacheOnErrorExcept: [401, 403],
+            maxStale: const Duration(days: 7),
+            priority: CachePriority.normal,
+            keyBuilder: CacheOptions.defaultCacheKeyBuilder,
+          ),
+        ),
+      );
+      _cacheInitialized = true;
+    } catch (e) {
+      if (ApiConstants.isDevelopment) {
+        print('⚠️ Failed to initialize cache: $e');
+      }
+    } finally {
+      if (!_cacheCompleter.isCompleted) {
+        _cacheCompleter.complete();
+      }
+    }
+  }
+
   Dio get client => _dio;
 
-  // ==================== HTTP Methods ====================
-
-  /// Generic GET request
   Future<Response> get(
     String path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    if (!_cacheInitialized) {
+      unawaited(_setupCache());
+    }
     try {
       return await _dio.get(
         path,
@@ -83,13 +135,15 @@ class ApiService {
     }
   }
 
-  /// Generic POST request
   Future<Response> post(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    if (!_cacheInitialized) {
+      unawaited(_setupCache());
+    }
     try {
       return await _dio.post(
         path,
@@ -102,13 +156,15 @@ class ApiService {
     }
   }
 
-  /// Generic PUT request
   Future<Response> put(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    if (!_cacheInitialized) {
+      unawaited(_setupCache());
+    }
     try {
       return await _dio.put(
         path,
@@ -121,13 +177,15 @@ class ApiService {
     }
   }
 
-  /// Generic DELETE request
   Future<Response> delete(
     String path, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
+    if (!_cacheInitialized) {
+      unawaited(_setupCache());
+    }
     try {
       return await _dio.delete(
         path,
@@ -140,11 +198,6 @@ class ApiService {
     }
   }
 
-  // ==================== Data Parsing ====================
-
-  /// Standardize data extraction from potential wrapped responses
-  /// Backend often returns: { "status": "success", "data": ... }
-  /// This helper extracts the 'data' part if it exists, or returns the raw data
   dynamic unwrap(Response response) {
     final data = response.data;
     if (data is Map<String, dynamic>) {
@@ -155,31 +208,23 @@ class ApiService {
     return data;
   }
 
-  // ==================== Error Handling ====================
-
-  /// Handle Dio errors and convert to ApiError
   ApiError _handleError(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
         return ApiError.timeoutError();
-
       case DioExceptionType.connectionError:
         return ApiError.networkError();
-
       case DioExceptionType.badResponse:
         final response = error.response;
         if (response != null) {
-          // 1. Try to parse backend error format first
           if (response.data is Map<String, dynamic>) {
             final data = response.data as Map<String, dynamic>;
             if (data['error'] != null) {
               return ApiError.fromJson(data);
             }
           }
-
-          // 2. Handle specific HTTP status codes if no backend error format
           switch (response.statusCode) {
             case 400:
               return ApiError(code: 'VALIDATION_ERROR');
@@ -196,12 +241,45 @@ class ApiService {
         return ApiError.serverError(
           'Error ${response?.statusCode}: ${error.message}',
         );
-
       case DioExceptionType.cancel:
         return ApiError(code: 'REQUEST_CANCELLED');
-
       default:
         return ApiError.fromException(error);
     }
+  }
+
+  Future<void> clearAllCache() async {
+    await _ensureCacheInitialized();
+    if (_cacheStore == null) return;
+    try {
+      await _cacheStore!.clean();
+      if (ApiConstants.isDevelopment) print('🗑️ Cache cleared successfully');
+    } catch (e) {
+      if (ApiConstants.isDevelopment) print('❌ Failed to clear cache: $e');
+    }
+  }
+
+  Future<void> clearCacheForUrl(String url) async {
+    await _ensureCacheInitialized();
+    if (_cacheStore == null) return;
+    try {
+      await _cacheStore!.delete(url);
+      if (ApiConstants.isDevelopment) print('🗑️ Cache cleared for: $url');
+    } catch (e) {
+      if (ApiConstants.isDevelopment)
+        print('❌ Failed to clear cache for URL: $e');
+    }
+  }
+
+  Options applyCacheOptions(CacheOptions cacheOptions, {Options? options}) {
+    final opts = options ?? Options();
+    return opts.copyWith(extra: {...?opts.extra, ...cacheOptions.toExtra()});
+  }
+
+  CacheOptions getCacheOptions(CacheOptions template) {
+    if (_cacheStore == null) {
+      return template.copyWith(policy: CachePolicy.noCache);
+    }
+    return template.copyWith(store: _cacheStore);
   }
 }
