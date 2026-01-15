@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../models/api_error.dart';
 import '../models/food_detail.dart';
 import '../utils/constants.dart';
+import '../utils/cache_config.dart';
 import 'api_service.dart';
 
 
@@ -50,6 +51,7 @@ class FoodService {
   Future<Map<String, dynamic>> getRecommendations({
     String? mealType,
     List<int>? detectedIds,
+    bool forceRefresh = false,
   }) async {
     try {
       Map<String, dynamic> queryParams = {};
@@ -59,9 +61,14 @@ class FoodService {
         queryParams['detected_ids'] = detectedIds.join(',');
       }
 
+      final cacheOptions = forceRefresh
+          ? _api.getCacheOptions(CacheConfig.forceRefresh)
+          : _api.getCacheOptions(CacheConfig.recommendations);
+
       final response = await _api.get(
         ApiConstants.recommendation,
         queryParameters: queryParams,
+        options: _api.applyCacheOptions(cacheOptions),
       );
 
       final data = _api.unwrap(response);
@@ -81,9 +88,16 @@ class FoodService {
 
   /// Get food/menu detail by ID
   /// GET /api/menus/:id
-  Future<FoodDetail> getFoodDetail(int menuId) async {
+  Future<FoodDetail> getFoodDetail(int menuId, {bool forceRefresh = false}) async {
     try {
-      final response = await _api.get('${ApiConstants.menuDetail}/$menuId');
+      final cacheOptions = forceRefresh
+          ? _api.getCacheOptions(CacheConfig.forceRefresh)
+          : _api.getCacheOptions(CacheConfig.foodDetails);
+
+      final response = await _api.get(
+        '${ApiConstants.menuDetail}/$menuId',
+        options: _api.applyCacheOptions(cacheOptions),
+      );
       final data = _api.unwrap(response);
 
       if (data != null && data is Map<String, dynamic>) {

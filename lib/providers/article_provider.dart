@@ -34,7 +34,10 @@ class ArticleProvider with ChangeNotifier {
 
     try {
       final page = refresh ? 1 : (_pagination?.page ?? 0) + 1;
-      final response = await _articleService.getPublicArticles(page: page);
+      final response = await _articleService.getPublicArticles(
+        page: page,
+        forceRefresh: refresh,
+      );
       
       if (refresh) {
         _articles = response.items;

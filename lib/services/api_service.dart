@@ -1,12 +1,16 @@
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
+import 'package:path_provider/path_provider.dart';
 import '../utils/constants.dart';
 import '../models/api_error.dart';
 import 'storage_service.dart';
 
 /// Base API service with Dio HTTP client
-/// Provides interceptors for authentication and error handling
+/// Provides interceptors for authentication, caching, and error handling
 class ApiService {
   late final Dio _dio;
+  CacheStore? _cacheStore;
   final StorageService _storage = StorageService();
 
   // Singleton pattern
@@ -14,6 +18,7 @@ class ApiService {
   factory ApiService() => _instance;
 
   ApiService._internal() {
+    // Sync initialization of _dio to prevent LateInitializationError
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
@@ -28,11 +33,10 @@ class ApiService {
       ),
     );
 
-    // Add request interceptor to attach JWT token
+    // Add logging and auth interceptor immediately
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Add token to headers if it exists
           final token = await _storage.getToken();
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
@@ -40,25 +44,55 @@ class ApiService {
           return handler.next(options);
         },
         onResponse: (response, handler) {
-          // Log successful responses in debug mode
           if (ApiConstants.isDevelopment) {
-            print('✅ [${response.statusCode}] ${response.requestOptions.method} ${response.requestOptions.path}');
+            final fromCache = response.extra['dio_cache_interceptor_response'] == true;
+            final cacheIndicator = fromCache ? '💾' : '🌐';
+            print('✅ $cacheIndicator [${response.statusCode}] ${response.requestOptions.method} ${response.requestOptions.path}');
           }
           return handler.next(response);
         },
-        onError: (error, handler) async {
-          // Log errors in debug mode
+        onError: (error, handler) {
           if (ApiConstants.isDevelopment) {
             print('❌ [${error.response?.statusCode ?? "ERR"}] ${error.requestOptions.method} ${error.requestOptions.path}');
-            print('   Message: ${error.message}');
-            if (error.response?.data != null) {
-              print('   Data: ${error.response?.data}');
-            }
           }
           return handler.next(error);
         },
       ),
     );
+
+    // Deferred async initialization for cache
+    _setupCache();
+  }
+
+  /// Setup cache store and add interceptor when ready
+  Future<void> _setupCache() async {
+    try {
+      final cacheDir = await getTemporaryDirectory();
+      _cacheStore = HiveCacheStore(
+        cacheDir.path,
+        hiveBoxName: 'bunda_care_cache',
+      );
+
+      // Add cache interceptor to the existing Dio instance
+      // We insert at index 0 to ensure it catches requests early
+      _dio.interceptors.insert(
+        0,
+        DioCacheInterceptor(
+          options: CacheOptions(
+            store: _cacheStore,
+            policy: CachePolicy.request,
+            hitCacheOnErrorExcept: [401, 403],
+            maxStale: const Duration(days: 7),
+            priority: CachePriority.normal,
+            keyBuilder: CacheOptions.defaultCacheKeyBuilder,
+          ),
+        ),
+      );
+    } catch (e) {
+      if (ApiConstants.isDevelopment) {
+        print('⚠️ Failed to initialize cache: $e');
+      }
+    }
   }
 
   /// Get the Dio instance
@@ -203,5 +237,57 @@ class ApiService {
       default:
         return ApiError.fromException(error);
     }
+  }
+
+  // ==================== Cache Management ====================
+
+  /// Clear all cached data
+  Future<void> clearAllCache() async {
+    if (_cacheStore == null) return;
+    try {
+      await _cacheStore!.clean();
+      if (ApiConstants.isDevelopment) {
+        print('🗑️ Cache cleared successfully');
+      }
+    } catch (e) {
+      if (ApiConstants.isDevelopment) {
+        print('❌ Failed to clear cache: $e');
+      }
+    }
+  }
+
+  /// Clear cache for specific URL
+  Future<void> clearCacheForUrl(String url) async {
+    if (_cacheStore == null) return;
+    try {
+      await _cacheStore!.delete(url);
+      if (ApiConstants.isDevelopment) {
+        print('🗑️ Cache cleared for: $url');
+      }
+    } catch (e) {
+      if (ApiConstants.isDevelopment) {
+        print('❌ Failed to clear cache for URL: $e');
+      }
+    }
+  }
+
+  /// Apply custom cache options to existing options
+  Options applyCacheOptions(CacheOptions cacheOptions, {Options? options}) {
+    final opts = options ?? Options();
+    return opts.copyWith(
+      extra: {
+        ...?opts.extra,
+        ...cacheOptions.toExtra(),
+      },
+    );
+  }
+
+  /// Get cache options with store configured
+  CacheOptions getCacheOptions(CacheOptions template) {
+    if (_cacheStore == null) {
+      // Return template with noCache policy if store isn't ready
+      return template.copyWith(policy: CachePolicy.noCache);
+    }
+    return template.copyWith(store: _cacheStore);
   }
 }

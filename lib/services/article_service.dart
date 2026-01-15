@@ -2,12 +2,22 @@
 import '../services/api_service.dart';
 import '../models/article.dart';
 import '../utils/constants.dart';
+import '../utils/cache_config.dart';
 
 class ArticleService {
   final ApiService _api = ApiService();
 
-  Future<ArticleListResponse> getPublicArticles({int page = 1, int limit = 10}) async {
+  Future<ArticleListResponse> getPublicArticles({
+    int page = 1,
+    int limit = 10,
+    bool forceRefresh = false,
+  }) async {
     try {
+      // Use cache for articles, unless force refresh
+      final cacheOptions = forceRefresh
+          ? _api.getCacheOptions(CacheConfig.forceRefresh)
+          : _api.getCacheOptions(CacheConfig.articles);
+
       final response = await _api.get(
         ApiConstants.publicArticles,
         queryParameters: {
@@ -16,6 +26,7 @@ class ArticleService {
           'sort_by': 'published_at',
           'sort_order': 'desc',
         },
+        options: _api.applyCacheOptions(cacheOptions),
       );
 
       final data = _api.unwrap(response);
@@ -25,9 +36,16 @@ class ArticleService {
     }
   }
 
-  Future<Article> getArticleDetail(String slug) async {
+  Future<Article> getArticleDetail(String slug, {bool forceRefresh = false}) async {
     try {
-      final response = await _api.get('${ApiConstants.publicArticles}/$slug');
+      final cacheOptions = forceRefresh
+          ? _api.getCacheOptions(CacheConfig.forceRefresh)
+          : _api.getCacheOptions(CacheConfig.articles);
+
+      final response = await _api.get(
+        '${ApiConstants.publicArticles}/$slug',
+        options: _api.applyCacheOptions(cacheOptions),
+      );
       final data = _api.unwrap(response);
       
       return Article.fromJson(data);

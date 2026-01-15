@@ -97,13 +97,13 @@ class UserPreferenceProvider with ChangeNotifier {
   }
 
   /// Fetch user preference from API
-  Future<void> fetchPreference() async {
+  Future<void> fetchPreference({bool forceRefresh = false}) async {
     _status = PreferenceStatus.loading;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final preference = await _userService.getPreference();
+      final preference = await _userService.getPreference(forceRefresh: forceRefresh);
       _currentPreference = preference;
       _status = PreferenceStatus.success;
       notifyListeners();
@@ -119,7 +119,7 @@ class UserPreferenceProvider with ChangeNotifier {
   }
 
   /// Fetch dashboard summary
-  Future<void> fetchDashboardSummary() async {
+  Future<void> fetchDashboardSummary({bool forceRefresh = false}) async {
     // Only set loading if we don't have data yet
     if (_dashboardSummary == null) {
       _status = PreferenceStatus.loading;
@@ -127,7 +127,7 @@ class UserPreferenceProvider with ChangeNotifier {
     }
 
     try {
-      _dashboardSummary = await _userService.getDashboardSummary();
+      _dashboardSummary = await _userService.getDashboardSummary(forceRefresh: forceRefresh);
       _status = PreferenceStatus.success;
       notifyListeners();
     } on ApiError catch (e) {
