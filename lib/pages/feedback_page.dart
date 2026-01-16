@@ -63,12 +63,12 @@ class _FeedbackPageState extends State<FeedbackPage> {
       appBar: AppBar(
         title: const Text(
           'Feedback Pengguna',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.pink[400],
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -166,19 +166,19 @@ class _FeedbackPageState extends State<FeedbackPage> {
             maxLines: 4,
             decoration: InputDecoration(
               hintText: 'Tuliskan saran atau masukan Anda di sini...',
-              fillColor: Colors.white,
+              fillColor: Colors.grey[50],
               filled: true,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.pink[100]!),
+                borderSide: BorderSide(color: Colors.grey[300]!),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.pink[100]!),
+                borderSide: BorderSide(color: Colors.grey[300]!),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.pink[300]!, width: 2),
+                borderSide: BorderSide(color: Colors.pink[400]!, width: 2),
               ),
             ),
           ),
@@ -188,7 +188,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
             child: ElevatedButton(
               onPressed: provider.isSending ? null : _submitFeedback,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink,
+                backgroundColor: Colors.pink[400],
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
