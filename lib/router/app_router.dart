@@ -4,10 +4,14 @@ import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../pages/login_page.dart';
 import '../pages/signup_page.dart';
-import '../pages/profile_page.dart';
+import '../pages/main_navigation.dart';
 import '../pages/registration_form_page.dart';
 import '../pages/multi_step_form_page.dart';
-import '../pages/main_navigation.dart';
+import '../pages/dashboard_page.dart';
+import '../pages/chatbot_page.dart';
+import '../pages/scan_page.dart';
+import '../pages/edukasi_page.dart';
+import '../pages/profile_page.dart';
 
 /// Application router configuration with authentication guards
 class AppRouter {
@@ -75,12 +79,61 @@ class AppRouter {
         builder: (context, state) => const SignUpPage(),
       ),
 
-      // Protected Routes
-      GoRoute(
-        path: '/',
-        name: 'home',
-        builder: (context, state) => const MainNavigation(),
+      // Main Navigation Shell (Stateful)
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return MainNavigation(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/',
+                name: 'home',
+                builder: (context, state) => const DashboardPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/chatbot',
+                name: 'chatbot',
+                builder: (context, state) => const ChatbotPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/scan',
+                name: 'scan',
+                builder: (context, state) => const ScanPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/edukasi',
+                name: 'edukasi',
+                builder: (context, state) => const EdukasiPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/profile',
+                name: 'profile',
+                builder: (context, state) => const ProfilePage(),
+              ),
+            ],
+          ),
+        ],
       ),
+
+      // Other Protected Routes
       GoRoute(
         path: '/role-selection',
         name: 'role-selection',
@@ -93,11 +146,6 @@ class AppRouter {
           final role = state.pathParameters['role']!;
           return MultiStepFormPage(userRole: role);
         },
-      ),
-      GoRoute(
-        path: '/profile',
-        name: 'profile',
-        builder: (context, state) => const ProfilePage(),
       ),
     ],
 

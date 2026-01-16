@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'chatbot_page.dart';
-import 'scan_page.dart';
-import 'edukasi_page.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_preference_provider.dart';
 import '../providers/auth_provider.dart';
@@ -34,396 +31,438 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Consumer2<UserPreferenceProvider, AuthProvider>(
-          builder: (context, provider, authProvider, child) {
-            if (provider.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (provider.status == PreferenceStatus.error) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(provider.errorMessage ?? 'Gagal memuat data'),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => provider.fetchPreference(),
-                      child: const Text('Coba Lagi'),
-                    ),
-                  ],
+        child: Column(
+          children: [
+            Expanded(
+              child: Selector2<UserPreferenceProvider, AuthProvider,
+                  ({PreferenceStatus status, String? errorMessage, bool isLoading})>(
+                selector: (_, provider, auth) => (
+                  status: provider.status,
+                  errorMessage: provider.errorMessage,
+                  isLoading: provider.isLoading,
                 ),
-              );
-            }
+                builder: (context, data, child) {
+                  if (data.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-            final pref = provider.currentPreference;
-            if (pref == null) {
-              return const Center(child: Text('Data profil tidak ditemukan.'));
-            }
+                  if (data.status == PreferenceStatus.error) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(data.errorMessage ?? 'Gagal memuat data'),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () => context
+                                .read<UserPreferenceProvider>()
+                                .fetchPreference(),
+                            child: const Text('Coba Lagi'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
 
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Builder(
-                          builder: (context) {
-                            final avatarUrl = authProvider.currentUser?.avatar;
-                            final hasAvatar =
-                                avatarUrl != null && avatarUrl.isNotEmpty;
+                  return Selector2<UserPreferenceProvider, AuthProvider,
+                      ({UserPreference? pref, String? avatar, String? name})>(
+                    selector: (_, provider, auth) => (
+                      pref: provider.currentPreference,
+                      avatar: auth.currentUser?.avatar,
+                      name: auth.currentUser?.name,
+                    ),
+                    builder: (context, data, _) {
+                      final pref = data.pref;
+                      if (pref == null) {
+                        return const Center(
+                          child: Text('Data profil tidak ditemukan.'),
+                        );
+                      }
 
-                            String? finalUrl;
-                            if (hasAvatar) {
-                              if (avatarUrl.startsWith('http')) {
-                                finalUrl = avatarUrl;
-                              } else {
-                                final baseUrl = ApiConstants.baseUrl;
-                                finalUrl = avatarUrl.startsWith('/')
-                                    ? '$baseUrl$avatarUrl'
-                                    : '$baseUrl/$avatarUrl';
-                              }
-                            }
+                      final avatarUrl = data.avatar;
+                      final userNameFallback = data.name ?? 'Bunda';
 
-                            return CircleAvatar(
-                              radius: 34,
-                              backgroundColor: Colors.pink[100],
-                              backgroundImage: hasAvatar
-                                  ? CachedNetworkImageProvider(finalUrl!)
-                                  : null,
-                              onBackgroundImageError: hasAvatar
-                                  ? (exception, stackTrace) {
-                                      debugPrint(
-                                        'Error loading avatar: $exception',
-                                      );
-                                    }
-                                  : null,
-                              child: !hasAvatar
-                                  ? Text(
-                                      authProvider.currentUser?.getInitials() ??
-                                          'B',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.pink[400],
-                                      ),
-                                    )
-                                  : null,
-                            );
-                          },
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
+                      return SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                pref.name ??
-                                    authProvider.currentUser?.name ??
-                                    'Bunda',
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.black87,
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Builder(
+                                    builder: (context) {
+                                      final hasAvatar = avatarUrl != null &&
+                                          avatarUrl.isNotEmpty;
+
+                                      String? finalUrl;
+                                      if (hasAvatar) {
+                                        if (avatarUrl.startsWith('http')) {
+                                          finalUrl = avatarUrl;
+                                        } else {
+                                          final baseUrl = ApiConstants.baseUrl;
+                                          finalUrl = avatarUrl.startsWith('/')
+                                              ? '$baseUrl$avatarUrl'
+                                              : '$baseUrl/$avatarUrl';
+                                        }
+                                      }
+
+                                      return CircleAvatar(
+                                        radius: 34,
+                                        backgroundColor: Colors.pink[100],
+                                        backgroundImage: hasAvatar
+                                            ? CachedNetworkImageProvider(
+                                                finalUrl!,
+                                              )
+                                            : null,
+                                        onBackgroundImageError: hasAvatar
+                                            ? (exception, stackTrace) {
+                                                debugPrint(
+                                                  'Error loading avatar: $exception',
+                                                );
+                                              }
+                                            : null,
+                                        child: !hasAvatar
+                                            ? Text(
+                                                context
+                                                        .read<AuthProvider>()
+                                                        .currentUser
+                                                        ?.getInitials() ??
+                                                    'B',
+                                                style: TextStyle(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.pink[400],
+                                                ),
+                                              )
+                                            : null,
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          pref.name ?? userNameFallback,
+                                          style: const TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w800,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          pref.role.replaceAll('_', ' '),
+                                          style: const TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => EditProfilePage(
+                                            initialPreference: pref,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.pink[50],
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: Colors.pink[400],
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 24),
+                              _buildSectionHeader('Profil Saya'),
+                              const SizedBox(height: 12),
+                              Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.05),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                  border: Border.all(color: Colors.grey[200]!),
+                                ),
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  children: [
+                                    _ProfileField(
+                                      label: pref.role == 'ANAK_BATITA'
+                                          ? 'Usia Anak'
+                                          : 'Usia',
+                                      value: pref.role == 'ANAK_BATITA'
+                                          ? (pref.ageYear > 0
+                                              ? '${pref.ageYear} Tahun ${pref.ageMonth ?? 0} Bulan'
+                                              : '${pref.ageMonth ?? 0} Bulan')
+                                          : '${pref.ageYear} Tahun',
+                                    ),
+                                    const Divider(height: 24),
+                                    _ProfileField(
+                                      label: 'Peran',
+                                      value: pref.role.replaceAll('_', ' '),
+                                    ),
+                                    if (pref.role == 'IBU_HAMIL' &&
+                                        pref.hpht != null) ...[
+                                      const Divider(height: 24),
+                                      _ProfileField(
+                                        label: 'HPHT',
+                                        value: pref.hpht!,
+                                      ),
+                                    ],
+                                    if (pref.role == 'IBU_HAMIL' &&
+                                        pref.gestationalAgeWeeks != null) ...[
+                                      const Divider(height: 24),
+                                      _ProfileField(
+                                        label: 'Usia Kandungan',
+                                        value:
+                                            '${pref.gestationalAgeWeeks} Minggu',
+                                      ),
+                                    ],
+                                  ],
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                pref.role.replaceAll('_', ' '),
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.black54,
+                              const SizedBox(height: 24),
+                              _buildSectionHeader('Rekam Medis'),
+                              const SizedBox(height: 12),
+                              Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[50]!,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: Colors.grey[200]!),
+                                ),
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        _StatPill(
+                                          title: pref.role == 'ANAK_BATITA'
+                                              ? 'Tinggi\nAnak'
+                                              : 'Tinggi\nBadan',
+                                          value: '${pref.heightCm} cm',
+                                        ),
+                                        _StatPill(
+                                          title: pref.role == 'ANAK_BATITA'
+                                              ? 'Berat\nAnak'
+                                              : 'Berat\nBadan',
+                                          value: '${pref.weightKg} kg',
+                                        ),
+                                        _StatPill(
+                                          title: 'BMI',
+                                          valueBold: pref.nutritionalTargets
+                                                  ?.bmi
+                                                  ?.toStringAsFixed(2) ??
+                                              '-',
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    if (pref.foodProhibitions.isNotEmpty)
+                                      _AllergyCard(
+                                        title: 'Pantangan Makanan',
+                                        items: pref.foodProhibitions,
+                                      ),
+                                    if (pref.foodProhibitions.isNotEmpty &&
+                                        pref.allergens.isNotEmpty)
+                                      const SizedBox(height: 12),
+                                    if (pref.allergens.isNotEmpty)
+                                      _AllergyCard(
+                                        title: 'Alergi',
+                                        items: pref.allergens,
+                                      ),
+                                    if (pref.lilaCm != null) ...[
+                                      const SizedBox(height: 12),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          _StatPillSmall(
+                                            label: 'LiLA',
+                                            value: '${pref.lilaCm} cm',
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                    if (pref.role == 'IBU_MENYUSUI' &&
+                                        pref.lactationPhase != null) ...[
+                                      const SizedBox(height: 12),
+                                      _ProfileField(
+                                        label: 'Fase Menyusui',
+                                        value: pref.lactationPhase == '0-6'
+                                            ? '6 Bulan Pertama'
+                                            : '6 Bulan Kedua',
+                                      ),
+                                    ],
+                                  ],
                                 ),
                               ),
+                              const SizedBox(height: 24),
+                              if (pref.nutritionalTargets != null) ...[
+                                _buildSectionHeader('Target Nutrisi Harian'),
+                                const SizedBox(height: 12),
+                                Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.pink[300]!,
+                                        Colors.purple[300]!
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          _NutrientInfo(
+                                            label: 'Kalori',
+                                            value:
+                                                '${pref.nutritionalTargets!.calories.toInt()}',
+                                            unit: 'kkal',
+                                          ),
+                                          Container(
+                                            width: 1,
+                                            height: 40,
+                                            color: Colors.white24,
+                                          ),
+                                          _NutrientInfo(
+                                            label: 'Protein',
+                                            value:
+                                                '${pref.nutritionalTargets!.proteinG.toInt()}',
+                                            unit: 'g',
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          _NutrientInfo(
+                                            label: 'Karbohidrat',
+                                            value:
+                                                '${pref.nutritionalTargets!.carbsG.toInt()}',
+                                            unit: 'g',
+                                          ),
+                                          Container(
+                                            width: 1,
+                                            height: 40,
+                                            color: Colors.white24,
+                                          ),
+                                          _NutrientInfo(
+                                            label: 'Lemak',
+                                            value:
+                                                '${pref.nutritionalTargets!.fatG.toInt()}',
+                                            unit: 'g',
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                              ],
+                              const SizedBox(height: 40),
+                              Center(
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'versi 5.50-117',
+                                      style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    ElevatedButton(
+                                      onPressed: () async {
+                                        final authProvider =
+                                            Provider.of<AuthProvider>(
+                                          context,
+                                          listen: false,
+                                        );
+                                        await authProvider.logout();
+                                        if (context.mounted) {
+                                          context.go('/login');
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.pink[50],
+                                        foregroundColor: Colors.pink[400],
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(18),
+                                          side: BorderSide(
+                                            color: Colors.pink[100]!,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 48,
+                                          vertical: 14,
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Logout',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 20),
                             ],
                           ),
                         ),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    EditProfilePage(initialPreference: pref),
-                              ),
-                            );
-                          },
-                          icon: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.pink[50],
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.edit,
-                              color: Colors.pink[400],
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    _buildSectionHeader('Profil Saya'),
-                    const SizedBox(height: 12),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                        border: Border.all(color: Colors.grey[200]!),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          _ProfileField(
-                            label: pref.role == 'ANAK_BATITA'
-                                ? 'Usia Anak'
-                                : 'Usia',
-                            value: pref.role == 'ANAK_BATITA'
-                                ? (pref.ageYear > 0
-                                      ? '${pref.ageYear} Tahun ${pref.ageMonth ?? 0} Bulan'
-                                      : '${pref.ageMonth ?? 0} Bulan')
-                                : '${pref.ageYear} Tahun',
-                          ),
-                          const Divider(height: 24),
-                          _ProfileField(
-                            label: 'Peran',
-                            value: pref.role.replaceAll('_', ' '),
-                          ),
-                          if (pref.role == 'IBU_HAMIL' &&
-                              pref.hpht != null) ...[
-                            const Divider(height: 24),
-                            _ProfileField(label: 'HPHT', value: pref.hpht!),
-                          ],
-                          if (pref.role == 'IBU_HAMIL' &&
-                              pref.gestationalAgeWeeks != null) ...[
-                            const Divider(height: 24),
-                            _ProfileField(
-                              label: 'Usia Kandungan',
-                              value: '${pref.gestationalAgeWeeks} Minggu',
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    _buildSectionHeader('Rekam Medis'),
-                    const SizedBox(height: 12),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[50]!,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.grey[200]!),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _StatPill(
-                                title: pref.role == 'ANAK_BATITA'
-                                    ? 'Tinggi\nAnak'
-                                    : 'Tinggi\nBadan',
-                                value: '${pref.heightCm} cm',
-                              ),
-                              _StatPill(
-                                title: pref.role == 'ANAK_BATITA'
-                                    ? 'Berat\nAnak'
-                                    : 'Berat\nBadan',
-                                value: '${pref.weightKg} kg',
-                              ),
-                              _StatPill(
-                                title: 'BMI',
-                                valueBold:
-                                    pref.nutritionalTargets?.bmi
-                                        ?.toStringAsFixed(2) ??
-                                    '-',
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          if (pref.foodProhibitions.isNotEmpty)
-                            _AllergyCard(
-                              title: 'Pantangan Makanan',
-                              items: pref.foodProhibitions,
-                            ),
-                          if (pref.foodProhibitions.isNotEmpty &&
-                              pref.allergens.isNotEmpty)
-                            const SizedBox(height: 12),
-                          if (pref.allergens.isNotEmpty)
-                            _AllergyCard(
-                              title: 'Alergi',
-                              items: pref.allergens,
-                            ),
-                          if (pref.lilaCm != null) ...[
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _StatPillSmall(
-                                  label: 'LiLA',
-                                  value: '${pref.lilaCm} cm',
-                                ),
-                              ],
-                            ),
-                          ],
-                          if (pref.role == 'IBU_MENYUSUI' &&
-                              pref.lactationPhase != null) ...[
-                            const SizedBox(height: 12),
-                            _ProfileField(
-                              label: 'Fase Menyusui',
-                              value: pref.lactationPhase == '0-6'
-                                  ? '6 Bulan Pertama'
-                                  : '6 Bulan Kedua',
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    if (pref.nutritionalTargets != null) ...[
-                      _buildSectionHeader('Target Nutrisi Harian'),
-                      const SizedBox(height: 12),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.pink[300]!, Colors.purple[300]!],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _NutrientInfo(
-                                  label: 'Kalori',
-                                  value:
-                                      '${pref.nutritionalTargets!.calories.toInt()}',
-                                  unit: 'kkal',
-                                ),
-                                Container(
-                                  width: 1,
-                                  height: 40,
-                                  color: Colors.white24,
-                                ),
-                                _NutrientInfo(
-                                  label: 'Protein',
-                                  value:
-                                      '${pref.nutritionalTargets!.proteinG.toInt()}',
-                                  unit: 'g',
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _NutrientInfo(
-                                  label: 'Karbohidrat',
-                                  value:
-                                      '${pref.nutritionalTargets!.carbsG.toInt()}',
-                                  unit: 'g',
-                                ),
-                                Container(
-                                  width: 1,
-                                  height: 40,
-                                  color: Colors.white24,
-                                ),
-                                _NutrientInfo(
-                                  label: 'Lemak',
-                                  value:
-                                      '${pref.nutritionalTargets!.fatG.toInt()}',
-                                  unit: 'g',
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-
-                    const SizedBox(height: 40),
-                    Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            'versi 5.50-117',
-                            style: TextStyle(
-                              color: Colors.grey[500],
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () async {
-                              final authProvider = Provider.of<AuthProvider>(
-                                context,
-                                listen: false,
-                              );
-                              await authProvider.logout();
-                              if (context.mounted) {
-                                context.go('/login');
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.pink[50],
-                              foregroundColor: Colors.pink[400],
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
-                                side: BorderSide(color: Colors.pink[100]!),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 48,
-                                vertical: 14,
-                              ),
-                            ),
-                            child: const Text(
-                              'Logout',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
+                      );
+                    },
+                  );
+                },
               ),
-            );
-          },
+            ),
+          ],
         ),
       ),
     );

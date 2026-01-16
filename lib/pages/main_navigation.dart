@@ -1,38 +1,25 @@
 import 'package:flutter/material.dart';
-import 'dashboard_page.dart';
-import 'chatbot_page.dart';
-import 'scan_page.dart';
-import 'edukasi_page.dart';
-import 'profile_page.dart';
+import 'package:go_router/go_router.dart';
 
-class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
+class MainNavigation extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
 
-  @override
-  State<MainNavigation> createState() => _MainNavigationState();
-}
-
-class _MainNavigationState extends State<MainNavigation> {
-  int _selectedIndex = 0;
+  const MainNavigation({
+    super.key,
+    required this.navigationShell,
+  });
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = [
-      const DashboardPage(),
-      const ChatbotPage(),
-      const ScanPage(),
-      const EdukasiPage(),
-      const ProfilePage(),
-    ];
-
     return Scaffold(
-      body: IndexedStack(index: _selectedIndex, children: pages),
+      body: navigationShell,
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -65,7 +52,7 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   Widget _buildNavItem(IconData iconOutlined, IconData iconFilled, int index) {
-    bool isSelected = _selectedIndex == index;
+    bool isSelected = navigationShell.currentIndex == index;
 
     List<Color> gradientColors = [Colors.pink[300]!, Colors.pink[400]!];
     // All items now use the same pink gradient for consistency

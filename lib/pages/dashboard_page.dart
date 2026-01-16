@@ -71,18 +71,19 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = context.watch<AuthProvider>();
-    final preferenceProvider = context.watch<UserPreferenceProvider>();
-    final userName = authProvider.currentUser?.name ?? "Pengguna";
-    final dashboardSummary = preferenceProvider.dashboardSummary;
-    final isLoading = preferenceProvider.isLoading;
+    // Watch only the profileUpdated flag at the top level to trigger the side effect.
+    // However, it's better to wrap this in a Selector if we want to avoid full rebuild.
+    // For now, let's keep it minimal.
+    final profileUpdated =
+        context.select<UserPreferenceProvider, bool>((p) => p.profileUpdated);
 
-    if (preferenceProvider.profileUpdated) {
+    if (profileUpdated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _fetchDashboardData();
-        preferenceProvider.resetProfileUpdatedFlag();
+        context.read<UserPreferenceProvider>().resetProfileUpdatedFlag();
       });
     }
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
@@ -94,64 +95,80 @@ class _DashboardPageState extends State<DashboardPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-              // Header & Welcome Section
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Halo, Bunda 👋",
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                              ),
+                // Header & Welcome Section
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // User Info Section - Optimized with Selector
+                          Selector2<AuthProvider, UserPreferenceProvider,
+                              ({String name, String? dashboardName})>(
+                            selector: (_, auth, pref) => (
+                              name: auth.currentUser?.name ?? "Pengguna",
+                              dashboardName: pref.dashboardSummary?.user.name,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              dashboardSummary?.user.name ?? userName,
-                              style: GoogleFonts.poppins(
-                                fontSize: 27,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            if (isLoading)
-                              const Padding(
-                                padding: EdgeInsets.only(right: 8.0),
-                                child: ShimmerCircle(size: 20),
-                              ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.refresh,
-                                color: Colors.grey,
-                              ),
-                              onPressed: _fetchDashboardData,
-                            ),
-                            IconButton(
-                              icon: const Icon(
-                                Icons.history,
-                                color: Colors.grey,
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const HistoryPage(),
+                            builder: (context, data, _) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Halo, Bunda 👋",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                    ),
                                   ),
-                                );
-                              },
-                            ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    data.dashboardName ?? data.name,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 27,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                          Row(
+                            children: [
+                              // Loading indicator - Optimized with Selector
+                              Selector<UserPreferenceProvider, bool>(
+                                selector: (_, p) => p.isLoading,
+                                builder: (context, isLoading, _) {
+                                  if (!isLoading) return const SizedBox.shrink();
+                                  return const Padding(
+                                    padding: EdgeInsets.only(right: 8.0),
+                                    child: ShimmerCircle(size: 20),
+                                  );
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.refresh,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: _fetchDashboardData,
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.history,
+                                  color: Colors.grey,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const HistoryPage(),
+                                    ),
+                                  );
+                                },
+                              ),
                             Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -177,84 +194,89 @@ class _DashboardPageState extends State<DashboardPage> {
                       ],
                     ),
                     const SizedBox(height: 30),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Colors.pink[400]!, Colors.pink[200]!],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.pink.withOpacity(0.3),
-                            spreadRadius: 2,
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                    Selector<UserPreferenceProvider, DashboardSummary?>(
+                      selector: (_, p) => p.dashboardSummary,
+                      builder: (context, dashboardSummary, _) {
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Colors.pink[400]!, Colors.pink[200]!],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.pink.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "Bundacare",
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                const Text(
-                                  "Analisis gizi Ibu dan anak",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.3),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    _getStatusText(dashboardSummary),
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Bundacare",
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
+                                    const SizedBox(height: 4),
+                                    const Text(
+                                      "Analisis gizi Ibu dan anak",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.white70,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.3),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        _getStatusText(dashboardSummary),
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                              Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.pregnant_woman,
+                                  size: 40,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            width: 70,
-                            height: 70,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.pregnant_woman,
-                              size: 40,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 30),
                     Row(
@@ -292,253 +314,273 @@ class _DashboardPageState extends State<DashboardPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              // Horizontal Recommendations List
-              SizedBox(
-                height: 220,
-                child: isLoading && dashboardSummary == null
-                    ? ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 3,
-                        itemBuilder: (context, index) =>
-                            const FoodCardSkeleton(),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        scrollDirection: Axis.horizontal,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount:
-                            dashboardSummary?.recommendations.length ?? 0,
-                        itemBuilder: (context, index) {
-                          final rec = dashboardSummary!.recommendations[index];
-                          final colors = [
-                            Colors.green,
-                            Colors.teal,
-                            Colors.orange,
-                            Colors.amber,
-                          ];
-                          return _buildRekomendasiCard(
-                            context,
-                            rec,
-                            colors[index % colors.length],
-                          );
-                        },
-                      ),
-              ),
-              // Nutrition Analysis Section
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 20,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Pencapaian Target Gizi",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+              Selector<UserPreferenceProvider,
+                  ({bool isLoading, DashboardSummary? summary})>(
+                selector: (_, p) =>
+                    (isLoading: p.isLoading, summary: p.dashboardSummary),
+                builder: (context, data, _) {
+                  final isLoading = data.isLoading;
+                  final dashboardSummary = data.summary;
+
+                  return SizedBox(
+                    height: 220,
+                    child: isLoading && dashboardSummary == null
+                        ? ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: 3,
+                            itemBuilder: (context, index) =>
+                                const FoodCardSkeleton(),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            scrollDirection: Axis.horizontal,
+                            physics: const BouncingScrollPhysics(),
+                            itemCount:
+                                dashboardSummary?.recommendations.length ?? 0,
+                            itemBuilder: (context, index) {
+                              final rec =
+                                  dashboardSummary!.recommendations[index];
+                              final colors = [
+                                Colors.green,
+                                Colors.teal,
+                                Colors.orange,
+                                Colors.amber,
+                              ];
+                              return _buildRekomendasiCard(
+                                context,
+                                rec,
+                                colors[index % colors.length],
+                              );
+                            },
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const MealLogPage(),
+                  );
+                },
+              ),
+              Selector<UserPreferenceProvider, DashboardSummary?>(
+                selector: (_, p) => p.dashboardSummary,
+                builder: (context, dashboardSummary, _) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 20,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Pencapaian Target Gizi",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
                               ),
-                            );
-                          },
-                          child: Text(
-                            "Daftar Rencana",
-                            style: TextStyle(
-                              color: Colors.pink[300],
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
                             ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const MealLogPage(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "Daftar Rencana",
+                                style: TextStyle(
+                                  color: Colors.pink[300],
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 24,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(25),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.pink.withOpacity(0.08),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Builder(
+                                    builder: (context) {
+                                      final consumed =
+                                          dashboardSummary?.todayNutrition
+                                                  .calories ??
+                                              0;
+                                      final target =
+                                          dashboardSummary?.targets.calories ??
+                                              1;
+                                      final percentage =
+                                          (consumed / target * 100)
+                                              .clamp(0, 100)
+                                              .toInt();
+
+                                      return SizedBox(
+                                        height: 120,
+                                        width: 120,
+                                        child: Stack(
+                                          children: [
+                                            PieChart(
+                                              PieChartData(
+                                                sectionsSpace: 0,
+                                                centerSpaceRadius: 35,
+                                                startDegreeOffset: -90,
+                                                sections: [
+                                                  PieChartSectionData(
+                                                    color: Colors.pink[400],
+                                                    value:
+                                                        percentage.toDouble(),
+                                                    showTitle: false,
+                                                    radius: 15,
+                                                  ),
+                                                  PieChartSectionData(
+                                                    color: Colors.pink[50],
+                                                    value: (100 - percentage)
+                                                        .toDouble(),
+                                                    showTitle: false,
+                                                    radius: 12,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Center(
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                    "$percentage%",
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.pink[400],
+                                                    ),
+                                                  ),
+                                                  const Text(
+                                                    "Kalori",
+                                                    style: TextStyle(
+                                                      fontSize: 8,
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(width: 20),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          "Status Kebutuhan Gizi",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Berdasarkan preferensi Bunda",
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        _buildNutrientSmallProgress(
+                                          "Protein",
+                                          dashboardSummary?.todayNutrition
+                                                  .proteinG ??
+                                              0,
+                                          dashboardSummary?.targets.proteinG ??
+                                              1,
+                                          Colors.orange,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        _buildNutrientSmallProgress(
+                                          "Karbo",
+                                          dashboardSummary?.todayNutrition
+                                                  .carbsG ??
+                                              0,
+                                          dashboardSummary?.targets.carbsG ?? 1,
+                                          Colors.blue,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        _buildNutrientSmallProgress(
+                                          "Lemak",
+                                          dashboardSummary?.todayNutrition
+                                                  .fatG ??
+                                              0,
+                                          dashboardSummary?.targets.fatG ?? 1,
+                                          Colors.teal,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              if (dashboardSummary != null) ...[
+                                const SizedBox(height: 20),
+                                const Divider(),
+                                const SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    _buildRemainingItem(
+                                      "Sisa Kalori",
+                                      "${dashboardSummary.remaining.calories} kkal",
+                                      Icons.local_fire_department,
+                                      Colors.pink[300]!,
+                                    ),
+                                    _buildRemainingItem(
+                                      "Protein",
+                                      "${dashboardSummary.remaining.proteinG.toStringAsFixed(1)}g",
+                                      Icons.egg_outlined,
+                                      Colors.orange[300]!,
+                                    ),
+                                    _buildRemainingItem(
+                                      "Karbo",
+                                      "${dashboardSummary.remaining.carbsG.toStringAsFixed(1)}g",
+                                      Icons.bakery_dining_outlined,
+                                      Colors.blue[300]!,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ],
                           ),
                         ),
                       ],
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 24,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.pink.withOpacity(0.08),
-                            blurRadius: 20,
-                            offset: const Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Builder(
-                                builder: (context) {
-                                  final consumed =
-                                      dashboardSummary
-                                          ?.todayNutrition
-                                          .calories ??
-                                      0;
-                                  final target =
-                                      dashboardSummary?.targets.calories ?? 1;
-                                  final percentage = (consumed / target * 100)
-                                      .clamp(0, 100)
-                                      .toInt();
-
-                                  return SizedBox(
-                                    height: 120,
-                                    width: 120,
-                                    child: Stack(
-                                      children: [
-                                        PieChart(
-                                          PieChartData(
-                                            sectionsSpace: 0,
-                                            centerSpaceRadius: 35,
-                                            startDegreeOffset: -90,
-                                            sections: [
-                                              PieChartSectionData(
-                                                color: Colors.pink[400],
-                                                value: percentage.toDouble(),
-                                                showTitle: false,
-                                                radius: 15,
-                                              ),
-                                              PieChartSectionData(
-                                                color: Colors.pink[50],
-                                                value: (100 - percentage)
-                                                    .toDouble(),
-                                                showTitle: false,
-                                                radius: 12,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Center(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                "$percentage%",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.pink[400],
-                                                ),
-                                              ),
-                                              const Text(
-                                                "Kalori",
-                                                style: TextStyle(
-                                                  fontSize: 8,
-                                                  color: Colors.grey,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 20),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      "Status Kebutuhan Gizi",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Berdasarkan preferensi Bunda",
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: Colors.grey[600],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    _buildNutrientSmallProgress(
-                                      "Protein",
-                                      dashboardSummary
-                                              ?.todayNutrition
-                                              .proteinG ??
-                                          0,
-                                      dashboardSummary?.targets.proteinG ?? 1,
-                                      Colors.orange,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    _buildNutrientSmallProgress(
-                                      "Karbo",
-                                      dashboardSummary
-                                              ?.todayNutrition
-                                              .carbsG ??
-                                          0,
-                                      dashboardSummary?.targets.carbsG ?? 1,
-                                      Colors.blue,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    _buildNutrientSmallProgress(
-                                      "Lemak",
-                                      dashboardSummary?.todayNutrition.fatG ??
-                                          0,
-                                      dashboardSummary?.targets.fatG ?? 1,
-                                      Colors.teal,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (dashboardSummary != null) ...[
-                            const SizedBox(height: 20),
-                            const Divider(),
-                            const SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _buildRemainingItem(
-                                  "Sisa Kalori",
-                                  "${dashboardSummary.remaining.calories} kkal",
-                                  Icons.local_fire_department,
-                                  Colors.pink[300]!,
-                                ),
-                                _buildRemainingItem(
-                                  "Protein",
-                                  "${dashboardSummary.remaining.proteinG.toStringAsFixed(1)}g",
-                                  Icons.egg_outlined,
-                                  Colors.orange[300]!,
-                                ),
-                                _buildRemainingItem(
-                                  "Karbo",
-                                  "${dashboardSummary.remaining.carbsG.toStringAsFixed(1)}g",
-                                  Icons.bakery_dining_outlined,
-                                  Colors.blue[300]!,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                },
               ),
             ],
           ),
