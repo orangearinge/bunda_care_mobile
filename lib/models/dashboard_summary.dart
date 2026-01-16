@@ -24,6 +24,28 @@ class DashboardSummary {
           .toList(),
     );
   }
+
+  // Computed properties to offload logic from UI
+  int get caloriePercentage => targets.calories > 0
+      ? (todayNutrition.calories / targets.calories * 100).clamp(0, 100).toInt()
+      : 0;
+
+  double get proteinPercentage =>
+      targets.proteinG > 0 ? (todayNutrition.proteinG / targets.proteinG).clamp(0.0, 1.0) : 0.0;
+
+  double get carbsPercentage =>
+      targets.carbsG > 0 ? (todayNutrition.carbsG / targets.carbsG).clamp(0.0, 1.0) : 0.0;
+
+  double get fatPercentage =>
+      targets.fatG > 0 ? (todayNutrition.fatG / targets.fatG).clamp(0.0, 1.0) : 0.0;
+
+  bool wouldExceedTarget(num additionalCalories) {
+    return (todayNutrition.calories + additionalCalories) > targets.calories;
+  }
+
+  bool isTargetMet() {
+    return todayNutrition.calories >= targets.calories;
+  }
 }
 
 class DashboardUser {
@@ -43,6 +65,26 @@ class DashboardUser {
       role: json['role'] ?? '',
       preferences: json['preferences'] ?? {},
     );
+  }
+
+  String get statusText {
+    if (role == 'IBU_HAMIL') {
+      final weeks = preferences['gestational_age_weeks'];
+      if (weeks != null) return "Hamil: $weeks Minggu";
+      return "Kesehatan Ibu Hamil";
+    } else if (role == 'IBU_MENYUSUI') {
+      final phase = preferences['lactation_phase'];
+      if (phase == '0-6') return "Menyusui: 6 Bulan Pertama";
+      if (phase == '6-12') return "Menyusui: 6 Bulan Kedua";
+      return "Kesehatan Ibu Menyusui";
+    } else if (role == 'ANAK_BATITA') {
+      final years = preferences['age_year'] ?? 0;
+      final months = preferences['age_month'] ?? 0;
+      if (years > 0) return "Anak Batita: $years Thn $months Bln";
+      return "Anak Batita: $months Bulan";
+    }
+
+    return "Kesehatan Ibu & Bayi";
   }
 }
 

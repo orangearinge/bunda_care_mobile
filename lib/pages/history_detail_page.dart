@@ -130,9 +130,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
   }
 
   Widget _buildLogCard(HistoryDetailItem item) {
-    // Parse time from ISO string
-    final DateTime logTime = DateTime.parse(item.loggedAt);
-    final String timeStr = "${logTime.hour.toString().padLeft(2, '0')}:${logTime.minute.toString().padLeft(2, '0')}";
+    final String timeStr = item.formattedTime;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),

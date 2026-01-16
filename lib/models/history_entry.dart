@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class HistoryEntry {
   final String date;
   final int calories;
@@ -18,6 +20,15 @@ class HistoryEntry {
     required this.targetCalories,
     required this.percentage,
   });
+
+  // Mature state for UI
+  String get formattedDate {
+    final dt = DateTime.tryParse(date);
+    if (dt == null) return date;
+    return DateFormat('EEEE, d MMM yyyy', 'id_ID').format(dt);
+  }
+
+  DateTime? get dateTime => DateTime.tryParse(date);
 
   factory HistoryEntry.fromJson(Map<String, dynamic> json) {
     return HistoryEntry(
@@ -65,5 +76,14 @@ class HistoryDetailItem {
       fatG: (json['fat_g'] ?? 0).toDouble(),
       loggedAt: json['logged_at'] ?? '',
     );
+  }
+
+  String get formattedTime {
+    try {
+      final logTime = DateTime.parse(loggedAt);
+      return "${logTime.hour.toString().padLeft(2, '0')}:${logTime.minute.toString().padLeft(2, '0')}";
+    } catch (_) {
+      return '';
+    }
   }
 }

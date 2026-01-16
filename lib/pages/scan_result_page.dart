@@ -3,26 +3,23 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'rekomendasi_page.dart';
+import '../models/scan_result.dart';
 
 class ScanResultPage extends StatelessWidget {
-  final List<String> scannedItems;
   final Uint8List? imageBytes;
   final String? imagePath;
-  final Map<String, dynamic>? rawResults;
+  final ScanResult results;
 
   const ScanResultPage({
     super.key,
-    required this.scannedItems,
     this.imageBytes,
     this.imagePath,
-    this.rawResults,
+    required this.results,
   });
 
   @override
   Widget build(BuildContext context) {
-    final List<int> detectedIds = rawResults != null && rawResults!['detected_ids'] != null
-        ? List<int>.from(rawResults!['detected_ids'])
-        : [];
+    final List<int> detectedIds = results.detectedIds;
 
     return Scaffold(
       backgroundColor: Colors.pink[50],
@@ -91,7 +88,7 @@ class ScanResultPage extends StatelessWidget {
                           spacing: 8,
                           runSpacing: 8,
                           alignment: WrapAlignment.center,
-                          children: scannedItems.map((item) => Container(
+                          children: results.detectedItems.map((item) => Container(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               color: Colors.pink[50],
@@ -110,7 +107,7 @@ class ScanResultPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          scannedItems.isEmpty ? "Tidak ada makanan terdeteksi" : "Identifikasi Terdeteksi",
+                          results.detectedItems.isEmpty ? "Tidak ada makanan terdeteksi" : "Identifikasi Terdeteksi",
                           style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 14,
@@ -125,7 +122,7 @@ class ScanResultPage extends StatelessWidget {
             const SizedBox(height: 30),
             
             // Nutrition Candidates
-            if (rawResults != null && rawResults!['candidates'] != null)
+            if (results.candidates.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -136,7 +133,7 @@ class ScanResultPage extends StatelessWidget {
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  ...(rawResults!['candidates'] as List).map((c) => _buildCandidateTile(c)).toList(),
+                  ...results.candidates.map((c) => _buildCandidateTile(c)).toList(),
                 ],
               ),
             
@@ -194,8 +191,8 @@ class ScanResultPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCandidateTile(Map<String, dynamic> candidate) {
-    final nutrition = candidate['per_100g'];
+  Widget _buildCandidateTile(FoodCandidate candidate) {
+    final nutrition = candidate.nutrition;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -210,12 +207,12 @@ class ScanResultPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  candidate['name'],
+                  candidate.name,
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Kalori: ${nutrition['calories']} kkal",
+                  "Kalori: ${nutrition.calories} kkal",
                   style: const TextStyle(color: Colors.blue),
                 ),
               ],
@@ -224,9 +221,9 @@ class ScanResultPage extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text("P: ${nutrition['protein_g']}g", style: const TextStyle(fontSize: 12)),
-              Text("K: ${nutrition['carbs_g']}g", style: const TextStyle(fontSize: 12)),
-              Text("L: ${nutrition['fat_g']}g", style: const TextStyle(fontSize: 12)),
+              Text("P: ${nutrition.proteinG}g", style: const TextStyle(fontSize: 12)),
+              Text("K: ${nutrition.carbsG}g", style: const TextStyle(fontSize: 12)),
+              Text("L: ${nutrition.fatG}g", style: const TextStyle(fontSize: 12)),
             ],
           )
         ],

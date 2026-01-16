@@ -9,6 +9,7 @@ import '../providers/food_provider.dart';
 import '../utils/constants.dart';
 import 'rekomendasi_page.dart';
 import 'scan_result_page.dart';
+import '../models/scan_result.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -64,18 +65,15 @@ class _ScanPageState extends State<ScanPage> {
     );
 
     if (success && mounted) {
-      final results = foodProvider.scanResults;
+      final ScanResult? results = foodProvider.scanResults;
       if (results != null) {
-        final candidates = results['candidates'] as List<dynamic>;
-
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ScanResultPage(
-              scannedItems: candidates.map((c) => c['name'] as String).toList(),
               imageBytes: _webImageBytes,
               imagePath: _selectedImage?.path,
-              rawResults: results,
+              results: results,
             ),
           ),
         );

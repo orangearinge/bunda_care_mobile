@@ -53,12 +53,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       final summary = prefProvider.dashboardSummary;
 
       if (summary != null) {
-        final currentCalories = summary.todayNutrition.calories;
-        final targetCalories = summary.targets.calories;
         final newCalories = foodDetail.nutrition.calories;
 
         // Jika sudah melebihi atau akan melebihi target
-        if (currentCalories >= targetCalories || (currentCalories + newCalories) > targetCalories) {
+        if (summary.isTargetMet() || summary.wouldExceedTarget(newCalories)) {
           final bool? proceed = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
@@ -71,8 +69,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                 ],
               ),
               content: Text(
-                currentCalories >= targetCalories
-                    ? "Bunda sudah memenuhi target kalori hari ini. Tetap ingin mencatat makanan ini?"
+                summary.isTargetMet()
+                    ? "Bunda sudah memenuhi target gizi hari ini. Tetap ingin mencatat makanan ini?"
                     : "Mencatat makanan ini akan membuat asupan kalori Bunda melebihi target harian. Tetap simpan?",
                 style: GoogleFonts.poppins(),
               ),

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import '../models/api_error.dart';
 import '../services/food_service.dart';
 import '../utils/constants.dart';
+import '../models/meal_log.dart';
+import '../models/food_detail.dart';
+import '../models/scan_result.dart';
 
 enum FoodStatus { initial, loading, success, error }
 
@@ -10,17 +13,17 @@ class FoodProvider with ChangeNotifier {
   final FoodService _foodService = FoodService();
 
   FoodStatus _status = FoodStatus.initial;
-  Map<String, dynamic>? _scanResults;
+  ScanResult? _scanResults;
   Map<String, dynamic>? _recommendations;
-  List<dynamic> _mealLogs = [];
-  dynamic _selectedFoodDetail;
+  List<MealLog> _mealLogs = [];
+  FoodDetail? _selectedFoodDetail;
   String? _errorMessage;
 
   FoodStatus get status => _status;
-  Map<String, dynamic>? get scanResults => _scanResults;
+  ScanResult? get scanResults => _scanResults;
   Map<String, dynamic>? get recommendations => _recommendations;
-  List<dynamic> get mealLogs => _mealLogs;
-  dynamic get selectedFoodDetail => _selectedFoodDetail;
+  List<MealLog> get mealLogs => _mealLogs;
+  FoodDetail? get selectedFoodDetail => _selectedFoodDetail;
   String? get errorMessage => _errorMessage;
   bool get isLoading => _status == FoodStatus.loading;
 
@@ -32,7 +35,7 @@ class FoodProvider with ChangeNotifier {
 
     try {
       final results = await _foodService.scanFood(imageBytes, fileName);
-      _scanResults = results;
+      _scanResults = ScanResult.fromJson(results);
       _status = FoodStatus.success;
       notifyListeners();
       return true;
@@ -104,8 +107,8 @@ class FoodProvider with ChangeNotifier {
     _status = FoodStatus.loading;
     notifyListeners();
     try {
-      final logs = await _foodService.getMealLogs();
-      _mealLogs = logs;
+      final List<dynamic> logsJson = await _foodService.getMealLogs();
+      _mealLogs = logsJson.map((json) => MealLog.fromJson(json)).toList();
       _status = FoodStatus.success;
       notifyListeners();
     } on ApiError catch (e) {
@@ -149,10 +152,18 @@ class FoodProvider with ChangeNotifier {
       if (success) {
         // Update local list
         final index = _mealLogs.indexWhere(
-          (l) => l['meal_log_id'] == mealLogId,
+          (l) => l.id == mealLogId,
         );
         if (index != -1) {
-          _mealLogs[index]['is_consumed'] = true;
+          final oldLog = _mealLogs[index];
+          _mealLogs[index] = MealLog(
+            id: oldLog.id,
+            menuName: oldLog.menuName,
+            isConsumed: true,
+            imageUrl: oldLog.imageUrl,
+            nutrition: oldLog.nutrition,
+            createdAt: oldLog.createdAt,
+          );
           notifyListeners();
         }
       }

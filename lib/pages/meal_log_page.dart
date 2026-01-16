@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/food_provider.dart';
 import '../providers/user_preference_provider.dart';
 import '../widgets/shimmer_loading.dart';
+import '../models/meal_log.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 
@@ -93,13 +94,12 @@ class _MealLogPageState extends State<MealLogPage> {
     );
   }
 
-  Widget _buildMealLogCard(Map<String, dynamic> log, FoodProvider provider) {
-    final bool isConsumed = log['is_consumed'] ?? false;
-    final String menuName = log['menu_name'] ?? 'Menu';
-    final String calories = "${log['total']['calories']} kkal";
-    final int logId = log['meal_log_id'];
-
-    final String? imageUrl = log['image_url'];
+  Widget _buildMealLogCard(MealLog log, FoodProvider provider) {
+    final bool isConsumed = log.isConsumed;
+    final String menuName = log.menuName;
+    final String calories = log.caloriesText;
+    final int logId = log.id;
+    final String? imageUrl = log.imageUrl;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -167,7 +167,10 @@ class _MealLogPageState extends State<MealLogPage> {
                     ),
                     child: const Text(
                       "Selesai",
-                      style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 10),
+                      style: TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10),
                     ),
                   )
                 else
@@ -179,7 +182,10 @@ class _MealLogPageState extends State<MealLogPage> {
                     ),
                     child: const Text(
                       "Terencana",
-                      style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 10),
+                      style: TextStyle(
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 10),
                     ),
                   ),
               ],
@@ -191,58 +197,63 @@ class _MealLogPageState extends State<MealLogPage> {
                 final prefProvider = context.read<UserPreferenceProvider>();
                 final summary = prefProvider.dashboardSummary;
 
-                if (summary != null) {
-                  final currentCalories = summary.todayNutrition.calories;
-                  final targetCalories = summary.targets.calories;
-                  final menuCalories = log['total']['calories'] ?? 0;
-
-                  if (currentCalories >= targetCalories || (currentCalories + menuCalories) > targetCalories) {
-                    final bool? proceed = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                        title: Row(
-                          children: [
-                            Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
-                            const SizedBox(width: 8),
-                            const Text("Target Terpenuhi"),
-                          ],
-                        ),
-                        content: Text(
-                          currentCalories >= targetCalories
-                              ? "Bunda sudah memenuhi target kalori hari ini. Tetap ingin mengonfirmasi makanan ini?"
-                              : "Mengonfirmasi makanan ini akan membuat asupan kalori Bunda melebihi target harian. Tetap simpan?",
-                          style: GoogleFonts.poppins(),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            child: Text("Batal", style: TextStyle(color: Colors.grey[600])),
-                          ),
-                          ElevatedButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.pink[400],
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            ),
-                            child: const Text("Tetap Konfirmasi"),
-                          ),
+                if (summary != null &&
+                    (summary.isTargetMet() ||
+                        summary.wouldExceedTarget(log.nutrition.calories))) {
+                  final bool? proceed = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      title: Row(
+                        children: [
+                          Icon(Icons.warning_amber_rounded,
+                              color: Colors.orange[700]),
+                          const SizedBox(width: 8),
+                          const Text("Target Terpenuhi"),
                         ],
                       ),
-                    );
+                      content: Text(
+                        summary.isTargetMet()
+                            ? "Bunda sudah memenuhi target gizi hari ini. Tetap ingin mengonfirmasi makanan ini?"
+                            : "Mengonfirmasi makanan ini akan membuat asupan kalori Bunda melebihi target harian. Tetap simpan?",
+                        style: GoogleFonts.poppins(),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text("Batal",
+                              style: TextStyle(color: Colors.grey[600])),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.pink[400],
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                          child: const Text("Tetap Konfirmasi"),
+                        ),
+                      ],
+                    ),
+                  );
 
-                    if (proceed != true) return;
-                  }
+                  if (proceed != true) return;
                 }
 
+                if (!mounted) return;
                 final success = await provider.confirmMeal(logId);
                 if (success && mounted) {
                   // Refresh global nutritional data
-                  context.read<UserPreferenceProvider>().fetchDashboardSummary();
-                  
+                  context
+                      .read<UserPreferenceProvider>()
+                      .fetchDashboardSummary();
+
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Selamat Makan! Gizi Anda telah diperbarui.')),
+                    const SnackBar(
+                        content:
+                            Text('Selamat Makan! Gizi Anda telah diperbarui.')),
                   );
                 }
               },
@@ -251,12 +262,14 @@ class _MealLogPageState extends State<MealLogPage> {
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
                   color: Colors.pink[300],
-                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+                  borderRadius: const BorderRadius.vertical(
+                      bottom: Radius.circular(20)),
                 ),
                 child: const Center(
                   child: Text(
                     "KONFIRMASI MAKAN",
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

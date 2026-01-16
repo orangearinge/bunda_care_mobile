@@ -44,30 +44,6 @@ class _DashboardPageState extends State<DashboardPage> {
     // GoRouter will automatically redirect to login
   }
 
-  String _getStatusText(DashboardSummary? dashboardSummary) {
-    if (dashboardSummary == null) return "Kesehatan Ibu & Bayi";
-
-    final role = dashboardSummary.user.role;
-    final prefs = dashboardSummary.user.preferences;
-
-    if (role == 'IBU_HAMIL') {
-      final weeks = prefs['gestational_age_weeks'];
-      if (weeks != null) return "Hamil: $weeks Minggu";
-      return "Kesehatan Ibu Hamil";
-    } else if (role == 'IBU_MENYUSUI') {
-      final phase = prefs['lactation_phase'];
-      if (phase == '0-6') return "Menyusui: 6 Bulan Pertama";
-      if (phase == '6-12') return "Menyusui: 6 Bulan Kedua";
-      return "Kesehatan Ibu Menyusui";
-    } else if (role == 'ANAK_BATITA') {
-      final years = prefs['age_year'] ?? 0;
-      final months = prefs['age_month'] ?? 0;
-      if (years > 0) return "Anak Batita: $years Thn $months Bln";
-      return "Anak Batita: $months Bulan";
-    }
-
-    return "Kesehatan Ibu & Bayi";
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +225,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
-                                        _getStatusText(dashboardSummary),
+                                        dashboardSummary?.user.statusText ?? "Kesehatan Ibu & Bayi",
                                         style: const TextStyle(
                                           fontSize: 11,
                                           color: Colors.white,
@@ -421,17 +397,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 children: [
                                   Builder(
                                     builder: (context) {
-                                      final consumed =
-                                          dashboardSummary?.todayNutrition
-                                                  .calories ??
-                                              0;
-                                      final target =
-                                          dashboardSummary?.targets.calories ??
-                                              1;
-                                      final percentage =
-                                          (consumed / target * 100)
-                                              .clamp(0, 100)
-                                              .toInt();
+                                      final percentage = dashboardSummary?.caloriePercentage ?? 0;
 
                                       return SizedBox(
                                         height: 120,
@@ -515,29 +481,19 @@ class _DashboardPageState extends State<DashboardPage> {
                                         const SizedBox(height: 12),
                                         _buildNutrientSmallProgress(
                                           "Protein",
-                                          dashboardSummary?.todayNutrition
-                                                  .proteinG ??
-                                              0,
-                                          dashboardSummary?.targets.proteinG ??
-                                              1,
+                                          dashboardSummary?.proteinPercentage ?? 0,
                                           Colors.orange,
                                         ),
                                         const SizedBox(height: 8),
                                         _buildNutrientSmallProgress(
                                           "Karbo",
-                                          dashboardSummary?.todayNutrition
-                                                  .carbsG ??
-                                              0,
-                                          dashboardSummary?.targets.carbsG ?? 1,
+                                          dashboardSummary?.carbsPercentage ?? 0,
                                           Colors.blue,
                                         ),
                                         const SizedBox(height: 8),
                                         _buildNutrientSmallProgress(
                                           "Lemak",
-                                          dashboardSummary?.todayNutrition
-                                                  .fatG ??
-                                              0,
-                                          dashboardSummary?.targets.fatG ?? 1,
+                                          dashboardSummary?.fatPercentage ?? 0,
                                           Colors.teal,
                                         ),
                                       ],
@@ -727,11 +683,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildNutrientSmallProgress(
     String label,
-    double consumed,
-    double target,
+    double progress,
     Color color,
   ) {
-    double progress = (consumed / target).clamp(0.0, 1.0);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

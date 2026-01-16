@@ -135,8 +135,7 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Widget _buildHistoryCard(HistoryEntry entry) {
-    final DateTime date = DateTime.parse(entry.date);
-    final String formattedDate = DateFormat('EEEE, d MMM yyyy', 'id_ID').format(date);
+    final String formattedDate = entry.formattedDate;
     
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
