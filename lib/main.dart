@@ -10,6 +10,7 @@ import 'providers/history_provider.dart';
 import 'providers/chat_provider.dart';
 import 'router/app_router.dart';
 import 'pages/main_navigation.dart';
+import 'package:shimmer/shimmer.dart';
 import 'utils/constants.dart';
 import 'utils/logger.dart';
 
@@ -82,19 +83,83 @@ class _AppContentState extends State<AppContent> {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.pink[300]),
-        home: const Scaffold(
+        home: Scaffold(
           backgroundColor: Colors.white,
-          body: Center(
+          body: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.white, Colors.pink[50]!],
+              ),
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(color: Colors.pink),
-                SizedBox(height: 20),
+                // Logo or App Icon
+                TweenAnimationBuilder<double>(
+                  duration: const Duration(seconds: 2),
+                  tween: Tween(begin: 0.8, end: 1.0),
+                  curve: Curves.elasticOut,
+                  builder: (context, value, child) {
+                    return Transform.scale(scale: value, child: child);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.pink.withOpacity(0.1),
+                          blurRadius: 20,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                    child: Image.asset(
+                      'lib/assets/images/logo_bundacare.png',
+                      width: 100,
+                      height: 100,
+                      errorBuilder: (_, __, ___) => Icon(
+                        Icons.favorite,
+                        size: 80,
+                        color: Colors.pink[300],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                // Loading Text with subtle shimmer
+                Shimmer.fromColors(
+                  baseColor: Colors.pink[400]!,
+                  highlightColor: Colors.pink[200]!,
+                  child: const Text(
+                    "Bunda Care",
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 Text(
-                  "Memulai Bunda Care...",
+                  "Partner Gizi Bunda & Buah Hati",
                   style: TextStyle(
-                    color: Colors.pink,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[600],
+                    fontSize: 14,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 60),
+                const SizedBox(
+                  width: 40,
+                  height: 40,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.pink),
                   ),
                 ),
               ],
