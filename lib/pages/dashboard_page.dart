@@ -32,15 +32,6 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Listen for profile updates
-    final preferenceProvider = Provider.of<UserPreferenceProvider>(
-      context,
-      listen: false,
-    );
-    if (preferenceProvider.profileUpdated) {
-      _fetchDashboardData();
-      preferenceProvider.resetProfileUpdatedFlag();
-    }
   }
 
   Future<void> _fetchDashboardData() async {
@@ -86,7 +77,6 @@ class _DashboardPageState extends State<DashboardPage> {
     final dashboardSummary = preferenceProvider.dashboardSummary;
     final isLoading = preferenceProvider.isLoading;
 
-    // Auto-refresh when profile is updated
     if (preferenceProvider.profileUpdated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _fetchDashboardData();

@@ -162,7 +162,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
         await provider.updateAvatar(avatarUrl: uploadedUrl);
-        await provider.fetchPreference();
 
         // Refresh auth provider to get updated avatar
         await authProvider.checkAuthStatus();

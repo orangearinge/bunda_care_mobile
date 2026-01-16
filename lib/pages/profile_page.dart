@@ -146,31 +146,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () async {
-                            final result = await Navigator.push(
+                          onPressed: () {
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
                                     EditProfilePage(initialPreference: pref),
                               ),
                             );
-
-                            if (result == true || result == null) {
-                              if (mounted) {
-                                final userPreferenceProvider =
-                                    Provider.of<UserPreferenceProvider>(
-                                      context,
-                                      listen: false,
-                                    );
-                                final authProvider = Provider.of<AuthProvider>(
-                                  context,
-                                  listen: false,
-                                );
-
-                                await userPreferenceProvider.fetchPreference();
-                                await authProvider.checkAuthStatus();
-                              }
-                            }
                           },
                           icon: Container(
                             padding: const EdgeInsets.all(8),
