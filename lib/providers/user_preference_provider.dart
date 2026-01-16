@@ -4,6 +4,7 @@ import '../models/dashboard_summary.dart';
 import '../models/api_error.dart';
 import '../services/user_service.dart';
 import '../utils/constants.dart';
+import '../utils/logger.dart';
 
 enum PreferenceStatus { initial, loading, success, error }
 
@@ -92,7 +93,7 @@ class UserPreferenceProvider with ChangeNotifier {
       // For now, this will work since the ProfilePage uses both providers
     } catch (e) {
       // Silently fail if AuthProvider not available
-      print('Could not update AuthProvider name: $e');
+      AppLogger.e('Could not update AuthProvider name', e);
     }
   }
 

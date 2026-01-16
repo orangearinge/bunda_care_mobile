@@ -1,7 +1,7 @@
-import 'package:dio/dio.dart';
 import 'api_service.dart';
 import '../models/api_error.dart';
 import '../utils/constants.dart';
+import '../utils/error_handler.dart';
 
 /// Service untuk interaksi dengan RAG Chatbot
 /// Menangani komunikasi dengan backend chat API tanpa menyimpan ke database
@@ -40,8 +40,7 @@ class ChatService {
         message: 'Format respons tidak valid dari server',
       );
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -56,10 +55,8 @@ class ChatService {
           message: 'Gagal memperbarui index',
         );
       }
-    } on ApiError {
-      rethrow;
     } catch (e) {
-      throw ApiError.fromException(e as Exception);
+      throw ErrorHandler.handle(e);
     }
   }
 }

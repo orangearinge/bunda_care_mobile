@@ -3,6 +3,7 @@ import '../models/api_error.dart';
 import '../models/food_detail.dart';
 import '../utils/constants.dart';
 import '../utils/cache_config.dart';
+import '../utils/error_handler.dart';
 import 'api_service.dart';
 
 
@@ -41,8 +42,7 @@ class FoodService {
         message: ApiConstants.getErrorMessage('SCAN_FAILED'),
       );
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -81,8 +81,7 @@ class FoodService {
         message: ApiConstants.getErrorMessage('RECOMMENDATION_FAILED'),
       );
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -109,8 +108,7 @@ class FoodService {
         message: 'Detail makanan tidak ditemukan',
       );
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -132,8 +130,7 @@ class FoodService {
       );
       return _api.unwrap(response);
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -154,8 +151,7 @@ class FoodService {
       }
       return [];
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -166,13 +162,7 @@ class FoodService {
       final response = await _api.post('${ApiConstants.mealLog}/$mealLogId/confirm');
       return response.statusCode == 200;
     } catch (e) {
-      if (e is ApiError) {
-        throw ApiError(
-          code: e.code,
-          message: ApiConstants.getErrorMessage(e.code),
-        );
-      }
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 }

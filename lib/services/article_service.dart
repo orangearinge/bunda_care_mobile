@@ -1,8 +1,8 @@
-
 import '../services/api_service.dart';
 import '../models/article.dart';
 import '../utils/constants.dart';
 import '../utils/cache_config.dart';
+import '../utils/error_handler.dart';
 
 class ArticleService {
   final ApiService _api = ApiService();
@@ -32,7 +32,7 @@ class ArticleService {
       final data = _api.unwrap(response);
       return ArticleListResponse.fromJson(data);
     } catch (e) {
-      rethrow;
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -50,7 +50,7 @@ class ArticleService {
       
       return Article.fromJson(data);
     } catch (e) {
-      rethrow;
+      throw ErrorHandler.handle(e);
     }
   }
 }

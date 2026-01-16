@@ -4,6 +4,8 @@ import '../models/history_entry.dart';
 import '../models/api_error.dart';
 import '../utils/constants.dart';
 import '../utils/cache_config.dart';
+import '../utils/error_handler.dart';
+import '../utils/logger.dart';
 import 'api_service.dart';
 
 /// Service for user-related API calls
@@ -22,9 +24,7 @@ class UserService {
       );
 
       final data = response.data;
-      if (ApiConstants.isDevelopment) {
-        print('BACKEND RESPONSE: $data');
-      }
+      AppLogger.d('BACKEND RESPONSE: $data');
 
       final unwrapped = _api.unwrap(response);
       if (unwrapped is Map<String, dynamic>) {
@@ -43,8 +43,7 @@ class UserService {
         );
       }
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -67,9 +66,7 @@ class UserService {
       }
       return null;
     } catch (e) {
-      if (ApiConstants.isDevelopment) {
-        print('GET PREFERENCE ERROR: $e');
-      }
+      AppLogger.e('GET PREFERENCE ERROR', e);
       return null;
     }
   }
@@ -104,8 +101,7 @@ class UserService {
         message: 'Format data dashboard tidak valid',
       );
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -132,8 +128,7 @@ class UserService {
         message: 'Gagal mengambil data profil pengguna',
       );
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -157,8 +152,7 @@ class UserService {
         message: 'Gagal memperbarui avatar',
       );
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -177,8 +171,7 @@ class UserService {
           .map((e) => HistoryEntry.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -197,8 +190,7 @@ class UserService {
           .map((e) => HistoryDetailItem.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 }

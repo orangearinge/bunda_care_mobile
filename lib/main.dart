@@ -11,6 +11,7 @@ import 'providers/chat_provider.dart';
 import 'router/app_router.dart';
 import 'pages/main_navigation.dart';
 import 'utils/constants.dart';
+import 'utils/logger.dart';
 
 void main() async {
   // Menangkap error flutter di luar zone (misalnya saat inisialisasi)
@@ -21,11 +22,11 @@ void main() async {
 
   try {
     await dotenv.load(fileName: ".env");
-    debugPrint("Environment loaded successfully");
+    AppLogger.i("Environment loaded successfully");
     // Debug API configuration
     ApiConstants.debugPrintConfig();
   } catch (e) {
-    debugPrint("Warning: Could not load .env file: $e");
+    AppLogger.w("Warning: Could not load .env file: $e");
   }
 
   runApp(const BundaCareApp());

@@ -4,6 +4,7 @@ import '../models/api_error.dart';
 import '../services/auth_service.dart';
 import '../services/user_service.dart';
 import '../utils/constants.dart';
+import '../utils/logger.dart';
 
 /// Authentication state enum
 enum AuthState {
@@ -125,7 +126,7 @@ class AuthProvider with ChangeNotifier {
         } on ApiError catch (e) {
           // Token is invalid/expired, clear session
           if (_isAuthError(e)) {
-            print('Token validation failed: ${e.code}');
+            AppLogger.w('Token validation failed: ${e.code}');
             await _authService.logout();
             _setState(AuthState.unauthenticated);
             return;
@@ -138,7 +139,7 @@ class AuthProvider with ChangeNotifier {
       // No valid session
       _setState(AuthState.unauthenticated);
     } catch (e) {
-      print('Error checking auth status: $e');
+      AppLogger.e('Error checking auth status', e);
       _setState(AuthState.unauthenticated);
     }
   }
@@ -180,13 +181,13 @@ class AuthProvider with ChangeNotifier {
     } on ApiError catch (e) {
       // Handle authentication errors by logging out
       if (_isAuthError(e)) {
-        print('Authentication error during user refresh: ${e.code}');
+        AppLogger.w('Authentication error during user refresh: ${e.code}');
         await logout();
         return;
       }
-      print('Error refreshing user data: $e');
+      AppLogger.e('Error refreshing user data', e);
     } catch (e) {
-      print('Error refreshing user data: $e');
+      AppLogger.e('Error refreshing user data', e);
     }
   }
 
@@ -303,7 +304,7 @@ class AuthProvider with ChangeNotifier {
     try {
       await _authService.logout();
     } catch (e) {
-      print('Logout error: $e');
+      AppLogger.e('Logout error', e);
       // Continue logout even if backend call fails
     } finally {
       _currentUser = null;

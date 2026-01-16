@@ -5,7 +5,8 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:path_provider/path_provider.dart';
 import '../utils/constants.dart';
-import '../models/api_error.dart';
+import '../utils/error_handler.dart';
+import '../utils/logger.dart';
 import 'storage_service.dart';
 
 class ApiService {
@@ -44,22 +45,19 @@ class ApiService {
           return handler.next(options);
         },
         onResponse: (response, handler) {
-          if (ApiConstants.isDevelopment) {
-            final fromCache =
-                response.extra['dio_cache_interceptor_response'] == true;
-            final cacheIndicator = fromCache ? '💾' : '🌐';
-            print(
-              '✅ $cacheIndicator [${response.statusCode}] ${response.requestOptions.method} ${response.requestOptions.path}',
-            );
-          }
+          final fromCache =
+              response.extra['dio_cache_interceptor_response'] == true;
+          final cacheIndicator = fromCache ? '💾' : '🌐';
+          AppLogger.d(
+            '✅ $cacheIndicator [${response.statusCode}] ${response.requestOptions.method} ${response.requestOptions.path}',
+          );
           return handler.next(response);
         },
         onError: (error, handler) {
-          if (ApiConstants.isDevelopment) {
-            print(
-              '❌ [${error.response?.statusCode ?? "ERR"}] ${error.requestOptions.method} ${error.requestOptions.path}',
-            );
-          }
+          AppLogger.e(
+            '❌ [${error.response?.statusCode ?? "ERR"}] ${error.requestOptions.method} ${error.requestOptions.path}',
+            error,
+          );
           return handler.next(error);
         },
       ),
@@ -104,9 +102,7 @@ class ApiService {
       );
       _cacheInitialized = true;
     } catch (e) {
-      if (ApiConstants.isDevelopment) {
-        print('⚠️ Failed to initialize cache: $e');
-      }
+      AppLogger.w('⚠️ Failed to initialize cache: $e');
     } finally {
       if (!_cacheCompleter.isCompleted) {
         _cacheCompleter.complete();
@@ -131,7 +127,7 @@ class ApiService {
         options: options,
       );
     } on DioException catch (e) {
-      throw _handleError(e);
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -152,7 +148,7 @@ class ApiService {
         options: options,
       );
     } on DioException catch (e) {
-      throw _handleError(e);
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -173,7 +169,7 @@ class ApiService {
         options: options,
       );
     } on DioException catch (e) {
-      throw _handleError(e);
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -194,7 +190,7 @@ class ApiService {
         options: options,
       );
     } on DioException catch (e) {
-      throw _handleError(e);
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -208,54 +204,16 @@ class ApiService {
     return data;
   }
 
-  ApiError _handleError(DioException error) {
-    switch (error.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-        return ApiError.timeoutError();
-      case DioExceptionType.connectionError:
-        return ApiError.networkError();
-      case DioExceptionType.badResponse:
-        final response = error.response;
-        if (response != null) {
-          if (response.data is Map<String, dynamic>) {
-            final data = response.data as Map<String, dynamic>;
-            if (data['error'] != null) {
-              return ApiError.fromJson(data);
-            }
-          }
-          switch (response.statusCode) {
-            case 400:
-              return ApiError(code: 'VALIDATION_ERROR');
-            case 401:
-              return ApiError(code: 'SESSION_EXPIRED');
-            case 403:
-              return ApiError(code: 'UNAUTHORIZED');
-            case 404:
-              return ApiError(code: 'DATA_NOT_FOUND');
-            case 500:
-              return ApiError(code: 'SERVER_ERROR');
-          }
-        }
-        return ApiError.serverError(
-          'Error ${response?.statusCode}: ${error.message}',
-        );
-      case DioExceptionType.cancel:
-        return ApiError(code: 'REQUEST_CANCELLED');
-      default:
-        return ApiError.fromException(error);
-    }
-  }
+
 
   Future<void> clearAllCache() async {
     await _ensureCacheInitialized();
     if (_cacheStore == null) return;
     try {
       await _cacheStore!.clean();
-      if (ApiConstants.isDevelopment) print('🗑️ Cache cleared successfully');
+      AppLogger.i('🗑️ Cache cleared successfully');
     } catch (e) {
-      if (ApiConstants.isDevelopment) print('❌ Failed to clear cache: $e');
+      AppLogger.e('❌ Failed to clear cache', e);
     }
   }
 
@@ -264,10 +222,9 @@ class ApiService {
     if (_cacheStore == null) return;
     try {
       await _cacheStore!.delete(url);
-      if (ApiConstants.isDevelopment) print('🗑️ Cache cleared for: $url');
+      AppLogger.i('🗑️ Cache cleared for: $url');
     } catch (e) {
-      if (ApiConstants.isDevelopment)
-        print('❌ Failed to clear cache for URL: $e');
+      AppLogger.e('❌ Failed to clear cache for URL', e);
     }
   }
 

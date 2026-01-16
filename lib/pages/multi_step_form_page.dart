@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/user_preference_provider.dart';
 import '../providers/auth_provider.dart';
 import '../utils/constants.dart';
+import '../utils/logger.dart';
 
 class MultiStepFormPage extends StatefulWidget {
   final String userRole; // 'IbuHamil', 'IbuMenyusui', atau 'AnakBatita'
@@ -633,8 +634,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       return int.tryParse(value.toString());
     }
 
-    print("Submitting Form Data: $formData");
-    print("Backend Role: $backendRole");
+    AppLogger.d("Submitting Form Data: $formData");
+    AppLogger.d("Backend Role: $backendRole");
 
     // Helper to parse list from comma separated string
     List<String> parseList(dynamic value) {

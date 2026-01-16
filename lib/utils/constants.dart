@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io' show Platform;
+import 'logger.dart';
 
 /// API Configuration Constants
 /// Contains all API endpoints, URLs, and configuration values
@@ -176,14 +177,14 @@ class ApiConstants {
   /// Print current API configuration for debugging
   static void debugPrintConfig() {
     if (isDevelopment) {
-      print('🔧 API Configuration Debug:');
-      print('   Platform: $platformInfo');
-      print('   Base URL: $baseUrl');
-      print('   Environment: ${dotenv.env['APP_ENV'] ?? 'not set'}');
-      print(
+      AppLogger.d('🔧 API Configuration Debug:');
+      AppLogger.d('   Platform: $platformInfo');
+      AppLogger.d('   Base URL: $baseUrl');
+      AppLogger.d('   Environment: ${dotenv.env['APP_ENV'] ?? 'not set'}');
+      AppLogger.d(
         '   API_BASE_URL from .env: ${dotenv.env['API_BASE_URL'] ?? 'not set'}',
       );
-      print('   kIsWeb: $kIsWeb');
+      AppLogger.d('   kIsWeb: $kIsWeb');
     }
   }
 }

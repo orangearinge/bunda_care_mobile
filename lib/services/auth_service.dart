@@ -1,9 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/auth_response.dart';
 import '../models/api_error.dart';
 import '../models/user.dart';
 import '../utils/constants.dart';
+import '../utils/error_handler.dart';
+import '../utils/logger.dart';
 import 'api_service.dart';
 import 'storage_service.dart';
 
@@ -14,12 +17,8 @@ class AuthService {
   final StorageService _storage = StorageService();
   late final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
-    clientId: kIsWeb
-        ? '362532988128-bsnv1n5p21vo4k5jqkdi592qokjltma5.apps.googleusercontent.com'
-        : null,
-    serverClientId: !kIsWeb
-        ? '362532988128-bsnv1n5p21vo4k5jqkdi592qokjltma5.apps.googleusercontent.com'
-        : null,
+    clientId: kIsWeb ? dotenv.env['GOOGLE_CLIENT_ID'] : null,
+    serverClientId: !kIsWeb ? dotenv.env['GOOGLE_CLIENT_ID'] : null,
   );
 
   // ==================== Email/Password Auth ====================
@@ -50,8 +49,7 @@ class AuthService {
 
       return authResponse;
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -76,8 +74,7 @@ class AuthService {
 
       return authResponse;
     } catch (e) {
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -133,12 +130,8 @@ class AuthService {
       // Sign out from Google on error
       await _googleSignIn.signOut();
 
-      if (ApiConstants.isDevelopment) {
-        print('Google sign-in error: $e');
-      }
-
-      if (e is ApiError) rethrow;
-      throw ApiError.fromException(Exception(e));
+      AppLogger.e('Google sign-in error', e);
+      throw ErrorHandler.handle(e);
     }
   }
 
@@ -153,7 +146,7 @@ class AuthService {
         await _api.post(ApiConstants.logout);
       } catch (e) {
         // Ignore backend logout errors - we still want to logout locally
-        print('Backend logout failed: $e');
+        AppLogger.w('Backend logout failed: $e');
       }
 
       // Sign out from Google if user signed in with Google

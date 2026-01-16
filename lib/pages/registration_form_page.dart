@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
+import '../utils/logger.dart';
 
 class RegistrationFormPage extends StatelessWidget {
   RegistrationFormPage({Key? key}) : super(key: key);
@@ -108,8 +109,8 @@ class RegistrationFormPage extends StatelessWidget {
   }) {
     return ElevatedButton(
       onPressed: () async {
-        // Debug: Print untuk memastikan fungsi dipanggil
-        print('Tombol $label ditekan!');
+        // Debug: Log untuk memastikan fungsi dipanggil
+        AppLogger.d('Tombol $label ditekan!');
 
         // Navigasi ke MultiStepFormPage
         context.go('/multi-step-form/$role');
