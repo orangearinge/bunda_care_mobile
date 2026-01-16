@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../models/history_entry.dart';
 import '../providers/history_provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class HistoryDetailPage extends StatefulWidget {
   final String date;
@@ -155,7 +157,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 image: DecorationImage(
-                  image: NetworkImage(item.imageUrl),
+                  image: CachedNetworkImageProvider(item.imageUrl),
                   fit: BoxFit.cover,
                 ),
               ),

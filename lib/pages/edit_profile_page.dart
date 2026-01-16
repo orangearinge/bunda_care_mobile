@@ -9,6 +9,8 @@ import '../utils/cloudinary_uploader.dart';
 import '../providers/user_preference_provider.dart';
 import '../providers/auth_provider.dart';
 import '../models/user_preference.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class EditProfilePage extends StatefulWidget {
   final UserPreference initialPreference;
@@ -570,7 +572,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   : _avatarImageBytes != null
                                   ? MemoryImage(_avatarImageBytes!)
                                   : hasRemoteImage
-                                  ? NetworkImage(finalRemoteUrl!)
+                                  ? CachedNetworkImageProvider(finalRemoteUrl!)
                                   : null,
                               onBackgroundImageError:
                                   (hasLocalImage || hasRemoteImage)

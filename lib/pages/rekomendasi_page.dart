@@ -4,6 +4,8 @@ import '../providers/food_provider.dart';
 import 'meal_log_page.dart';
 import 'food_detail_page.dart';
 import '../widgets/shimmer_loading.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 
 class RekomendasiPage extends StatefulWidget {
@@ -202,39 +204,25 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
           if (imageUrl != null && imageUrl.isNotEmpty)
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-              child: Image.network(
-                imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
                 width: double.infinity,
                 height: 180,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: double.infinity,
-                    height: 180,
-                    color: Colors.grey[200],
-                    child: Icon(
-                      Icons.restaurant,
-                      size: 64,
-                      color: Colors.grey[400],
-                    ),
-                  );
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    width: double.infinity,
-                    height: 180,
-                    color: Colors.grey[200],
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
-                            : null,
-                      ),
-                    ),
-                  );
-                },
+                placeholder: (context, url) => const ShimmerImage(
+                  width: double.infinity,
+                  height: 180,
+                ),
+                errorWidget: (context, url, error) => Container(
+                  width: double.infinity,
+                  height: 180,
+                  color: Colors.grey[200],
+                  child: Icon(
+                    Icons.restaurant,
+                    size: 64,
+                    color: Colors.grey[400],
+                  ),
+                ),
               ),
             ),
           Padding(

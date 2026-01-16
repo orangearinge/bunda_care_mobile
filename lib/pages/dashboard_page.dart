@@ -11,6 +11,8 @@ import 'meal_log_page.dart';
 import 'food_detail_page.dart';
 import 'history_page.dart';
 import '../widgets/shimmer_loading.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 
 class DashboardPage extends StatefulWidget {
@@ -591,12 +593,16 @@ class _DashboardPageState extends State<DashboardPage> {
                   ),
                   child: Stack(
                     children: [
-                      Image.network(
-                        rec.imageUrl,
+                      CachedNetworkImage(
+                        imageUrl: rec.imageUrl,
                         height: 120,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) => Container(
+                        placeholder: (context, url) => const ShimmerImage(
+                          width: double.infinity,
+                          height: 120,
+                        ),
+                        errorWidget: (context, url, error) => Container(
                           height: 120,
                           color: Colors.grey[200],
                           child: const Icon(

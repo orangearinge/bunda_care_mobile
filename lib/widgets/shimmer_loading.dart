@@ -100,6 +100,35 @@ class ShimmerCircle extends StatelessWidget {
   }
 }
 
+class ShimmerImage extends StatelessWidget {
+  final double? width;
+  final double? height;
+  final double borderRadius;
+
+  const ShimmerImage({
+    super.key,
+    this.width,
+    this.height,
+    this.borderRadius = 0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(borderRadius),
+        ),
+      ),
+    );
+  }
+}
+
 class FoodCardSkeleton extends StatelessWidget {
   const FoodCardSkeleton({super.key});
 

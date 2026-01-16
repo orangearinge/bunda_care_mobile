@@ -8,6 +8,8 @@ import '../providers/food_provider.dart';
 import '../providers/user_preference_provider.dart';
 import 'meal_log_page.dart';
 import '../widgets/shimmer_loading.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class FoodDetailPage extends StatefulWidget {
   final int menuId;
@@ -257,25 +259,18 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               borderRadius: const BorderRadius.vertical(
                 bottom: Radius.circular(30),
               ),
-              child: Image.network(
-                foodDetail.imageUrl!,
+              child: CachedNetworkImage(
+                imageUrl: foodDetail.imageUrl!,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Icon(
+                placeholder: (context, url) => const ShimmerImage(
+                  width: double.infinity,
+                  height: 250,
+                ),
+                errorWidget: (context, url, error) => Icon(
                   Icons.restaurant,
                   size: 64,
                   color: Colors.grey[400],
                 ),
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null,
-                    ),
-                  );
-                },
               ),
             )
           : Icon(

@@ -9,6 +9,8 @@ import '../providers/auth_provider.dart';
 import '../models/user_preference.dart';
 import 'edit_profile_page.dart';
 import '../utils/constants.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -94,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               radius: 34,
                               backgroundColor: Colors.pink[100],
                               backgroundImage: hasAvatar
-                                  ? NetworkImage(finalUrl!)
+                                  ? CachedNetworkImageProvider(finalUrl!)
                                   : null,
                               onBackgroundImageError: hasAvatar
                                   ? (exception, stackTrace) {

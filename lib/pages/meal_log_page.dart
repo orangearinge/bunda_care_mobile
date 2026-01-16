@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../providers/food_provider.dart';
 import '../providers/user_preference_provider.dart';
 import '../widgets/shimmer_loading.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
 
 class MealLogPage extends StatefulWidget {
   const MealLogPage({super.key});
@@ -121,12 +123,17 @@ class _MealLogPageState extends State<MealLogPage> {
                 if (imageUrl != null && imageUrl.isNotEmpty)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      imageUrl,
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
                       width: 60,
                       height: 60,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _buildIconPlaceholder(isConsumed),
+                      placeholder: (context, url) => const ShimmerImage(
+                        width: 60,
+                        height: 60,
+                        borderRadius: 12,
+                      ),
+                      errorWidget: (_, __, ___) => _buildIconPlaceholder(isConsumed),
                     ),
                   )
                 else
