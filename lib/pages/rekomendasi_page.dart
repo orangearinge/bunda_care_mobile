@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/food_provider.dart';
 import 'meal_log_page.dart';
 import 'food_detail_page.dart';
+import '../widgets/shimmer_loading.dart';
 
 
 class RekomendasiPage extends StatefulWidget {
@@ -99,7 +100,11 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
               // --- Content ---
               Expanded(
                 child: foodProvider.isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: 3,
+                        itemBuilder: (context, index) => const MenuCardSkeleton(),
+                      )
                     : foodProvider.errorMessage != null
                         ? Center(
                             child: Column(

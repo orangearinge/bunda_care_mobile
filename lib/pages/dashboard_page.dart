@@ -10,6 +10,7 @@ import 'rekomendasi_page.dart';
 import 'meal_log_page.dart';
 import 'food_detail_page.dart';
 import 'history_page.dart';
+import '../widgets/shimmer_loading.dart';
 
 
 class DashboardPage extends StatefulWidget {
@@ -136,16 +137,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             if (isLoading)
                               const Padding(
                                 padding: EdgeInsets.only(right: 8.0),
-                                child: SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.pink,
-                                    ),
-                                  ),
-                                ),
+                                child: ShimmerCircle(size: 20),
                               ),
                             IconButton(
                               icon: const Icon(
@@ -312,7 +304,13 @@ class _DashboardPageState extends State<DashboardPage> {
               SizedBox(
                 height: 220,
                 child: isLoading && dashboardSummary == null
-                    ? const Center(child: CircularProgressIndicator())
+                    ? ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 3,
+                        itemBuilder: (context, index) =>
+                            const FoodCardSkeleton(),
+                      )
                     : ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         scrollDirection: Axis.horizontal,

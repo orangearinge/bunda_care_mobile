@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../models/article.dart';
+import 'shimmer_loading.dart';
 
 class ArticleCard extends StatelessWidget {
   final Article article;
@@ -28,9 +29,10 @@ class ArticleCard extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: article.coverImage!,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey[200],
-                    child: const Center(child: CircularProgressIndicator()),
+                  placeholder: (context, url) => const ShimmerBox(
+                    width: double.infinity,
+                    height: double.infinity,
+                    borderRadius: 0,
                   ),
                   errorWidget: (context, url, error) => Container(
                     color: Colors.grey[200],

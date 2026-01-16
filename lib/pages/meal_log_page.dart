@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/food_provider.dart';
 import '../providers/user_preference_provider.dart';
+import '../widgets/shimmer_loading.dart';
 
 class MealLogPage extends StatefulWidget {
   const MealLogPage({super.key});
@@ -42,7 +43,11 @@ class _MealLogPageState extends State<MealLogPage> {
       body: Consumer<FoodProvider>(
         builder: (context, foodProvider, child) {
           if (foodProvider.isLoading && foodProvider.mealLogs.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return ListView.builder(
+              padding: const EdgeInsets.all(20),
+              itemCount: 5,
+              itemBuilder: (context, index) => const MealLogSkeleton(),
+            );
           }
 
           if (foodProvider.mealLogs.isEmpty) {

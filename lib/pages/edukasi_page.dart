@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/article_provider.dart';
 import '../widgets/article_card.dart';
 import 'article_detail_page.dart';
+import '../widgets/shimmer_loading.dart';
 
 class EdukasiPage extends StatefulWidget {
   const EdukasiPage({super.key});
@@ -65,7 +66,11 @@ class _EdukasiPageState extends State<EdukasiPage> {
       body: Consumer<ArticleProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading && provider.articles.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: 5,
+              itemBuilder: (context, index) => const ArticleCardSkeleton(),
+            );
           }
 
           if (provider.error != null && provider.articles.isEmpty) {
@@ -117,7 +122,7 @@ class _EdukasiPageState extends State<EdukasiPage> {
                  if (index == provider.articles.length) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Center(child: CircularProgressIndicator(color: Colors.pink)),
+                    child: Center(child: ShimmerCircle(size: 30)),
                   );
                 }
 

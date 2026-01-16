@@ -7,6 +7,7 @@ import '../services/food_service.dart';
 import '../providers/food_provider.dart';
 import '../providers/user_preference_provider.dart';
 import 'meal_log_page.dart';
+import '../widgets/shimmer_loading.dart';
 
 class FoodDetailPage extends StatefulWidget {
   final int menuId;
@@ -148,8 +149,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             elevation: 0,
           ),
           body: isLoading && foodDetail == null
-              ? const Center(child: CircularProgressIndicator())
-              : errorMessage != null
+              ? const FoodDetailSkeleton()
+                  : errorMessage != null
                   ? _buildErrorState(errorMessage)
                   : _buildContent(foodDetail),
         );

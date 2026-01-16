@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/history_entry.dart';
 import '../providers/history_provider.dart';
 import 'history_detail_page.dart';
+import '../widgets/shimmer_loading.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -45,8 +46,10 @@ class _HistoryPageState extends State<HistoryPage> {
           final errorMessage = historyProvider.errorMessage;
 
           if (isLoading && history.isEmpty) {
-            return const Center(
-              child: CircularProgressIndicator(color: Colors.pink),
+            return ListView.builder(
+              padding: const EdgeInsets.all(20),
+              itemCount: 5,
+              itemBuilder: (context, index) => const HistoryCardSkeleton(),
             );
           }
 
