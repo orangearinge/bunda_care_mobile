@@ -12,6 +12,7 @@ import '../pages/chatbot_page.dart';
 import '../pages/scan_page.dart';
 import '../pages/edukasi_page.dart';
 import '../pages/profile_page.dart';
+import '../pages/feedback_page.dart';
 
 /// Application router configuration with authentication guards
 class AppRouter {
@@ -146,6 +147,11 @@ class AppRouter {
           final role = state.pathParameters['role']!;
           return MultiStepFormPage(userRole: role);
         },
+      ),
+      GoRoute(
+        path: '/feedback',
+        name: 'feedback',
+        builder: (context, state) => const FeedbackPage(),
       ),
     ],
 

@@ -8,6 +8,7 @@ import 'providers/food_provider.dart';
 import 'providers/article_provider.dart';
 import 'providers/history_provider.dart';
 import 'providers/chat_provider.dart';
+import 'providers/feedback_provider.dart';
 import 'router/app_router.dart';
 import 'pages/main_navigation.dart';
 import 'package:shimmer/shimmer.dart';
@@ -46,6 +47,7 @@ class BundaCareApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ArticleProvider()),
         ChangeNotifierProvider(create: (_) => HistoryProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(create: (_) => FeedbackProvider()),
       ],
       // Menggunakan Builder agar context bisa mengakses provider di level yang sama
       child: const AppContent(),

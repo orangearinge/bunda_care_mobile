@@ -18,7 +18,9 @@ class ApiConstants {
   static String get baseUrl {
     // Check .env first for all platforms
     final url = dotenv.env['API_BASE_URL'];
-    if (url != null && url.isNotEmpty) return url;
+    if (url != null && url.isNotEmpty) {
+      return url;
+    }
 
     // Fallback for web
     if (kIsWeb) {
@@ -45,7 +47,9 @@ class ApiConstants {
 
   /// Check if running on Android Emulator
   static bool get isAndroidEmulator {
-    if (!Platform.isAndroid) return false;
+    if (!Platform.isAndroid) {
+      return false;
+    }
     // Additional emulator detection can be added here if needed
     return true; // For now, assume all Android is emulator unless .env is set
   }
@@ -57,18 +61,24 @@ class ApiConstants {
 
   /// Check if running on iOS Simulator
   static bool get isIOSSimulator {
-    if (!Platform.isIOS) return false;
+    if (!Platform.isIOS) {
+      return false;
+    }
     // Additional simulator detection can be added here if needed
     return true; // For now, assume all iOS is simulator unless .env is set
   }
 
   /// Get platform information for debugging
   static String get platformInfo {
-    if (kIsWeb) return 'Web';
-    if (Platform.isAndroid)
+    if (kIsWeb) {
+      return 'Web';
+    }
+    if (Platform.isAndroid) {
       return 'Android (${isAndroidEmulator ? 'Emulator' : 'Physical'})';
-    if (Platform.isIOS)
+    }
+    if (Platform.isIOS) {
       return 'iOS (${isIOSSimulator ? 'Simulator' : 'Physical'})';
+    }
     return 'Unknown';
   }
 
@@ -100,6 +110,8 @@ class ApiConstants {
   static const String userProfile = "/api/user/profile";
   static const String userAvatar = "/api/user/avatar";
   static const String userHistory = "/api/user/history";
+  static const String feedback = "/api/feedback";
+  static const String myFeedback = "/api/feedback/me";
 
   // ==================== Chat Endpoints ====================
   static const String chat = "/api/chat";
@@ -168,7 +180,9 @@ class ApiConstants {
 
   /// Get user-friendly error message from error code
   static String getErrorMessage(String? errorCode) {
-    if (errorCode == null) return errorMessages['UNKNOWN_ERROR']!;
+    if (errorCode == null) {
+      return errorMessages['UNKNOWN_ERROR']!;
+    }
     return errorMessages[errorCode] ?? errorMessages['UNKNOWN_ERROR']!;
   }
 
