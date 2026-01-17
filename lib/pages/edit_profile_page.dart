@@ -11,6 +11,7 @@ import '../providers/auth_provider.dart';
 import '../models/user_preference.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
+import '../widgets/shimmer_loading.dart';
 
 
 class EditProfilePage extends StatefulWidget {
@@ -496,9 +497,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
+      body: Consumer<UserPreferenceProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading && provider.currentPreference == null) {
+            return const EditProfileSkeleton();
+          }
+          return SingleChildScrollView(
+            child: Column(
+              children: [
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -851,7 +857,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           ],
         ),
-      ),
-    );
+      );
+    },
+  ),
+);
   }
 }

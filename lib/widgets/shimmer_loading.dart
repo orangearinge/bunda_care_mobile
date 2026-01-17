@@ -441,22 +441,39 @@ class FoodDetailSkeleton extends StatelessWidget {
                           const SizedBox(height: 12),
                           Row(
                             children: [
-                              Container(width: 80, height: 20, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15))),
+                              Container(
+                                  width: 80,
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15))),
                               const SizedBox(width: 8),
-                              Container(width: 60, height: 20, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15))),
+                              Container(
+                                  width: 60,
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(15))),
                             ],
                           ),
                         ],
                       ),
-                      Container(width: 80, height: 40, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(15))),
+                      Container(
+                          width: 80,
+                          height: 40,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15))),
                     ],
                   ),
                   const SizedBox(height: 24),
                   Container(width: 150, height: 20, color: Colors.white),
                   const SizedBox(height: 12),
-                  Container(width: double.infinity, height: 14, color: Colors.white),
+                  Container(
+                      width: double.infinity, height: 14, color: Colors.white),
                   const SizedBox(height: 8),
-                  Container(width: double.infinity, height: 14, color: Colors.white),
+                  Container(
+                      width: double.infinity, height: 14, color: Colors.white),
                   const SizedBox(height: 8),
                   Container(width: 150, height: 14, color: Colors.white),
                   const SizedBox(height: 24),
@@ -473,6 +490,204 @@ class FoodDetailSkeleton extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ProfileSkeleton extends StatelessWidget {
+  const ProfileSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Header
+            Container(
+              width: double.infinity,
+              color: Colors.white,
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+              child: Column(
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(width: 150, height: 24, color: Colors.white),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: 100,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(width: 150, height: 20, color: Colors.white),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(width: 150, height: 20, color: Colors.white),
+                  const SizedBox(height: 12),
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 1.5,
+                    children: List.generate(
+                      4,
+                      (index) => Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(width: 150, height: 20, color: Colors.white),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class EditProfileSkeleton extends StatelessWidget {
+  const EditProfileSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 120,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Container(
+              width: 120,
+              height: 120,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: List.generate(
+                  6,
+                  (index) => Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    width: double.infinity,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ArticleDetailSkeleton extends StatelessWidget {
+  const ArticleDetailSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 250,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(color: Colors.white),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(width: double.infinity, height: 32, color: Colors.white),
+                  const SizedBox(height: 8),
+                  Container(width: 150, height: 16, color: Colors.white),
+                  const SizedBox(height: 24),
+                  ...List.generate(
+                    15,
+                    (index) => Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      width: index % 5 == 4 ? 200 : double.infinity,
+                      height: 14,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

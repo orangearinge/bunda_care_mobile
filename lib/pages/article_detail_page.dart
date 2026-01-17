@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../providers/article_provider.dart';
 import '../utils/styles.dart';
 import '../models/article.dart'; // Add this import
+import '../widgets/shimmer_loading.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final String slug;
@@ -31,7 +32,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
       body: Consumer<ArticleProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const ArticleDetailSkeleton();
           }
 
           if (provider.error != null) {

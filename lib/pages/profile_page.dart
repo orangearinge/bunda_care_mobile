@@ -8,6 +8,7 @@ import 'edit_profile_page.dart';
 import '../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
+import '../widgets/shimmer_loading.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -55,7 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 builder: (context, data, child) {
                   if (data.isLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const ProfileSkeleton();
                   }
 
                   if (data.status == PreferenceStatus.error) {
