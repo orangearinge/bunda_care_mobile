@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../models/chat_message.dart';
 import '../providers/chat_provider.dart';
 import '../utils/styles.dart';
@@ -207,15 +208,39 @@ class _ChatbotPageState extends State<ChatbotPage> {
                   ),
                 ],
               ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  color: message.isUser ? Colors.white : Colors.grey[800],
-                  fontSize: 15,
-                  height: 1.4,
-                ),
+                child: message.isUser
+                    ? Text(
+                        message.text,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          height: 1.4,
+                        ),
+                      )
+                    : MarkdownBody(
+                        data: message.text,
+                        styleSheet: MarkdownStyleSheet(
+                          p: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 15,
+                            height: 1.4,
+                          ),
+                          h3: TextStyle(
+                            color: Colors.grey[900],
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            height: 1.5,
+                          ),
+                          strong: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[900],
+                          ),
+                          listBullet: TextStyle(
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                      ),
               ),
-            ),
             const SizedBox(height: 4),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
