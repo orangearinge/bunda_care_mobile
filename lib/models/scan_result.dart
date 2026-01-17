@@ -10,13 +10,20 @@ class ScanResult {
   });
 
   factory ScanResult.fromJson(Map<String, dynamic> json) {
+    var detectedItems = List<String>.from(json['detected_items'] ?? []);
+    final candidates = (json['candidates'] as List<dynamic>?)
+            ?.map((c) => FoodCandidate.fromJson(c))
+            .toList() ??
+        [];
+
+    if (detectedItems.isEmpty && candidates.isNotEmpty) {
+      detectedItems = candidates.map((c) => c.name).toList();
+    }
+
     return ScanResult(
-      detectedItems: List<String>.from(json['detected_items'] ?? []),
+      detectedItems: detectedItems,
       detectedIds: List<int>.from(json['detected_ids'] ?? []),
-      candidates: (json['candidates'] as List<dynamic>?)
-              ?.map((c) => FoodCandidate.fromJson(c))
-              .toList() ??
-          [],
+      candidates: candidates,
     );
   }
 }
