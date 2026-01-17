@@ -10,6 +10,7 @@ import '../utils/constants.dart';
 import 'rekomendasi_page.dart';
 import 'scan_result_page.dart';
 import '../models/scan_result.dart';
+import '../utils/styles.dart';
 
 class ScanPage extends StatefulWidget {
   const ScanPage({super.key});
@@ -149,11 +150,7 @@ class _ScanPageState extends State<ScanPage> {
         centerTitle: true,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.pink[400]!, Colors.pink[200]!],
-            ),
+            gradient: AppStyles.pinkGradient,
           ),
         ),
         elevation: 0,

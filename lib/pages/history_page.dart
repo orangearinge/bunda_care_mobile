@@ -6,6 +6,7 @@ import '../models/history_entry.dart';
 import '../providers/history_provider.dart';
 import 'history_detail_page.dart';
 import '../widgets/shimmer_loading.dart';
+import '../utils/styles.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -32,12 +33,16 @@ class _HistoryPageState extends State<HistoryPage> {
           "Histori Gizi Bunda",
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: Colors.white,
           ),
         ),
-        backgroundColor: Colors.white,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppStyles.pinkGradient,
+          ),
+        ),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Consumer<HistoryProvider>(
         builder: (context, historyProvider, child) {
@@ -95,10 +100,19 @@ class _HistoryPageState extends State<HistoryPage> {
             ElevatedButton(
               onPressed: () => context.read<HistoryProvider>().fetchHistory(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink,
-                foregroundColor: Colors.white,
+                padding: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text("Coba Lagi"),
+              child: Ink(
+                decoration: BoxDecoration(
+                  gradient: AppStyles.pinkGradient,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: const Text("Cari Rekomendasi", style: TextStyle(color: Colors.white)),
+                ),
+              ),
             ),
           ],
         ),

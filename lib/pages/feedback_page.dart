@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/feedback_provider.dart';
 import '../models/feedback.dart';
 import 'package:intl/intl.dart';
+import '../utils/styles.dart';
 
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
@@ -65,7 +66,11 @@ class _FeedbackPageState extends State<FeedbackPage> {
           'Feedback Pengguna',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.pink[400],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppStyles.pinkGradient,
+          ),
+        ),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -188,27 +193,36 @@ class _FeedbackPageState extends State<FeedbackPage> {
             child: ElevatedButton(
               onPressed: provider.isSending ? null : _submitFeedback,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink[400],
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 elevation: 0,
               ),
-              child: provider.isSending
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : const Text(
-                      'Kirim Feedback',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+              child: Ink(
+                decoration: BoxDecoration(
+                  gradient: AppStyles.pinkGradient,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Container(
+                  width: double.infinity,
+                  height: 55,
+                  alignment: Alignment.center,
+                  child: provider.isSending
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Text(
+                          'Kirim Feedback',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                ),
+              ),
             ),
           ),
         ],

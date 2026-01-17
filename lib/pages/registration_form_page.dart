@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../utils/logger.dart';
+import '../utils/styles.dart';
 
 class RegistrationFormPage extends StatelessWidget {
   RegistrationFormPage({Key? key}) : super(key: key);
@@ -16,11 +17,7 @@ class RegistrationFormPage extends StatelessWidget {
         title: const Text("Pilih Kategori"),
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.pink[400]!, Colors.pink[300]!],
-            ),
+            gradient: AppStyles.pinkGradient,
           ),
         ),
         foregroundColor: Colors.white,

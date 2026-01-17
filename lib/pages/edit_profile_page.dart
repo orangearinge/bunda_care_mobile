@@ -10,6 +10,7 @@ import '../providers/user_preference_provider.dart';
 import '../providers/auth_provider.dart';
 import '../models/user_preference.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../utils/styles.dart';
 
 
 class EditProfilePage extends StatefulWidget {
@@ -501,7 +502,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
           'Edit Profil',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.pink[400],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppStyles.pinkGradient,
+          ),
+        ),
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -511,7 +516,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.pink[400],
+                gradient: AppStyles.pinkGradient,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
@@ -822,24 +827,33 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           child: ElevatedButton(
                             onPressed: provider.isLoading ? null : _saveProfile,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.pink[400],
-                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               elevation: 2,
                             ),
-                            child: provider.isLoading
-                                ? const CircularProgressIndicator(
-                                    color: Colors.white,
-                                  )
-                                : const Text(
-                                    'SIMPAN PERUBAHAN',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                gradient: AppStyles.pinkGradient,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: provider.isLoading
+                                    ? const CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    : const Text(
+                                        'SIMPAN PERUBAHAN',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                              ),
+                            ),
                           ),
                         );
                       },

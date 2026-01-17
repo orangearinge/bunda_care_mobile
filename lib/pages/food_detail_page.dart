@@ -9,6 +9,7 @@ import '../providers/user_preference_provider.dart';
 import 'meal_log_page.dart';
 import '../widgets/shimmer_loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../utils/styles.dart';
 
 
 class FoodDetailPage extends StatefulWidget {
@@ -84,11 +85,19 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                     if (context.mounted) Navigator.pop(context, true);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pink[400],
-                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
-                  child: const Text("Tetap Simpan"),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: AppStyles.pinkGradient,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: const Text("Tetap Simpan", style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -140,7 +149,11 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         return Scaffold(
           backgroundColor: Colors.pink[50],
           appBar: AppBar(
-            backgroundColor: Colors.pink[300],
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: AppStyles.pinkGradient,
+              ),
+            ),
             foregroundColor: Colors.white,
             title: Text(
               foodDetail?.name ?? 'Detail Makanan',
@@ -411,9 +424,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.pink[400]!, Colors.pink[300]!],
-        ),
+        gradient: AppStyles.pinkGradient,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -733,23 +744,48 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           height: 55,
           child: ElevatedButton.icon(
             onPressed: () => _addToMealPlan(false),
-            icon: const Icon(Icons.add_circle_outline),
+            icon: const Icon(Icons.add_circle_outline, color: Colors.white),
             label: Text(
               'TAMBAH KE RENCANA MAKAN',
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.5,
+                color: Colors.white,
               ),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.pink[400],
-              foregroundColor: Colors.white,
+              padding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),
               elevation: 4,
               shadowColor: Colors.pink.withOpacity(0.3),
+            ),
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: AppStyles.pinkGradient,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Container(
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.add_circle_outline, color: Colors.white),
+                    const SizedBox(width: 8),
+                    Text(
+                      'TAMBAH KE RENCANA MAKAN',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),

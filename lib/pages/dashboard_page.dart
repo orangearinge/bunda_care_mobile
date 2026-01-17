@@ -12,6 +12,7 @@ import 'food_detail_page.dart';
 import 'history_page.dart';
 import '../widgets/shimmer_loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../utils/styles.dart';
 
 
 
@@ -177,11 +178,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [Colors.pink[400]!, Colors.pink[200]!],
-                            ),
+                            gradient: AppStyles.pinkGradient,
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(

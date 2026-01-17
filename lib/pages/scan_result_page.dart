@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../utils/styles.dart';
 import 'rekomendasi_page.dart';
 import '../models/scan_result.dart';
 
@@ -25,7 +26,11 @@ class ScanResultPage extends StatelessWidget {
       backgroundColor: Colors.pink[50],
       appBar: AppBar(
         title: const Text("Hasil Scan"),
-        backgroundColor: Colors.pink[300],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppStyles.pinkGradient,
+          ),
+        ),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -156,20 +161,29 @@ class ScanResultPage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pink[300],
-                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.zero,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
                   elevation: 5,
                   shadowColor: Colors.pink.withOpacity(0.3),
                 ),
-                child: const Text(
-                  "LIHAT REKOMENDASI",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
+                child: Ink(
+                  decoration: BoxDecoration(
+                    gradient: AppStyles.pinkGradient,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Container(
+                    alignment: Alignment.center,
+                    child: const Text(
+                      "LIHAT REKOMENDASI",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
               ),

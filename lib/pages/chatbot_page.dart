@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/chat_message.dart';
 import '../providers/chat_provider.dart';
+import '../utils/styles.dart';
 
 /// Halaman Chatbot Gizi dengan integrasi RAG
 /// Respons bersifat temporary dan tidak disimpan ke database
@@ -62,11 +63,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
         centerTitle: true,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.pink[400]!, Colors.pink[200]!],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            gradient: AppStyles.pinkGradient,
           ),
         ),
         elevation: 0,
@@ -198,9 +195,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 gradient: message.isUser
-                    ? LinearGradient(
-                        colors: [Colors.pink[300]!, Colors.pink[200]!],
-                      )
+                    ? AppStyles.pinkGradient
                     : null,
                 color: message.isUser ? null : Colors.grey[100],
                 borderRadius: BorderRadius.circular(20),
@@ -308,9 +303,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
             const SizedBox(width: 8),
             Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.pink[300]!, Colors.pink[200]!],
-                ),
+                gradient: AppStyles.pinkGradient,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(

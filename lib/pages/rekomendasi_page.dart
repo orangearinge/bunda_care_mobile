@@ -5,6 +5,7 @@ import 'meal_log_page.dart';
 import 'food_detail_page.dart';
 import '../widgets/shimmer_loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../utils/styles.dart';
 
 
 
@@ -50,7 +51,11 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
       backgroundColor: Colors.pink[50],
       appBar: AppBar(
         title: Text("Rekomendasi ${_selectedMealType}"),
-        backgroundColor: Colors.pink[300],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppStyles.pinkGradient,
+          ),
+        ),
         foregroundColor: Colors.white,
       ),
       body: Consumer<FoodProvider>(
@@ -302,7 +307,7 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.pink[300],
+                gradient: AppStyles.pinkGradient,
                 borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
               ),
               child: const Center(

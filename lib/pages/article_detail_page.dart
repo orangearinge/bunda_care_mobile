@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../providers/article_provider.dart';
+import '../utils/styles.dart';
 import '../models/article.dart'; // Add this import
 
 class ArticleDetailPage extends StatefulWidget {
@@ -63,7 +64,11 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                           errorWidget: (context, url, _) =>
                               Container(color: Colors.grey[300]),
                         )
-                      : Container(color: Colors.grey[300]),
+                      : Container(
+                          decoration: BoxDecoration(
+                            gradient: AppStyles.pinkGradient,
+                          ),
+                        ),
                 ),
               ),
               SliverToBoxAdapter(

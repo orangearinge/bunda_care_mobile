@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/styles.dart';
 
 class MealLogPage extends StatelessWidget {
   final String makanan;
@@ -109,7 +110,11 @@ class MealLogPage extends StatelessWidget {
           "Rekomendasi Menu",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.pink[300],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppStyles.pinkGradient,
+          ),
+        ),
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -121,7 +126,7 @@ class MealLogPage extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.pink[300],
+                gradient: AppStyles.pinkGradient,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(32),
                   bottomRight: Radius.circular(32),

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/history_entry.dart';
 import '../providers/history_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../utils/styles.dart';
 
 
 class HistoryDetailPage extends StatefulWidget {
@@ -39,12 +40,16 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: Colors.black87,
+            color: Colors.white,
           ),
         ),
-        backgroundColor: Colors.white,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppStyles.pinkGradient,
+          ),
+        ),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Consumer<HistoryProvider>(
         builder: (context, historyProvider, child) {

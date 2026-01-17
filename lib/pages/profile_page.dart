@@ -7,6 +7,7 @@ import '../models/user_preference.dart';
 import 'edit_profile_page.dart';
 import '../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../utils/styles.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -419,11 +420,7 @@ class _ProfilePageState extends State<ProfilePage> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.pink[400]!, Colors.purple[400]!],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: AppStyles.pinkGradient,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(

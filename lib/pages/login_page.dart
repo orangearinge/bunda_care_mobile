@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../utils/constants.dart';
+import '../utils/styles.dart';
 
 /// Halaman Login untuk autentikasi user
 /// Stateful widget yang mengelola form login dengan validasi
@@ -87,11 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                       width: double.infinity,
                       height: 300,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.pink[400]!, Colors.pink[300]!],
-                        ),
+                        gradient: AppStyles.pinkGradient,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -280,30 +277,41 @@ class _LoginPageState extends State<LoginPage> {
                                 ? null
                                 : () => _login(authProvider),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.pink[300],
-                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.zero,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
                             ),
-                            child: authProvider.isLoading
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Text(
-                                    'LOGIN',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1,
-                                    ),
-                                  ),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                gradient: AppStyles.pinkGradient,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                height: 50,
+                                alignment: Alignment.center,
+                                child: authProvider.isLoading
+                                    ? const SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Text(
+                                        'LOGIN',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 1,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                              ),
+                            ),
                           ),
                         ),
                       ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../utils/styles.dart';
 
 class MainNavigation extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -64,11 +65,7 @@ class MainNavigation extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           gradient: isSelected
-              ? LinearGradient(
-                  colors: gradientColors,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
+              ? AppStyles.pinkGradient
               : null,
           borderRadius: BorderRadius.circular(12),
         ),

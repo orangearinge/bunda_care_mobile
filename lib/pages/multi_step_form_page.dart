@@ -5,6 +5,7 @@ import '../providers/user_preference_provider.dart';
 import '../providers/auth_provider.dart';
 import '../utils/constants.dart';
 import '../utils/logger.dart';
+import '../utils/styles.dart';
 
 class MultiStepFormPage extends StatefulWidget {
   final String userRole; // 'IbuHamil', 'IbuMenyusui', atau 'AnakBatita'
@@ -28,8 +29,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
 
   Map<String, dynamic> formData = {};
 
-  final Color primaryPink = Colors.pink[300]!;
-  final Color secondaryBlue = Colors.blue[300]!;
+  final Color primaryPink = Colors.pink[400]!;
+  final Color secondaryBlue = Colors.pink[400]!; // Changed to pink for consistency
 
   // Required fields per role (excluding optional dietary preferences)
   final Map<String, List<String>> _roleRequiredFields = {
@@ -735,7 +736,11 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Langkah ${_currentPage + 1} dari $_totalSteps"),
-        backgroundColor: accentColor,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppStyles.pinkGradient,
+          ),
+        ),
         foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -770,17 +775,31 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
             child: ElevatedButton(
               onPressed: _nextPage,
               style: ElevatedButton.styleFrom(
-                backgroundColor: accentColor,
+                padding: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: _isLoadingSubmit
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : Text(
-                      _currentPage == _totalSteps - 1
-                          ? 'Selesai & Masuk'
-                          : 'Lanjut',
-                      style: const TextStyle(fontSize: 18, color: Colors.white),
-                    ),
+              child: Ink(
+                decoration: BoxDecoration(
+                  gradient: AppStyles.pinkGradient,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                  width: double.infinity,
+                  height: 50,
+                  alignment: Alignment.center,
+                  child: _isLoadingSubmit
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : Text(
+                          _currentPage == _totalSteps - 1
+                              ? 'Selesai & Masuk'
+                              : 'Lanjut',
+                          style: const TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                ),
+              ),
             ),
           ),
         ],

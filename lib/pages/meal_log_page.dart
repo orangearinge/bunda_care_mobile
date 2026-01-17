@@ -6,6 +6,7 @@ import '../providers/user_preference_provider.dart';
 import '../widgets/shimmer_loading.dart';
 import '../models/meal_log.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../utils/styles.dart';
 
 
 class MealLogPage extends StatefulWidget {
@@ -31,10 +32,14 @@ class _MealLogPageState extends State<MealLogPage> {
       appBar: AppBar(
         title: Text(
           "Rencana Makan Bunda",
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppStyles.pinkGradient,
+          ),
+        ),
+        foregroundColor: Colors.white,
         elevation: 0,
         actions: [
           IconButton(
@@ -68,10 +73,19 @@ class _MealLogPageState extends State<MealLogPage> {
                   ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pink[300],
+                      padding: EdgeInsets.zero,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text("Cari Rekomendasi"),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        gradient: AppStyles.pinkGradient,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: const Text("Cari Rekomendasi", style: TextStyle(color: Colors.white)),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -228,12 +242,20 @@ class _MealLogPageState extends State<MealLogPage> {
                         ElevatedButton(
                           onPressed: () => Navigator.pop(context, true),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.pink[400],
-                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.zero,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
                           ),
-                          child: const Text("Tetap Konfirmasi"),
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              gradient: AppStyles.pinkGradient,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              child: const Text("Tetap Konfirmasi", style: TextStyle(color: Colors.white)),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -261,7 +283,7 @@ class _MealLogPageState extends State<MealLogPage> {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: Colors.pink[300],
+                  gradient: AppStyles.pinkGradient,
                   borderRadius: const BorderRadius.vertical(
                       bottom: Radius.circular(20)),
                 ),

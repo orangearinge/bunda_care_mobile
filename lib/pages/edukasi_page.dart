@@ -5,6 +5,7 @@ import '../providers/article_provider.dart';
 import '../widgets/article_card.dart';
 import 'article_detail_page.dart';
 import '../widgets/shimmer_loading.dart';
+import '../utils/styles.dart';
 
 class EdukasiPage extends StatefulWidget {
   const EdukasiPage({super.key});
@@ -54,11 +55,7 @@ class _EdukasiPageState extends State<EdukasiPage> {
         centerTitle: true,
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.pink[400]!, Colors.pink[200]!],
-            ),
+            gradient: AppStyles.pinkGradient,
           ),
         ),
         elevation: 0,
