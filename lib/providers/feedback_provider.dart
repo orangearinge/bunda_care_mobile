@@ -6,22 +6,40 @@ class FeedbackProvider with ChangeNotifier {
   final FeedbackService _feedbackService = FeedbackService();
 
   List<FeedbackModel> _feedbacks = [];
+  Pagination? _pagination;
   bool _isLoading = false;
   bool _isSending = false;
   String? _error;
 
   List<FeedbackModel> get feedbacks => _feedbacks;
+  Pagination? get pagination => _pagination;
   bool get isLoading => _isLoading;
   bool get isSending => _isSending;
   String? get error => _error;
 
-  Future<void> fetchMyFeedbacks() async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
+  Future<void> fetchMyFeedbacks({
+    int page = 1,
+    String? search,
+    bool loadMore = false,
+  }) async {
+    if (!loadMore) {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+    }
 
     try {
-      _feedbacks = await _feedbackService.getMyFeedback();
+      final response = await _feedbackService.getMyFeedback(
+        page: page,
+        search: search,
+      );
+
+      if (page == 1) {
+        _feedbacks = response.items;
+      } else {
+        _feedbacks.addAll(response.items);
+      }
+      _pagination = response.pagination;
     } catch (e) {
       _error = e.toString();
     } finally {

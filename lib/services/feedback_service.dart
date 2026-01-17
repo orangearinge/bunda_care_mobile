@@ -35,19 +35,25 @@ class FeedbackService {
     }
   }
 
-  /// Get my feedback history
+  /// Get my feedback history with pagination and search
   /// GET /api/feedback/me
-  Future<List<FeedbackModel>> getMyFeedback() async {
+  Future<FeedbackListResponse> getMyFeedback({
+    int page = 1,
+    int limit = 10,
+    String? search,
+  }) async {
     try {
-      final response = await _api.get(ApiConstants.myFeedback);
-      final unwrapped = _api.unwrap(response);
+      final response = await _api.get(
+        ApiConstants.myFeedback,
+        queryParameters: {
+          'page': page,
+          'limit': limit,
+          if (search != null && search.isNotEmpty) 'search': search,
+        },
+      );
 
-      if (unwrapped is List) {
-        return unwrapped
-            .map((e) => FeedbackModel.fromJson(e as Map<String, dynamic>))
-            .toList();
-      }
-      return [];
+      final unwrapped = _api.unwrap(response);
+      return FeedbackListResponse.fromJson(unwrapped);
     } catch (e) {
       AppLogger.e('GET FEEDBACK ERROR', e);
       throw ErrorHandler.handle(e);

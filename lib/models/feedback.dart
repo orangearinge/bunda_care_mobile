@@ -29,3 +29,48 @@ class FeedbackModel {
     };
   }
 }
+class FeedbackListResponse {
+  final List<FeedbackModel> items;
+  final Pagination pagination;
+
+  FeedbackListResponse({required this.items, required this.pagination});
+
+  factory FeedbackListResponse.fromJson(Map<String, dynamic> json) {
+    var list = json['items'] as List;
+    List<FeedbackModel> itemsList = list.map((i) => FeedbackModel.fromJson(i)).toList();
+
+    return FeedbackListResponse(
+      items: itemsList,
+      pagination: Pagination.fromJson(json['pagination']),
+    );
+  }
+}
+
+class Pagination {
+  final int page;
+  final int limit;
+  final int total;
+  final int totalPages;
+  final bool hasNext;
+  final bool hasPrev;
+
+  Pagination({
+    required this.page,
+    required this.limit,
+    required this.total,
+    required this.totalPages,
+    required this.hasNext,
+    required this.hasPrev,
+  });
+
+  factory Pagination.fromJson(Map<String, dynamic> json) {
+    return Pagination(
+      page: json['page'] as int,
+      limit: json['limit'] as int,
+      total: json['total'] as int,
+      totalPages: json['total_pages'] as int,
+      hasNext: json['has_next'] as bool,
+      hasPrev: json['has_prev'] as bool,
+    );
+  }
+}
