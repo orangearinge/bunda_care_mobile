@@ -46,24 +46,8 @@ class _SignUpPageState extends State<SignUpPage> {
   }) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: TextStyle(color: Colors.grey[400]),
-      filled: true,
-      fillColor: Colors.grey[50],
       prefixIcon: Icon(icon, color: Colors.grey[600]),
       suffixIcon: suffixIcon,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30),
-        borderSide: BorderSide(color: Colors.grey[300]!),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30),
-        borderSide: BorderSide(color: Colors.grey[300]!),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(30),
-        borderSide: BorderSide(color: Colors.pink[200]!, width: 2),
-      ),
     );
   }
 
@@ -157,7 +141,6 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Consumer<AuthProvider>(
         builder: (context, authProvider, child) {
           return SafeArea(

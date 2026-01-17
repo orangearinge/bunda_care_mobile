@@ -60,7 +60,6 @@ class _FeedbackPageState extends State<FeedbackPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
           'Feedback Pengguna',
@@ -73,7 +72,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
         ),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -169,22 +168,8 @@ class _FeedbackPageState extends State<FeedbackPage> {
           TextField(
             controller: _commentController,
             maxLines: 4,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Tuliskan saran atau masukan Anda di sini...',
-              fillColor: Colors.grey[50],
-              filled: true,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey[300]!),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.pink[400]!, width: 2),
-              ),
             ),
           ),
           const SizedBox(height: 20),

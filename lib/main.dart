@@ -178,7 +178,7 @@ class _AppContentState extends State<AppContent> {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Bunda Care',
-      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.pink[300]),
+      theme: AppStyles.themeData,
       routerConfig: _appRouter!.router,
     );
   }

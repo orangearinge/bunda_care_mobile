@@ -71,7 +71,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       // SafeArea memastikan konten tidak tertutup status bar (di atas)
       body: Consumer<AuthProvider>(
         builder: (context, authProvider, child) => SafeArea(
@@ -157,29 +156,6 @@ class _LoginPageState extends State<LoginPage> {
                           controller: _emailController,
                           decoration: InputDecoration(
                             hintText: 'email',
-                            filled: true,
-                            fillColor: Colors.grey[50],
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 18,
-                            ),
-
-                            // Border styling
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(
-                                color: Colors.pink[200]!,
-                                width: 2,
-                              ),
-                            ),
                           ),
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
@@ -198,13 +174,6 @@ class _LoginPageState extends State<LoginPage> {
                           obscureText: _obscurePassword,
                           decoration: InputDecoration(
                             hintText: 'password',
-                            filled: true,
-                            fillColor: Colors.grey[50],
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 18,
-                            ),
-
                             // Tombol untuk toggle visibility password
                             suffixIcon: IconButton(
                               icon: Icon(
@@ -218,23 +187,6 @@ class _LoginPageState extends State<LoginPage> {
                                   _obscurePassword = !_obscurePassword;
                                 });
                               },
-                            ),
-
-                            // Border styling
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                              borderSide: BorderSide(
-                                color: Colors.pink[200]!,
-                                width: 2,
-                              ),
                             ),
                           ),
 

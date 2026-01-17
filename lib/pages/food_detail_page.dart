@@ -742,18 +742,8 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         SizedBox(
           width: double.infinity,
           height: 55,
-          child: ElevatedButton.icon(
+          child: ElevatedButton(
             onPressed: () => _addToMealPlan(false),
-            icon: const Icon(Icons.add_circle_outline, color: Colors.white),
-            label: Text(
-              'TAMBAH KE RENCANA MAKAN',
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 0.5,
-                color: Colors.white,
-              ),
-            ),
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.zero,
               shape: RoundedRectangleBorder(

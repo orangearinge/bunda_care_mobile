@@ -279,13 +279,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           helperText: helperText,
           helperMaxLines: 2,
           suffixIcon: suffixIcon,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey[300]!),
-          ),
-          filled: true,
-          fillColor: Colors.grey[50],
         ),
         keyboardType: keyboardType,
         validator: validator,
@@ -371,13 +364,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         decoration: InputDecoration(
           labelText: 'Peran',
           prefixIcon: Icon(Icons.people_outline, color: Colors.pink[300]),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey[300]!),
-          ),
-          filled: true,
-          fillColor: Colors.grey[50],
         ),
         items: _roles.map((role) {
           return DropdownMenuItem(
