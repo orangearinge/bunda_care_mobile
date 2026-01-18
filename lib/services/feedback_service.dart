@@ -27,7 +27,7 @@ class FeedbackService {
       } else {
         throw ApiError(
           code: 'FEEDBACK_FAILED',
-          message: 'Format respons tidak valid',
+          message: 'Format respons salah',
         );
       }
     } catch (e) {

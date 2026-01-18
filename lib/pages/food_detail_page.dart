@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../models/food_detail.dart';
-import '../models/api_error.dart';
-import '../services/food_service.dart';
 import '../providers/food_provider.dart';
 import '../providers/user_preference_provider.dart';
 import 'meal_log_page.dart';

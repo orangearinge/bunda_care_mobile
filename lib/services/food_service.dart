@@ -109,7 +109,7 @@ class FoodService {
 
       throw ApiError(
         code: 'MENU_NOT_FOUND',
-        message: 'Detail makanan tidak ditemukan',
+        message: 'Detail makanan tidak ada',
       );
     } catch (e) {
       // Allow detail to be null if network error (might be in cache)

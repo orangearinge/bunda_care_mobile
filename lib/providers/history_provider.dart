@@ -59,7 +59,7 @@ class HistoryProvider with ChangeNotifier {
       _status = HistoryStatus.error;
       notifyListeners();
     } catch (e) {
-      _errorMessage = 'Gagal memuat detail histori';
+      _errorMessage = 'Detail histori gagal dimuat';
       _status = HistoryStatus.error;
       notifyListeners();
     }

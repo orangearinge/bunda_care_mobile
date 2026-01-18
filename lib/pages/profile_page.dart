@@ -62,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   if (data.status == PreferenceStatus.error) {
                     return OfflinePlaceholder(
-                      message: data.errorMessage ?? 'Gagal memuat data profil.',
+                      message: data.errorMessage ?? 'Data profil gagal dimuat',
                       onRetry: () => context
                           .read<UserPreferenceProvider>()
                           .fetchPreference(),

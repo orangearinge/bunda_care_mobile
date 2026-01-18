@@ -39,7 +39,7 @@ class UserService {
       } else {
         throw ApiError(
           code: 'UPDATE_FAILED',
-          message: 'Format respons tidak valid',
+          message: 'Format respons salah',
         );
       }
     } catch (e) {
@@ -106,7 +106,7 @@ class UserService {
       
       throw ApiError(
         code: 'FETCH_FAILED',
-        message: 'Format data dashboard tidak valid',
+        message: 'Format dashboard salah',
       );
     } catch (e) {
       throw ErrorHandler.handle(e);

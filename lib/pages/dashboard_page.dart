@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_preference_provider.dart';
-import '../services/user_service.dart';
 import '../models/dashboard_summary.dart';
 import 'rekomendasi_page.dart';
 import 'meal_log_page.dart';
@@ -76,7 +75,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
             if (data.status == PreferenceStatus.error && data.summary == null) {
               return OfflinePlaceholder(
-                message: context.read<UserPreferenceProvider>().dashboardError ?? 'Data dashboard tidak tersedia.',
+                message: context.read<UserPreferenceProvider>().dashboardError ?? 'Dashboard gagal dimuat',
                 onRetry: _fetchDashboardData,
               );
             }

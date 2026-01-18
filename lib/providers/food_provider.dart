@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/api_error.dart';
 import '../services/food_service.dart';
@@ -139,7 +138,7 @@ class FoodProvider with ChangeNotifier {
       _status = FoodStatus.error;
       notifyListeners();
     } catch (e) {
-      _errorMessage = 'Gagal memuat detail makanan';
+      _errorMessage = 'Detail makanan gagal dimuat';
       _status = FoodStatus.error;
       notifyListeners();
     }

@@ -62,7 +62,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                 foregroundColor: Colors.white,
               ),
               body: OfflinePlaceholder(
-                message: 'Artikel tidak ditemukan atau tidak tersedia offline.',
+                message: 'Artikel tidak ditemukan',
                 onRetry: () => provider.fetchArticleDetail(widget.slug),
               ),
             );

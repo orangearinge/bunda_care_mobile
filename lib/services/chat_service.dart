@@ -16,7 +16,7 @@ class ChatService {
       if (query.trim().isEmpty) {
         throw ApiError(
           code: 'EMPTY_QUERY',
-          message: 'Pertanyaan tidak boleh kosong',
+          message: 'Pertanyaan wajib diisi',
         );
       }
 
@@ -37,7 +37,7 @@ class ChatService {
 
       throw ApiError(
         code: 'INVALID_RESPONSE',
-        message: 'Format respons tidak valid dari server',
+        message: 'Respons server salah',
       );
     } catch (e) {
       throw ErrorHandler.handle(e);

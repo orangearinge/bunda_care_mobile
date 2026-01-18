@@ -174,8 +174,8 @@ class ApiConstants {
     'FILE_TOO_LARGE': 'Gambar terlalu besar',
 
     // Data Errors
-    'INVALID_USER_DATA': 'Data user tidak valid',
-    'DATA_NOT_FOUND': 'Data tidak ditemukan',
+    'INVALID_USER_DATA': 'Data user salah',
+    'DATA_NOT_FOUND': 'Data tidak ada',
   };
 
   /// Get user-friendly error message from error code
