@@ -67,6 +67,14 @@ class UserService {
       return null;
     } catch (e) {
       AppLogger.e('GET PREFERENCE ERROR', e);
+      // For preference, if it fails due to network/timeout, we return null 
+      // instead of rethrowing, let the provider handle the null state.
+      // If we got here, DioCacheInterceptor might have already tried and failed 
+      // or it was a non-cacheable error.
+      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+        return null;
+      }
+      // For other errors, we might still want to know what happened
       return null;
     }
   }
@@ -171,6 +179,9 @@ class UserService {
           .map((e) => HistoryEntry.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
+      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+        return [];
+      }
       throw ErrorHandler.handle(e);
     }
   }
@@ -190,6 +201,9 @@ class UserService {
           .map((e) => HistoryDetailItem.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
+      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+        return [];
+      }
       throw ErrorHandler.handle(e);
     }
   }

@@ -81,6 +81,10 @@ class FoodService {
         message: ApiConstants.getErrorMessage('RECOMMENDATION_FAILED'),
       );
     } catch (e) {
+       // If it fails due to network/timeout, return empty data or let cache handle it
+      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+        return {};
+      }
       throw ErrorHandler.handle(e);
     }
   }
@@ -108,6 +112,12 @@ class FoodService {
         message: 'Detail makanan tidak ditemukan',
       );
     } catch (e) {
+      // Allow detail to be null if network error (might be in cache)
+      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+        // We throw so the provider knows it's an error, 
+        // but it could potentially be caught and handled if we want to show stale data.
+        // Actually, let's throw but make sure the provider handles it nicely.
+      }
       throw ErrorHandler.handle(e);
     }
   }

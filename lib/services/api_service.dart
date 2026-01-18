@@ -97,6 +97,7 @@ class ApiService {
             maxStale: const Duration(days: 7),
             priority: CachePriority.normal,
             keyBuilder: CacheOptions.defaultCacheKeyBuilder,
+            allowPostMethod: false,
           ),
         ),
       );
@@ -221,8 +222,17 @@ class ApiService {
     await _ensureCacheInitialized();
     if (_cacheStore == null) return;
     try {
-      await _cacheStore!.delete(url);
-      AppLogger.i('🗑️ Cache cleared for: $url');
+      // Key is the full URL or a partial key depending on how keyBuilder works
+      // The default use the URI itself as key base
+      final baseUrl = _dio.options.baseUrl;
+      final fullUrl = url.startsWith('http') ? url : '$baseUrl$url';
+      
+      final key = CacheOptions.defaultCacheKeyBuilder(
+        RequestOptions(path: fullUrl, baseUrl: baseUrl),
+      );
+      
+      await _cacheStore!.delete(key);
+      AppLogger.i('🗑️ Cache cleared for: $fullUrl (key: $key)');
     } catch (e) {
       AppLogger.e('❌ Failed to clear cache for URL', e);
     }

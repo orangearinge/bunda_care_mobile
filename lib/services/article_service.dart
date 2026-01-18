@@ -1,8 +1,9 @@
-import '../services/api_service.dart';
 import '../models/article.dart';
+import '../models/api_error.dart';
 import '../utils/constants.dart';
 import '../utils/cache_config.dart';
 import '../utils/error_handler.dart';
+import 'api_service.dart';
 
 class ArticleService {
   final ApiService _api = ApiService();
@@ -32,6 +33,20 @@ class ArticleService {
       final data = _api.unwrap(response);
       return ArticleListResponse.fromJson(data);
     } catch (e) {
+      // If network fails, return empty list
+      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+         return ArticleListResponse(
+           items: [], 
+           pagination: Pagination(
+             page: page, 
+             limit: limit, 
+             total: 0, 
+             totalPages: 0,
+             hasNext: false,
+             hasPrev: false,
+           ),
+         );
+      }
       throw ErrorHandler.handle(e);
     }
   }
@@ -50,6 +65,9 @@ class ArticleService {
       
       return Article.fromJson(data);
     } catch (e) {
+      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+        // Handle network error
+      }
       throw ErrorHandler.handle(e);
     }
   }

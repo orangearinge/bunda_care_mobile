@@ -87,8 +87,27 @@ class _ProfilePageState extends State<ProfilePage> {
                     builder: (context, data, _) {
                       final pref = data.pref;
                       if (pref == null) {
-                        return const Center(
-                          child: Text('Data profil tidak ditemukan.'),
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.cloud_off_rounded,
+                                  size: 64, color: Colors.grey),
+                              const SizedBox(height: 16),
+                              const Text(
+                                'Data profil tidak tersedia secara offline.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: () => context
+                                    .read<UserPreferenceProvider>()
+                                    .fetchPreference(),
+                                child: const Text('Coba Lagi'),
+                              ),
+                            ],
+                          ),
                         );
                       }
 

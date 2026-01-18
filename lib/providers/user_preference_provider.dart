@@ -105,16 +105,36 @@ class UserPreferenceProvider with ChangeNotifier {
 
     try {
       final preference = await _userService.getPreference(forceRefresh: forceRefresh);
-      _currentPreference = preference;
-      _status = PreferenceStatus.success;
+      
+      // Only update if we actually got something back
+      if (preference != null) {
+        _currentPreference = preference;
+        _status = PreferenceStatus.success;
+      } else if (_currentPreference != null) {
+        // If we have existing data but the refresh failed (returned null)
+        // we stay in success state to keep showing stale data
+        _status = PreferenceStatus.success;
+      } else {
+        // No data in memory AND fetch returned null
+        _status = PreferenceStatus.success; // Or success with null pref
+      }
       notifyListeners();
     } on ApiError catch (e) {
-      _errorMessage = e.message;
-      _status = PreferenceStatus.error;
+      // If we already have data, don't show error state, just keep stale data
+      if (_currentPreference != null && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+         _status = PreferenceStatus.success;
+      } else {
+        _errorMessage = e.message;
+        _status = PreferenceStatus.error;
+      }
       notifyListeners();
     } catch (e) {
-      _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
-      _status = PreferenceStatus.error;
+      if (_currentPreference != null) {
+        _status = PreferenceStatus.success;
+      } else {
+        _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
+        _status = PreferenceStatus.error;
+      }
       notifyListeners();
     }
   }
