@@ -18,13 +18,6 @@ class _MainNavigationState extends State<MainNavigation> {
   bool _showExitDialog = false;
 
   Future<bool> _handleBackNavigation() async {
-    final currentIndex = widget.navigationShell.currentIndex;
-
-    if (currentIndex != 0) {
-      widget.navigationShell.goBranch(0, initialLocation: true);
-      return false;
-    }
-
     if (_showExitDialog) return false;
 
     _showExitDialog = true;
