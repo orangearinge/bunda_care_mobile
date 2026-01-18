@@ -9,18 +9,18 @@ class ArticleCard extends StatelessWidget {
   final Article article;
   final VoidCallback onTap;
 
-  const ArticleCard({Key? key, required this.article, required this.onTap}) : super(key: key);
+  const ArticleCard({super.key, required this.article, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -37,7 +37,7 @@ class ArticleCard extends StatelessWidget {
                 Stack(
                   children: [
                     AspectRatio(
-                      aspectRatio: 16 / 9,
+                      aspectRatio: 16 / 10,
                       child: CachedNetworkImage(
                         imageUrl: article.coverImage!,
                         fit: BoxFit.cover,
@@ -58,7 +58,7 @@ class ArticleCard extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.pink[400]!.withOpacity(0.9),
+                          color: Colors.pink[400]!.withValues(alpha: 0.9),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Text(
@@ -74,14 +74,14 @@ class ArticleCard extends StatelessWidget {
                   ],
                 ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       article.title,
                       style: const TextStyle(
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF2D3142),
                         height: 1.3,
