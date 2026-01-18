@@ -21,13 +21,13 @@ class HistoryProvider with ChangeNotifier {
   bool get isLoading => _status == HistoryStatus.loading;
 
   /// Fetch nutrition history
-  Future<void> fetchHistory({bool forceRefresh = false}) async {
+  Future<void> fetchHistory() async {
     _status = HistoryStatus.loading;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final results = await _userService.getHistory(forceRefresh: forceRefresh);
+      final results = await _userService.getHistory();
       _history = results;
       _status = HistoryStatus.success;
       notifyListeners();
@@ -43,14 +43,14 @@ class HistoryProvider with ChangeNotifier {
   }
 
   /// Fetch history details for a specific date
-  Future<void> fetchHistoryDetail(String date, {bool forceRefresh = false}) async {
+  Future<void> fetchHistoryDetail(String date) async {
     _status = HistoryStatus.loading;
     _errorMessage = null;
     _historyDetails = [];
     notifyListeners();
 
     try {
-      final results = await _userService.getHistoryDetail(date, forceRefresh: forceRefresh);
+      final results = await _userService.getHistoryDetail(date);
       _historyDetails = results;
       _status = HistoryStatus.success;
       notifyListeners();

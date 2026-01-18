@@ -9,7 +9,6 @@ import '../providers/user_preference_provider.dart';
 import 'meal_log_page.dart';
 import '../widgets/shimmer_loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../widgets/offline_placeholder.dart';
 import '../utils/styles.dart';
 
 
@@ -173,16 +172,6 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   }
 
   Widget _buildErrorState(String errorMessage) {
-    final isNetworkError = errorMessage.contains('koneksi') ||
-        errorMessage.contains('timeout') ||
-        errorMessage.contains('internet');
-
-    if (isNetworkError) {
-      return OfflinePlaceholder(
-        onRetry: _fetchFoodDetail,
-      );
-    }
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),

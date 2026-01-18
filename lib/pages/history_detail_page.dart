@@ -5,7 +5,6 @@ import '../models/history_entry.dart';
 import '../providers/history_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
-import '../widgets/offline_placeholder.dart';
 
 
 class HistoryDetailPage extends StatefulWidget {
@@ -85,19 +84,6 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
   }
 
   Widget _buildErrorState(String errorMessage) {
-    // Check if error message indicates network issue
-    final isNetworkError = errorMessage.contains('koneksi') || 
-                          errorMessage.contains('timeout') ||
-                          errorMessage.contains('internet');
-    
-    if (isNetworkError) {  
-      return OfflinePlaceholder(
-        onRetry: () => context
-            .read<HistoryProvider>()
-            .fetchHistoryDetail(widget.date, forceRefresh: true),
-      );
-    }
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -115,7 +101,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
             ElevatedButton(
               onPressed: () => context
                   .read<HistoryProvider>()
-                  .fetchHistoryDetail(widget.date, forceRefresh: true),
+                  .fetchHistoryDetail(widget.date),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink,
                 foregroundColor: Colors.white,

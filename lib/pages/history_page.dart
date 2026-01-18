@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/history_entry.dart';
 import '../providers/history_provider.dart';
 import 'history_detail_page.dart';
 import '../widgets/shimmer_loading.dart';
-import '../widgets/offline_placeholder.dart';
 import '../utils/styles.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -59,7 +59,7 @@ class _HistoryPageState extends State<HistoryPage> {
           }
 
           if (errorMessage != null && history.isEmpty) {
-            return _buildErrorState(errorMessage, () => historyProvider.fetchHistory(forceRefresh: true));
+            return _buildErrorState(errorMessage);
           }
 
           if (history.isEmpty) {
@@ -67,7 +67,7 @@ class _HistoryPageState extends State<HistoryPage> {
           }
 
           return RefreshIndicator(
-            onRefresh: () => context.read<HistoryProvider>().fetchHistory(forceRefresh: true),
+            onRefresh: () => context.read<HistoryProvider>().fetchHistory(),
             color: Colors.pink,
             child: ListView.builder(
               padding: const EdgeInsets.all(20),
@@ -82,16 +82,7 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  Widget _buildErrorState(String errorMessage, VoidCallback onRetry) {
-    // Check if error message indicates network issue
-    final isNetworkError = errorMessage.contains('koneksi') || 
-                          errorMessage.contains('timeout') ||
-                          errorMessage.contains('internet');
-                          
-    if (isNetworkError) {
-      return OfflinePlaceholder(onRetry: onRetry);
-    }
-  
+  Widget _buildErrorState(String errorMessage) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -107,13 +98,21 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: onRetry,
+              onPressed: () => context.read<HistoryProvider>().fetchHistory(),
               style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                backgroundColor: Colors.pink,
-                foregroundColor: Colors.white
               ),
-              child: const Text("Coba Lagi"),
+              child: Ink(
+                decoration: BoxDecoration(
+                  gradient: AppStyles.pinkGradient,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: const Text("Cari Rekomendasi", style: TextStyle(color: Colors.white)),
+                ),
+              ),
             ),
           ],
         ),

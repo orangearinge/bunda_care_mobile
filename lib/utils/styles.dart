@@ -78,7 +78,7 @@ class AppStyles {
       // Input Decoration Theme (TextFields)
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.grey[50],
+        fillColor: Colors.grey[50], // Or white depending on preference
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusLarge),
@@ -97,13 +97,6 @@ class AppStyles {
           borderSide: const BorderSide(color: Colors.red, width: 1),
         ),
         hintStyle: TextStyle(color: Colors.grey[400]),
-      ),
-
-      pageTransitionsTheme: const PageTransitionsTheme(
-        builders: {
-          TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-        },
       ),
     );
   }

@@ -9,7 +9,6 @@ import '../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
 import '../widgets/shimmer_loading.dart';
-import '../widgets/offline_placeholder.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -61,29 +60,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
 
                   if (data.status == PreferenceStatus.error) {
-                    final errorMessage = data.errorMessage ?? 'Gagal memuat data';
-                    final isNetworkError = errorMessage.contains('koneksi') ||
-                        errorMessage.contains('timeout') ||
-                        errorMessage.contains('internet');
-
-                    if (isNetworkError) {
-                      return OfflinePlaceholder(
-                        onRetry: () => context
-                            .read<UserPreferenceProvider>()
-                            .fetchPreference(forceRefresh: true),
-                      );
-                    }
-
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(errorMessage),
+                          Text(data.errorMessage ?? 'Gagal memuat data'),
                           const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () => context
                                 .read<UserPreferenceProvider>()
-                                .fetchPreference(forceRefresh: true),
+                                .fetchPreference(),
                             child: const Text('Coba Lagi'),
                           ),
                         ],
@@ -109,14 +95,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       final avatarUrl = data.avatar;
                       final userNameFallback = data.name ?? 'Bunda';
 
-                      return RefreshIndicator(
-                        onRefresh: () => context
-                            .read<UserPreferenceProvider>()
-                            .fetchPreference(forceRefresh: true),
-                        color: Colors.pink,
-                        child: SingleChildScrollView(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: const EdgeInsets.only(bottom: 30),
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.only(bottom: 30),
                         child: Column(
                           children: [
                             _buildHeader(
@@ -154,8 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ],
                         ),
-                      ),
-                    );
+                      );
                     },
                   );
                 },

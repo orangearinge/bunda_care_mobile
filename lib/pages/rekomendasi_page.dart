@@ -6,7 +6,8 @@ import 'food_detail_page.dart';
 import '../widgets/shimmer_loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
-import '../widgets/offline_placeholder.dart';
+
+
 
 class RekomendasiPage extends StatefulWidget {
   final String mealType;
@@ -112,8 +113,22 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
                         itemBuilder: (context, index) => const MenuCardSkeleton(),
                       )
                     : foodProvider.errorMessage != null
-                        ? OfflinePlaceholder(
-                            onRetry: _fetchData,
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  foodProvider.errorMessage!,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: _fetchData,
+                                  child: const Text("Coba Lagi"),
+                                ),
+                              ],
+                            ),
                           )
                         : _buildRecommendationList(foodProvider.recommendations),
               ),

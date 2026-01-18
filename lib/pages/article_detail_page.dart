@@ -5,9 +5,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../providers/article_provider.dart';
 import '../utils/styles.dart';
-import '../models/article.dart';
+import '../models/article.dart'; // Add this import
 import '../widgets/shimmer_loading.dart';
-import '../widgets/offline_placeholder.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final String slug;
@@ -29,34 +28,14 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ArticleProvider>(
+    return Scaffold(
+      body: Consumer<ArticleProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
             return const ArticleDetailSkeleton();
           }
 
           if (provider.error != null) {
-            final errorMessage = provider.error ?? 'Terjadi kesalahan';
-            final isNetworkError = errorMessage.contains('koneksi') ||
-                errorMessage.contains('timeout') ||
-                errorMessage.contains('internet');
-
-            if (isNetworkError) {
-              return Scaffold(
-                appBar: AppBar(
-                  flexibleSpace: Container(
-                    decoration: BoxDecoration(
-                      gradient: AppStyles.pinkGradient,
-                    ),
-                  ),
-                  foregroundColor: Colors.white,
-                ),
-                body: OfflinePlaceholder(
-                  onRetry: () => context.read<ArticleProvider>().fetchArticleDetail(widget.slug),
-                ),
-              );
-            }
-
             return Scaffold(
               appBar: AppBar(),
               body: Center(child: Text("Error: ${provider.error}")),
@@ -71,8 +50,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
             );
           }
 
-          return Scaffold(
-            body: CustomScrollView(
+          return CustomScrollView(
             slivers: [
               SliverAppBar(
                 expandedHeight: 250,
@@ -166,9 +144,9 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                 ),
               ),
             ],
-            ),
           );
         },
-      );
+      ),
+    );
   }
 }

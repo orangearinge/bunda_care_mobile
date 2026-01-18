@@ -4,7 +4,6 @@ import '../providers/feedback_provider.dart';
 import '../models/feedback.dart';
 import 'package:intl/intl.dart';
 import '../utils/styles.dart';
-import '../widgets/offline_placeholder.dart';
 
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
@@ -81,98 +80,80 @@ class _FeedbackPageState extends State<FeedbackPage> {
       ),
       body: Consumer<FeedbackProvider>(
         builder: (context, provider, child) {
-          // Check for network errors
-          if (provider.error != null && provider.feedbacks.isEmpty && !provider.isLoading) {
-            final errorMessage = provider.error ?? 'Terjadi kesalahan';
-            final isNetworkError = errorMessage.contains('koneksi') ||
-                errorMessage.contains('timeout') ||
-                errorMessage.contains('internet');
-
-            if (isNetworkError) {
-              return OfflinePlaceholder(
-                onRetry: () => context.read<FeedbackProvider>().fetchMyFeedbacks(),
-              );
-            }
-          }
-
-          return RefreshIndicator(
-            onRefresh: () => context.read<FeedbackProvider>().fetchMyFeedbacks(),
-            color: Colors.pink,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildFeedbackForm(provider),
-                  const SizedBox(height: 36),
-                  Row(
-                    children: [
-                      Container(
-                        width: 4,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: Colors.pink[400],
-                          borderRadius: BorderRadius.circular(2),
-                        ),
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildFeedbackForm(provider),
+                const SizedBox(height: 36),
+                Row(
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: Colors.pink[400],
+                        borderRadius: BorderRadius.circular(2),
                       ),
-                      const SizedBox(width: 8),
-                      const Text(
-                        'Riwayat Feedback',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2D3142),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  if (provider.isLoading)
-                    const Padding(
-                      padding: EdgeInsets.only(top: 40),
-                      child: Center(child: CircularProgressIndicator(strokeWidth: 3)),
-                    )
-                  else if (provider.feedbacks.isEmpty)
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 60),
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(Icons.chat_bubble_outline_rounded,
-                                  size: 48, color: Colors.grey[300]),
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Belum ada feedback dari Anda',
-                              style: TextStyle(
-                                color: Colors.grey[500],
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  else
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: provider.feedbacks.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 14),
-                      itemBuilder: (context, index) {
-                        return _buildFeedbackCard(provider.feedbacks[index]);
-                      },
                     ),
-                ],
-              ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Riwayat Feedback',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF2D3142),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                if (provider.isLoading)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 40),
+                    child: Center(child: CircularProgressIndicator(strokeWidth: 3)),
+                  )
+                else if (provider.feedbacks.isEmpty)
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 60),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.chat_bubble_outline_rounded,
+                                size: 48, color: Colors.grey[300]),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Belum ada feedback dari Anda',
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                else
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: provider.feedbacks.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 14),
+                    itemBuilder: (context, index) {
+                      return _buildFeedbackCard(provider.feedbacks[index]);
+                    },
+                  ),
+              ],
             ),
           );
         },
