@@ -216,7 +216,7 @@ class AuthProvider with ChangeNotifier {
       // Handle auth errors specifically
       if (_isAuthError(e)) {
         await logout();
-        _setError(e.message);
+        _setError(ApiConstants.getErrorMessage(e.code));
         return false;
       }
       _setError(e.message);
@@ -247,7 +247,7 @@ class AuthProvider with ChangeNotifier {
       // Handle auth errors specifically
       if (_isAuthError(e)) {
         await logout();
-        _setError(e.message);
+        _setError(ApiConstants.getErrorMessage(e.code));
         return false;
       }
       _setError(e.message);
@@ -280,12 +280,12 @@ class AuthProvider with ChangeNotifier {
       // Handle auth errors specifically
       if (_isAuthError(e)) {
         await logout();
-        _setError(e.message);
+        _setError(ApiConstants.getErrorMessage(e.code));
         return false;
       }
       // Don't show error if user cancelled sign-in
       if (e.code != 'GOOGLE_SIGNIN_CANCELLED') {
-        _setError(e.message);
+        _setError(ApiConstants.getErrorMessage(e.code));
       } else {
         _setState(AuthState.unauthenticated);
       }
