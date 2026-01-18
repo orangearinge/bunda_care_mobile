@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
@@ -13,45 +12,56 @@ import '../pages/scan_page.dart';
 import '../pages/edukasi_page.dart';
 import '../pages/profile_page.dart';
 import '../pages/feedback_page.dart';
+import '../utils/navigator_observers.dart';
 
 /// Application router configuration with authentication guards
 class AppRouter {
   final AuthProvider authProvider;
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
 
   AppRouter(this.authProvider);
 
   late final GoRouter router = GoRouter(
+    navigatorKey: navigatorKey,
+    observers: [ExitDialogNavigatorObserver()],
     refreshListenable: authProvider,
     debugLogDiagnostics: true,
-    
+
     // Redirect logic based on authentication state
     redirect: (context, state) {
       final isAuthenticated = authProvider.isAuthenticated;
       final isUserComplete = authProvider.isUserComplete;
-      final isAuthenticating = authProvider.state == AuthState.initial ||
-                                authProvider.state == AuthState.loading;
+      final isAuthenticating =
+          authProvider.state == AuthState.initial ||
+          authProvider.state == AuthState.loading;
       final isGoogleSignInInProgress = authProvider.isGoogleSignInInProgress;
 
-      final isGoingToAuth = state.matchedLocation == '/login' ||
-                            state.matchedLocation == '/register';
+      final isGoingToAuth =
+          state.matchedLocation == '/login' ||
+          state.matchedLocation == '/register';
       final isGoingToRoleSelection = state.matchedLocation == '/role-selection';
 
       // Still checking auth status, Google sign-in in progress, or loading on login page - stay on current route
-      if (isAuthenticating || isGoogleSignInInProgress || (authProvider.state == AuthState.loading && state.matchedLocation == '/login')) return null;
+      if (isAuthenticating ||
+          isGoogleSignInInProgress ||
+          (authProvider.state == AuthState.loading &&
+              state.matchedLocation == '/login'))
+        return null;
 
-       // User is authenticated but trying to access auth pages
-       if (isAuthenticated && isGoingToAuth) {
-         // If user is not complete, redirect to role selection
-         if (!isUserComplete) {
-           return '/role-selection';
-         }
-         return '/';
-       }
+      // User is authenticated but trying to access auth pages
+      if (isAuthenticated && isGoingToAuth) {
+        // If user is not complete, redirect to role selection
+        if (!isUserComplete) {
+          return '/role-selection';
+        }
+        return '/';
+      }
 
-       // User is authenticated but not complete, trying to access home/dashboard
-       if (isAuthenticated && !isUserComplete && state.matchedLocation == '/') {
-         return '/role-selection';
-       }
+      // User is authenticated but not complete, trying to access home/dashboard
+      if (isAuthenticated && !isUserComplete && state.matchedLocation == '/') {
+        return '/role-selection';
+      }
 
       // User is authenticated and complete, but trying to access role selection
       if (isAuthenticated && isUserComplete && isGoingToRoleSelection) {

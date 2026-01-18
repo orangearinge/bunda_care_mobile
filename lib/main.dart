@@ -15,11 +15,12 @@ import 'package:shimmer/shimmer.dart';
 import 'utils/constants.dart';
 import 'utils/logger.dart';
 import 'utils/styles.dart';
+// import 'utils/navigator_observers.dart';
 
 void main() async {
   // Menangkap error flutter di luar zone (misalnya saat inisialisasi)
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Inisialisasi format tanggal (untuk Bahasa Indonesia)
   await initializeDateFormatting('id_ID', null);
 
@@ -115,7 +116,7 @@ class _AppContentState extends State<AppContent> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.pink.withOpacity(0.1),
+                          color: Colors.pink.withValues(alpha: 0.1),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
