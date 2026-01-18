@@ -17,9 +17,12 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   bool _showExitDialog = false;
 
-  Future<bool> _handleWillPop() async {
-    if (widget.navigationShell.currentIndex != 0) {
-      return true;
+  Future<bool> _handleBackNavigation() async {
+    final currentIndex = widget.navigationShell.currentIndex;
+
+    if (currentIndex != 0) {
+      widget.navigationShell.goBranch(0, initialLocation: true);
+      return false;
     }
 
     if (_showExitDialog) return false;
@@ -49,12 +52,10 @@ class _MainNavigationState extends State<MainNavigation> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: widget.navigationShell.currentIndex != 0,
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
-        if (!didPop &&
-            widget.navigationShell.currentIndex == 0 &&
-            !_showExitDialog) {
-          await _handleWillPop();
+        if (!didPop && !_showExitDialog) {
+          await _handleBackNavigation();
         }
       },
       child: Scaffold(
