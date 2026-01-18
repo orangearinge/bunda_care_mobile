@@ -495,7 +495,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: Colors.amber[50],
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.star_rounded, color: Colors.amber),
+              child: const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
             ),
             title: const Text(
               'Beri Feedback',
