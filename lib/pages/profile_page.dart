@@ -540,7 +540,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildVersionInfo() {
     return Center(
       child: Text(
-        'versi 5.50-117',
+        'versi 1.0-0',
         style: TextStyle(
           color: Colors.grey[400],
           fontSize: 12,
