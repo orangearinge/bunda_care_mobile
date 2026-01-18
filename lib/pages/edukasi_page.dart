@@ -73,7 +73,7 @@ class _EdukasiPageState extends State<EdukasiPage> {
 
           if (provider.error != null && provider.articles.isEmpty) {
             return OfflinePlaceholder(
-              message: 'Gagal memuat artikel: ${provider.error}',
+              message: provider.error!,
               onRetry: () => provider.fetchArticles(refresh: true),
             );
           }

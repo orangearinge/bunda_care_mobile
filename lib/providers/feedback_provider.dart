@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/feedback.dart';
 import '../services/feedback_service.dart';
+import '../utils/constants.dart';
 
 class FeedbackProvider with ChangeNotifier {
   final FeedbackService _feedbackService = FeedbackService();
@@ -41,7 +42,7 @@ class FeedbackProvider with ChangeNotifier {
       }
       _pagination = response.pagination;
     } catch (e) {
-      _error = e.toString();
+      _error = ApiConstants.getErrorMessage('SERVER_ERROR');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -58,7 +59,7 @@ class FeedbackProvider with ChangeNotifier {
       _feedbacks.insert(0, newFeedback);
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = ApiConstants.getErrorMessage('SERVER_ERROR');
       return false;
     } finally {
       _isSending = false;

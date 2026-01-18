@@ -2,6 +2,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/article.dart';
 import '../services/article_service.dart';
+import '../utils/constants.dart';
 
 enum ArticleStatus { initial, loading, success, error }
 
@@ -51,7 +52,7 @@ class ArticleProvider with ChangeNotifier {
       _status = ArticleStatus.success;
       _error = null;
     } catch (e) {
-      _error = e.toString();
+      _error = ApiConstants.getErrorMessage('SERVER_ERROR');
       _status = ArticleStatus.error;
     } finally {
       _isLoadingMore = false;
@@ -70,7 +71,7 @@ class ArticleProvider with ChangeNotifier {
       _selectedArticle = article;
       _status = ArticleStatus.success;
     } catch (e) {
-      _error = e.toString();
+      _error = ApiConstants.getErrorMessage('SERVER_ERROR');
       _status = ArticleStatus.error;
     } finally {
       notifyListeners();

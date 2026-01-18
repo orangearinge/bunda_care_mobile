@@ -5,14 +5,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../providers/article_provider.dart';
 import '../utils/styles.dart';
-import '../models/article.dart'; // Add this import
 import '../widgets/shimmer_loading.dart';
 import '../widgets/offline_placeholder.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final String slug;
 
-  const ArticleDetailPage({Key? key, required this.slug}) : super(key: key);
+  const ArticleDetailPage({super.key, required this.slug});
 
   @override
   State<ArticleDetailPage> createState() => _ArticleDetailPageState();
@@ -46,7 +45,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                 foregroundColor: Colors.white,
               ),
               body: OfflinePlaceholder(
-                message: 'Gagal memuat artikel: ${provider.error}',
+                message: provider.error ?? 'Server lagi maintenance. Tunggu ya!',
                 onRetry: () => provider.fetchArticleDetail(widget.slug),
               ),
             );

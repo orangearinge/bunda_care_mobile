@@ -19,13 +19,13 @@ class OfflinePlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Container dengan gradient background dan shadow
             Container(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -62,23 +62,23 @@ class OfflinePlaceholder extends StatelessWidget {
                     ),
                     child: Icon(
                       icon,
-                      size: 48,
+                      size: 40,
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
                   // Title
                   Text(
                     title!,
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey[800],
-                      height: 1.3,
+                      height: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   // Message
                   Text(
                     message,
@@ -86,13 +86,13 @@ class OfflinePlaceholder extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[600],
-                      height: 1.5,
+                      height: 1.4,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             // Action Button
             Container(
               width: double.infinity,
@@ -113,7 +113,7 @@ class OfflinePlaceholder extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             // Optional secondary message
             Text(
               'Koneksi stabil biar bisa sync data',

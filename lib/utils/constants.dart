@@ -142,24 +142,24 @@ class ApiConstants {
     'INVALID_TOKEN': 'Sesi habis. Login lagi yuk!',
     'SESSION_EXPIRED': 'Waktunya login lagi nih!',
     'UNAUTHORIZED': 'Kamu belum punya akses fitur ini',
-    'ACCOUNT_NOT_VERIFIED': 'Cek email dulu, verifikasi akunnya!',
-    'PASSWORD_TOO_WEAK': 'Password minimal 8 karakter ya!',
+    'ACCOUNT_NOT_VERIFIED': 'Verifikasi email dulu ya!',
+    'PASSWORD_TOO_WEAK': 'Password harus 8 karakter!',
     'LOGOUT_FAILED': 'Gagal logout. Coba lagi deh',
-    'GOOGLE_AUTH_CANCELLED': 'Daftar pakai Google dibatalkan',
+    'GOOGLE_AUTH_CANCELLED': 'Daftar Google dibatalkan',
     'GOOGLE_SIGNIN_CANCELLED': 'Login Google dibatalkan',
 
     // Network / Server Errors
     'NETWORK_ERROR': 'Yah, internetnya mati. Cek koneksi kamu ya!',
     'TIMEOUT_ERROR': 'Lama banget responsnya. Coba lagi yuk!',
-    'SERVER_ERROR': 'Server lagi sibuk. Tunggu sebentar ya!',
-    'UNKNOWN_ERROR': 'Ada yang tidak beres. Coba lagi nanti',
+    'SERVER_ERROR': 'Server lagi maintenance. Tunggu ya!',
+    'UNKNOWN_ERROR': 'Ada masalah. Coba lagi nanti',
     'REQUEST_CANCELLED': 'Permintaan dibatalkan',
 
     // Food scanning & Recommendation
     'SCAN_FAILED': 'Foto kurang jelas. Foto ulang yang lebih terang ya!',
     'FOOD_NOT_RECOGNIZED': 'Makanan ini belum kenal. Coba foto yang berbeda',
     'SCAN_LIMIT_EXCEEDED': 'Batas scan harian habis. Besok lagi yuk!',
-    'RECOMMENDATION_FAILED': 'Rekomendasi lagi loading. Tunggu sebentar',
+    'RECOMMENDATION_FAILED': 'Rekomendasi lagi error. Tunggu sebentar',
     'NO_RECOMMENDATIONS': 'Belum ada saran untuk saat ini',
     'INVALID_FOOD_DATA': 'Data makanan kurang lengkap',
 
@@ -169,12 +169,12 @@ class ApiConstants {
     'DUPLICATE_LOG': 'Makanan ini sudah dicatat sebelumnya',
 
     // Cloudinary & Files
-    'UPLOAD_FAILED': 'Gagal upload gambar. Cek internet kamu!',
-    'INVALID_FILE_TYPE': 'File harus gambar ya!',
-    'FILE_TOO_LARGE': 'Gambarnya kegedean. Pilih yang lebih kecil',
+    'UPLOAD_FAILED': 'Upload gagal. Cek internet!',
+    'INVALID_FILE_TYPE': 'Harus file gambar!',
+    'FILE_TOO_LARGE': 'Gambar terlalu besar',
 
     // Data Errors
-    'INVALID_USER_DATA': 'Data pengguna tidak valid',
+    'INVALID_USER_DATA': 'Data user tidak valid',
     'DATA_NOT_FOUND': 'Data tidak ditemukan',
   };
 
