@@ -29,8 +29,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Consumer<ArticleProvider>(
+    return Consumer<ArticleProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {
             return const ArticleDetailSkeleton();
@@ -72,7 +71,8 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
             );
           }
 
-          return CustomScrollView(
+          return Scaffold(
+            body: CustomScrollView(
             slivers: [
               SliverAppBar(
                 expandedHeight: 250,
@@ -166,9 +166,9 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                 ),
               ),
             ],
+            ),
           );
         },
-      ),
-    );
+      );
   }
 }
