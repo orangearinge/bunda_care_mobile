@@ -15,7 +15,6 @@ import 'package:shimmer/shimmer.dart';
 import 'utils/constants.dart';
 import 'utils/logger.dart';
 import 'utils/styles.dart';
-// import 'utils/navigator_observers.dart';
 
 void main() async {
   // Menangkap error flutter di luar zone (misalnya saat inisialisasi)
