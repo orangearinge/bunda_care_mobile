@@ -5,6 +5,7 @@ import '../providers/food_provider.dart';
 import '../providers/user_preference_provider.dart';
 import '../widgets/shimmer_loading.dart';
 import '../models/meal_log.dart';
+import '../widgets/offline_placeholder.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
 
@@ -57,7 +58,12 @@ class _MealLogPageState extends State<MealLogPage> {
               itemBuilder: (context, index) => const MealLogSkeleton(),
             );
           }
-
+          if (foodProvider.errorMessage != null && foodProvider.mealLogs.isEmpty) {
+            return OfflinePlaceholder(
+              message: foodProvider.errorMessage!,
+              onRetry: () => foodProvider.fetchMealLogs(),
+            );
+          }
           if (foodProvider.mealLogs.isEmpty) {
             return Center(
               child: Column(

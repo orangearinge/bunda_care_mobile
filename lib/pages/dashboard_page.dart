@@ -12,6 +12,7 @@ import 'food_detail_page.dart';
 import 'history_page.dart';
 import '../widgets/shimmer_loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../widgets/offline_placeholder.dart';
 import '../utils/styles.dart';
 
 
@@ -64,14 +65,26 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _fetchDashboardData,
-          color: Colors.pink,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+        child: Selector<UserPreferenceProvider,
+            ({bool isLoading, DashboardSummary? summary})>(
+          selector: (_, p) =>
+              (isLoading: p.isLoading, summary: p.dashboardSummary),
+          builder: (context, data, _) {
+            if (!data.isLoading && data.summary == null) {
+              return OfflinePlaceholder(
+                message: 'Data dashboard tidak tersedia secara offline.',
+                onRetry: _fetchDashboardData,
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: _fetchDashboardData,
+              color: Colors.pink,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                 // Header & Welcome Section
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -535,13 +548,15 @@ class _DashboardPageState extends State<DashboardPage> {
                   );
                 },
               ),
-            ],
-          ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildRekomendasiCard(
     BuildContext context,

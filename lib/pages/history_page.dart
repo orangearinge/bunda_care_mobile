@@ -6,6 +6,7 @@ import '../models/history_entry.dart';
 import '../providers/history_provider.dart';
 import 'history_detail_page.dart';
 import '../widgets/shimmer_loading.dart';
+import '../widgets/offline_placeholder.dart';
 import '../utils/styles.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -59,7 +60,10 @@ class _HistoryPageState extends State<HistoryPage> {
           }
 
           if (errorMessage != null && history.isEmpty) {
-            return _buildErrorState(errorMessage);
+            return OfflinePlaceholder(
+              message: errorMessage,
+              onRetry: () => context.read<HistoryProvider>().fetchHistory(),
+            );
           }
 
           if (history.isEmpty) {
@@ -82,43 +86,7 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  Widget _buildErrorState(String errorMessage) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-            const SizedBox(height: 16),
-            Text(
-              errorMessage,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(color: Colors.red[700]),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () => context.read<HistoryProvider>().fetchHistory(),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              child: Ink(
-                decoration: BoxDecoration(
-                  gradient: AppStyles.pinkGradient,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: const Text("Cari Rekomendasi", style: TextStyle(color: Colors.white)),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildEmptyState() {
     return Center(

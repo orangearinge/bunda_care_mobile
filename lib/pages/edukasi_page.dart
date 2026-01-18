@@ -5,6 +5,7 @@ import '../providers/article_provider.dart';
 import '../widgets/article_card.dart';
 import 'article_detail_page.dart';
 import '../widgets/shimmer_loading.dart';
+import '../widgets/offline_placeholder.dart';
 import '../utils/styles.dart';
 
 class EdukasiPage extends StatefulWidget {
@@ -71,21 +72,9 @@ class _EdukasiPageState extends State<EdukasiPage> {
           }
 
           if (provider.error != null && provider.articles.isEmpty) {
-             return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 48, color: Colors.pink),
-                  const SizedBox(height: 16),
-                  Text('Gagal memuat artikel: ${provider.error}', textAlign: TextAlign.center),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => provider.fetchArticles(refresh: true),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
-                    child: const Text('Coba Lagi', style: TextStyle(color: Colors.white)),
-                  ),
-                ],
-              ),
+            return OfflinePlaceholder(
+              message: 'Gagal memuat artikel: ${provider.error}',
+              onRetry: () => provider.fetchArticles(refresh: true),
             );
           }
 

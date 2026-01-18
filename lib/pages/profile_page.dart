@@ -9,6 +9,7 @@ import '../utils/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
 import '../widgets/shimmer_loading.dart';
+import '../widgets/offline_placeholder.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -87,27 +88,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     builder: (context, data, _) {
                       final pref = data.pref;
                       if (pref == null) {
-                        return Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.cloud_off_rounded,
-                                  size: 64, color: Colors.grey),
-                              const SizedBox(height: 16),
-                              const Text(
-                                'Data profil tidak tersedia secara offline.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              const SizedBox(height: 16),
-                              ElevatedButton(
-                                onPressed: () => context
-                                    .read<UserPreferenceProvider>()
-                                    .fetchPreference(),
-                                child: const Text('Coba Lagi'),
-                              ),
-                            ],
-                          ),
+                        return OfflinePlaceholder(
+                          message: 'Data profil tidak tersedia secara offline.',
+                          onRetry: () => context
+                              .read<UserPreferenceProvider>()
+                              .fetchPreference(),
                         );
                       }
 

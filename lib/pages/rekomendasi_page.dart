@@ -5,6 +5,7 @@ import 'meal_log_page.dart';
 import 'food_detail_page.dart';
 import '../widgets/shimmer_loading.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../widgets/offline_placeholder.dart';
 import '../utils/styles.dart';
 
 
@@ -113,22 +114,9 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
                         itemBuilder: (context, index) => const MenuCardSkeleton(),
                       )
                     : foodProvider.errorMessage != null
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  foodProvider.errorMessage!,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                                const SizedBox(height: 16),
-                                ElevatedButton(
-                                  onPressed: _fetchData,
-                                  child: const Text("Coba Lagi"),
-                                ),
-                              ],
-                            ),
+                        ? OfflinePlaceholder(
+                            message: foodProvider.errorMessage!,
+                            onRetry: _fetchData,
                           )
                         : _buildRecommendationList(foodProvider.recommendations),
               ),

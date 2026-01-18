@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/history_entry.dart';
 import '../providers/history_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import '../widgets/offline_placeholder.dart';
 import '../utils/styles.dart';
 
 
@@ -64,7 +65,12 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
           }
 
           if (errorMessage != null && items.isEmpty) {
-            return _buildErrorState(errorMessage);
+            return OfflinePlaceholder(
+              message: errorMessage,
+              onRetry: () => context
+                  .read<HistoryProvider>()
+                  .fetchHistoryDetail(widget.date),
+            );
           }
 
           if (items.isEmpty) {
@@ -83,36 +89,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
     );
   }
 
-  Widget _buildErrorState(String errorMessage) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-            const SizedBox(height: 16),
-            Text(
-              errorMessage,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(color: Colors.red[700]),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () => context
-                  .read<HistoryProvider>()
-                  .fetchHistoryDetail(widget.date),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink,
-                foregroundColor: Colors.white,
-              ),
-              child: const Text("Coba Lagi"),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildEmptyState() {
     return Center(

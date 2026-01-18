@@ -7,6 +7,7 @@ import '../providers/article_provider.dart';
 import '../utils/styles.dart';
 import '../models/article.dart'; // Add this import
 import '../widgets/shimmer_loading.dart';
+import '../widgets/offline_placeholder.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final String slug;
@@ -37,16 +38,34 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
 
           if (provider.error != null) {
             return Scaffold(
-              appBar: AppBar(),
-              body: Center(child: Text("Error: ${provider.error}")),
+              appBar: AppBar(
+                title: const Text('Detail Artikel'),
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
+                ),
+                foregroundColor: Colors.white,
+              ),
+              body: OfflinePlaceholder(
+                message: 'Gagal memuat artikel: ${provider.error}',
+                onRetry: () => provider.fetchArticleDetail(widget.slug),
+              ),
             );
           }
 
           final article = provider.selectedArticle;
           if (article == null) {
             return Scaffold(
-              appBar: AppBar(),
-              body: const Center(child: Text("Artikel tidak ditemukan")),
+              appBar: AppBar(
+                title: const Text('Detail Artikel'),
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
+                ),
+                foregroundColor: Colors.white,
+              ),
+              body: OfflinePlaceholder(
+                message: 'Artikel tidak ditemukan atau tidak tersedia offline.',
+                onRetry: () => provider.fetchArticleDetail(widget.slug),
+              ),
             );
           }
 

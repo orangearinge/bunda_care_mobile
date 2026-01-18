@@ -8,6 +8,7 @@ import '../providers/food_provider.dart';
 import '../providers/user_preference_provider.dart';
 import 'meal_log_page.dart';
 import '../widgets/shimmer_loading.dart';
+import '../widgets/offline_placeholder.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
 
@@ -163,54 +164,18 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           ),
           body: isLoading && foodDetail == null
               ? const FoodDetailSkeleton()
-                  : errorMessage != null
-                  ? _buildErrorState(errorMessage)
+              : errorMessage != null
+                  ? OfflinePlaceholder(
+                      message: errorMessage,
+                      onRetry: _fetchFoodDetail,
+                    )
                   : _buildContent(foodDetail),
         );
       },
     );
   }
 
-  Widget _buildErrorState(String errorMessage) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red[300],
-            ),
-            const SizedBox(height: 16),
-            Text(
-              errorMessage,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.red[700],
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _fetchFoodDetail,
-              icon: const Icon(Icons.refresh),
-              label: const Text('Coba Lagi'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.pink[300],
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildContent(FoodDetail? foodDetail) {
     if (foodDetail == null) return const SizedBox.shrink();
