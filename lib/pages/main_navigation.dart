@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:io' show Platform, exit;
+import 'package:flutter/services.dart';
 import '../utils/styles.dart';
+import '../utils/dialogs.dart';
 
 class MainNavigation extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -11,7 +14,45 @@ class MainNavigation extends StatefulWidget {
   State<MainNavigation> createState() => _MainNavigationState();
 }
 
-class _MainNavigationState extends State<MainNavigation> {
+class _MainNavigationState extends State<MainNavigation>
+    with WidgetsBindingObserver {
+  bool _isDialogShowing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached && _isDialogShowing) {
+      _isDialogShowing = false;
+    }
+  }
+
+  Future<void> _handleBackNavigation() async {
+    if (_isDialogShowing) return;
+
+    _isDialogShowing = true;
+    final result = await Dialogs.showExitConfirmation(context);
+    _isDialogShowing = false;
+
+    if (result == true && mounted) {
+      if (Platform.isAndroid || Platform.isIOS) {
+        SystemNavigator.pop();
+      } else {
+        exit(0);
+      }
+    }
+  }
+
   void _onItemTapped(int index) {
     widget.navigationShell.goBranch(
       index,
@@ -21,36 +62,51 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: widget.navigationShell,
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.2),
-              spreadRadius: 2,
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(Icons.home_outlined, Icons.home, 0),
-                _buildNavItem(Icons.chat_bubble_outline, Icons.chat_bubble, 1),
-                _buildNavItem(
-                  Icons.photo_camera_outlined,
-                  Icons.photo_camera,
-                  2,
-                ),
-                _buildNavItem(Icons.menu_book_outlined, Icons.menu_book, 3),
-                _buildNavItem(Icons.person_outline, Icons.person, 4),
-              ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop && !_isDialogShowing) {
+          await _handleBackNavigation();
+        }
+      },
+      child: Scaffold(
+        body: widget.navigationShell,
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.2),
+                spreadRadius: 2,
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 15.0,
+                vertical: 8,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem(Icons.home_outlined, Icons.home, 0),
+                  _buildNavItem(
+                    Icons.chat_bubble_outline,
+                    Icons.chat_bubble,
+                    1,
+                  ),
+                  _buildNavItem(
+                    Icons.photo_camera_outlined,
+                    Icons.photo_camera,
+                    2,
+                  ),
+                  _buildNavItem(Icons.menu_book_outlined, Icons.menu_book, 3),
+                  _buildNavItem(Icons.person_outline, Icons.person, 4),
+                ],
+              ),
             ),
           ),
         ),

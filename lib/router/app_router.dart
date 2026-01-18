@@ -12,7 +12,6 @@ import '../pages/scan_page.dart';
 import '../pages/edukasi_page.dart';
 import '../pages/profile_page.dart';
 import '../pages/feedback_page.dart';
-import '../utils/navigator_observers.dart';
 
 /// Application router configuration with authentication guards
 class AppRouter {
@@ -24,7 +23,6 @@ class AppRouter {
 
   late final GoRouter router = GoRouter(
     navigatorKey: navigatorKey,
-    observers: [ExitDialogNavigatorObserver()],
     refreshListenable: authProvider,
     debugLogDiagnostics: true,
 
