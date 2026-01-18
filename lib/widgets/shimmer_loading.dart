@@ -193,19 +193,25 @@ class ArticleCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey[300]!,
+        highlightColor: Colors.grey[100]!,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AspectRatio(
               aspectRatio: 16 / 9,
               child: Container(
-                color: Colors.white,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
               ),
             ),
             Padding(
@@ -215,20 +221,28 @@ class ArticleCardSkeleton extends StatelessWidget {
                 children: [
                   Container(
                     width: double.infinity,
-                    height: 20,
+                    height: 18,
                     color: Colors.white,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Container(
                     width: double.infinity,
-                    height: 14,
+                    height: 12,
                     color: Colors.white,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Container(
                     width: 200,
-                    height: 14,
+                    height: 12,
                     color: Colors.white,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(width: 100, height: 12, color: Colors.white),
+                      Container(width: 80, height: 12, color: Colors.white),
+                    ],
                   ),
                 ],
               ),
