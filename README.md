@@ -94,7 +94,6 @@ lib/
 │   ├── cloudinary_uploader.dart
 │   └── constants.dart
 ├── widgets/                # Reusable UI components
-│   └── feature_card.dart
 └── main.dart              # App entry point
 ```
 
