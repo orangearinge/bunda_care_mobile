@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/food_provider.dart';
 import '../providers/user_preference_provider.dart';
 import '../widgets/shimmer_loading.dart';
+import '../widgets/offline_placeholder.dart';
 import '../models/meal_log.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
@@ -44,7 +45,7 @@ class _MealLogPageState extends State<MealLogPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () => context.read<FoodProvider>().fetchMealLogs(),
+            onPressed: () => context.read<FoodProvider>().fetchMealLogs(forceRefresh: true),
           ),
         ],
       ),
@@ -55,6 +56,42 @@ class _MealLogPageState extends State<MealLogPage> {
               padding: const EdgeInsets.all(20),
               itemCount: 5,
               itemBuilder: (context, index) => const MealLogSkeleton(),
+            );
+          }
+          
+          if (foodProvider.errorMessage != null && foodProvider.mealLogs.isEmpty) {
+            final errorMessage = foodProvider.errorMessage!;
+            final isNetworkError = errorMessage.contains('koneksi') || 
+                                  errorMessage.contains('timeout') ||
+                                  errorMessage.contains('internet');
+
+            if (isNetworkError) {
+              return OfflinePlaceholder(
+                onRetry: () => foodProvider.fetchMealLogs(forceRefresh: true),
+              );
+            }
+            
+             return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+                    const SizedBox(height: 16),
+                    Text(
+                      errorMessage,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(color: Colors.red[700]),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () => foodProvider.fetchMealLogs(forceRefresh: true),
+                      child: const Text("Coba Lagi"),
+                    ),
+                  ],
+                ),
+              ),
             );
           }
 
@@ -93,7 +130,7 @@ class _MealLogPageState extends State<MealLogPage> {
           }
 
           return RefreshIndicator(
-            onRefresh: () => foodProvider.fetchMealLogs(),
+            onRefresh: () => foodProvider.fetchMealLogs(forceRefresh: true),
             child: ListView.builder(
               padding: const EdgeInsets.all(20),
               itemCount: foodProvider.mealLogs.length,
@@ -287,12 +324,21 @@ class _MealLogPageState extends State<MealLogPage> {
                   borderRadius: const BorderRadius.vertical(
                       bottom: Radius.circular(20)),
                 ),
-                child: const Center(
-                  child: Text(
-                    "KONFIRMASI MAKAN",
-                    style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
+                child: Center(
+                  child: provider.isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          "KONFIRMASI MAKAN",
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
                 ),
               ),
             ),

@@ -29,6 +29,24 @@ class MealLog {
   }
 
   String get caloriesText => "${nutrition.calories} kkal";
+
+  MealLog copyWith({
+    int? id,
+    String? menuName,
+    bool? isConsumed,
+    String? imageUrl,
+    MealLogNutrition? nutrition,
+    DateTime? createdAt,
+  }) {
+    return MealLog(
+      id: id ?? this.id,
+      menuName: menuName ?? this.menuName,
+      isConsumed: isConsumed ?? this.isConsumed,
+      imageUrl: imageUrl ?? this.imageUrl,
+      nutrition: nutrition ?? this.nutrition,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }
 
 class MealLogNutrition {

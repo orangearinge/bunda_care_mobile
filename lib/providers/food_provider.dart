@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/api_error.dart';
 import '../services/food_service.dart';
@@ -103,11 +102,11 @@ class FoodProvider with ChangeNotifier {
   }
 
   /// Fetch meal logs
-  Future<void> fetchMealLogs() async {
+  Future<void> fetchMealLogs({bool forceRefresh = false}) async {
     _status = FoodStatus.loading;
     notifyListeners();
     try {
-      final List<dynamic> logsJson = await _foodService.getMealLogs();
+      final List<dynamic> logsJson = await _foodService.getMealLogs(forceRefresh: forceRefresh);
       _mealLogs = logsJson.map((json) => MealLog.fromJson(json)).toList();
       _status = FoodStatus.success;
       notifyListeners();
@@ -147,28 +146,36 @@ class FoodProvider with ChangeNotifier {
 
   /// Confirm a meal as eaten
   Future<bool> confirmMeal(int mealLogId) async {
+    _status = FoodStatus.loading;
+    _errorMessage = null;
+    notifyListeners();
+
     try {
       final success = await _foodService.confirmMeal(mealLogId);
       if (success) {
         // Update local list
-        final index = _mealLogs.indexWhere(
-          (l) => l.id == mealLogId,
-        );
+        final index = _mealLogs.indexWhere((l) => l.id == mealLogId);
         if (index != -1) {
-          final oldLog = _mealLogs[index];
-          _mealLogs[index] = MealLog(
-            id: oldLog.id,
-            menuName: oldLog.menuName,
-            isConsumed: true,
-            imageUrl: oldLog.imageUrl,
-            nutrition: oldLog.nutrition,
-            createdAt: oldLog.createdAt,
-          );
-          notifyListeners();
+          _mealLogs[index] = _mealLogs[index].copyWith(isConsumed: true);
         }
+        _status = FoodStatus.success;
+        notifyListeners();
+        return true;
       }
-      return success;
+      
+      _status = FoodStatus.error;
+      _errorMessage = 'Gagal mengonfirmasi makanan';
+      notifyListeners();
+      return false;
+    } on ApiError catch (e) {
+      _errorMessage = e.message;
+      _status = FoodStatus.error;
+      notifyListeners();
+      return false;
     } catch (e) {
+      _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
+      _status = FoodStatus.error;
+      notifyListeners();
       return false;
     }
   }

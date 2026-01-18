@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_preference_provider.dart';
-import '../services/user_service.dart';
+
 import '../models/dashboard_summary.dart';
 import 'rekomendasi_page.dart';
 import 'meal_log_page.dart';
@@ -35,8 +35,8 @@ class _DashboardPageState extends State<DashboardPage> {
     super.didChangeDependencies();
   }
 
-  Future<void> _fetchDashboardData() async {
-    await context.read<UserPreferenceProvider>().fetchDashboardSummary();
+  Future<void> _fetchDashboardData({bool forceRefresh = false}) async {
+    await context.read<UserPreferenceProvider>().fetchDashboardSummary(forceRefresh: forceRefresh);
   }
 
   void _logout(BuildContext context) async {
@@ -65,7 +65,7 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: _fetchDashboardData,
+          onRefresh: () => _fetchDashboardData(forceRefresh: true),
           color: Colors.pink,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -130,7 +130,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                   Icons.refresh,
                                   color: Colors.grey,
                                 ),
-                                onPressed: _fetchDashboardData,
+                                onPressed: () => _fetchDashboardData(forceRefresh: true),
                               ),
                               IconButton(
                                 icon: const Icon(
@@ -740,40 +740,6 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
         Text(label, style: TextStyle(fontSize: 9, color: Colors.grey[500])),
-      ],
-    );
-  }
-
-  Widget _buildLegendItem({
-    required Color color,
-    required String text,
-    required String subText,
-  }) {
-    return Row(
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              text,
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            Text(
-              subText,
-              style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey[500]),
-            ),
-          ],
-        ),
       ],
     );
   }

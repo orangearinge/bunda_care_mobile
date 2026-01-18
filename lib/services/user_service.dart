@@ -34,6 +34,7 @@ class UserService {
         // Invalidate user preference cache after update
         await _api.clearCacheForUrl(ApiConstants.userPreference);
         await _api.clearCacheForUrl(ApiConstants.userProfile);
+        await _api.clearCacheForUrl(ApiConstants.userDashboard);
         
         return (preference: pref, token: token);
       } else {
@@ -158,9 +159,18 @@ class UserService {
 
   /// Get nutritional history
   /// GET /api/user/history
-  Future<List<HistoryEntry>> getHistory() async {
+  /// Get nutritional history
+  /// GET /api/user/history
+  Future<List<HistoryEntry>> getHistory({bool forceRefresh = false}) async {
     try {
-      final response = await _api.get(ApiConstants.userHistory);
+      final cacheOptions = forceRefresh
+          ? _api.getCacheOptions(CacheConfig.forceRefresh)
+          : _api.getCacheOptions(CacheConfig.history);
+
+      final response = await _api.get(
+        ApiConstants.userHistory,
+        options: _api.applyCacheOptions(cacheOptions),
+      );
       final data = _api.unwrap(response);
 
       if (data == null) return [];
@@ -177,9 +187,19 @@ class UserService {
 
   /// Get nutritional history detail
   /// GET /api/user/history/<date_str>
-  Future<List<HistoryDetailItem>> getHistoryDetail(String dateStr) async {
+  Future<List<HistoryDetailItem>> getHistoryDetail(
+    String dateStr, {
+    bool forceRefresh = false,
+  }) async {
     try {
-      final response = await _api.get('${ApiConstants.userHistory}/$dateStr');
+      final cacheOptions = forceRefresh
+          ? _api.getCacheOptions(CacheConfig.forceRefresh)
+          : _api.getCacheOptions(CacheConfig.history);
+
+      final response = await _api.get(
+        '${ApiConstants.userHistory}/$dateStr',
+        options: _api.applyCacheOptions(cacheOptions),
+      );
       final data = _api.unwrap(response);
 
       if (data == null) return [];

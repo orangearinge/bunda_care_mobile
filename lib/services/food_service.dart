@@ -136,11 +136,19 @@ class FoodService {
 
   /// Get meal logs
   /// GET /api/meal-log
-  Future<List<dynamic>> getMealLogs({int limit = 50}) async {
+  Future<List<dynamic>> getMealLogs({
+    int limit = 50,
+    bool forceRefresh = false,
+  }) async {
     try {
+      final cacheOptions = forceRefresh
+          ? _api.getCacheOptions(CacheConfig.forceRefresh)
+          : _api.getCacheOptions(CacheConfig.mealLogs);
+
       final response = await _api.get(
         ApiConstants.mealLog,
         queryParameters: {"limit": limit},
+        options: _api.applyCacheOptions(cacheOptions),
       );
       final data = _api.unwrap(response);
       
@@ -160,7 +168,10 @@ class FoodService {
   Future<bool> confirmMeal(int mealLogId) async {
     try {
       final response = await _api.post('${ApiConstants.mealLog}/$mealLogId/confirm');
-      return response.statusCode == 200;
+      final data = _api.unwrap(response);
+      
+      // If unwrap returns data (even if empty list/map), it means status was success
+      return data != null;
     } catch (e) {
       throw ErrorHandler.handle(e);
     }

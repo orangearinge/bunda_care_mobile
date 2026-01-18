@@ -5,6 +5,7 @@ import '../providers/article_provider.dart';
 import '../widgets/article_card.dart';
 import 'article_detail_page.dart';
 import '../widgets/shimmer_loading.dart';
+import '../widgets/offline_placeholder.dart';
 import '../utils/styles.dart';
 
 class EdukasiPage extends StatefulWidget {
@@ -71,7 +72,18 @@ class _EdukasiPageState extends State<EdukasiPage> {
           }
 
           if (provider.error != null && provider.articles.isEmpty) {
-             return Center(
+            final errorMessage = provider.error ?? 'Gagal memuat artikel';
+            final isNetworkError = errorMessage.contains('koneksi') ||
+                errorMessage.contains('timeout') ||
+                errorMessage.contains('internet');
+
+            if (isNetworkError) {
+              return OfflinePlaceholder(
+                onRetry: () => provider.fetchArticles(refresh: true),
+              );
+            }
+
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

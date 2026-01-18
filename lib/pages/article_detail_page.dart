@@ -5,8 +5,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import '../providers/article_provider.dart';
 import '../utils/styles.dart';
-import '../models/article.dart'; // Add this import
+import '../models/article.dart';
 import '../widgets/shimmer_loading.dart';
+import '../widgets/offline_placeholder.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final String slug;
@@ -36,6 +37,27 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
           }
 
           if (provider.error != null) {
+            final errorMessage = provider.error ?? 'Terjadi kesalahan';
+            final isNetworkError = errorMessage.contains('koneksi') ||
+                errorMessage.contains('timeout') ||
+                errorMessage.contains('internet');
+
+            if (isNetworkError) {
+              return Scaffold(
+                appBar: AppBar(
+                  flexibleSpace: Container(
+                    decoration: BoxDecoration(
+                      gradient: AppStyles.pinkGradient,
+                    ),
+                  ),
+                  foregroundColor: Colors.white,
+                ),
+                body: OfflinePlaceholder(
+                  onRetry: () => context.read<ArticleProvider>().fetchArticleDetail(widget.slug),
+                ),
+              );
+            }
+
             return Scaffold(
               appBar: AppBar(),
               body: Center(child: Text("Error: ${provider.error}")),

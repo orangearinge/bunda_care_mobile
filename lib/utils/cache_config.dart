@@ -8,6 +8,8 @@ class CacheConfig {
   static const Duration _dashboard = Duration(minutes: 15);
   static const Duration _userProfile = Duration(minutes: 30);
   static const Duration _recommendations = Duration(minutes: 20);
+  static const Duration _mealLogs = Duration(hours: 1);
+  static const Duration _history = Duration(hours: 12);
 
   /// Default cache options for articles
   /// Articles rarely change and are read-heavy
@@ -56,6 +58,24 @@ class CacheConfig {
         policy: CachePolicy.request,
         maxStale: _recommendations,
         priority: CachePriority.low,
+        keyBuilder: CacheOptions.defaultCacheKeyBuilder,
+      );
+
+  /// Cache options for meal logs
+  static CacheOptions get mealLogs => CacheOptions(
+        store: null,
+        policy: CachePolicy.request,
+        maxStale: _mealLogs,
+        priority: CachePriority.normal,
+        keyBuilder: CacheOptions.defaultCacheKeyBuilder,
+      );
+
+  /// Cache options for history
+  static CacheOptions get history => CacheOptions(
+        store: null,
+        policy: CachePolicy.request,
+        maxStale: _history,
+        priority: CachePriority.normal,
         keyBuilder: CacheOptions.defaultCacheKeyBuilder,
       );
 
