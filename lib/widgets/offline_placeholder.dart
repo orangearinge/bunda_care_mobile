@@ -10,8 +10,8 @@ class OfflinePlaceholder extends StatelessWidget {
   const OfflinePlaceholder({
     super.key,
     required this.onRetry,
-    this.message = 'Data tidak tersedia secara offline.',
-    this.title = 'Tidak Ada Koneksi',
+    this.message = 'Yah, lagi offline nih. Cek koneksi internet kamu!',
+    this.title = 'Offline Mode',
     this.icon = Icons.cloud_off_rounded,
   });
 
@@ -116,7 +116,7 @@ class OfflinePlaceholder extends StatelessWidget {
             const SizedBox(height: 16),
             // Optional secondary message
             Text(
-              'Pastikan koneksi internet Anda stabil',
+              'Koneksi stabil biar bisa sync data',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,

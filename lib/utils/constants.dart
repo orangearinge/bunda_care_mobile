@@ -136,42 +136,42 @@ class ApiConstants {
   /// Map backend error codes to user-friendly messages
   static const Map<String, String> errorMessages = {
     // Auth Errors
-    'VALIDATION_ERROR': 'Harap isi semua kolom dengan benar',
-    'INVALID_CREDENTIALS': 'Email atau password salah',
-    'EMAIL_IN_USE': 'Email ini sudah terdaftar',
-    'INVALID_TOKEN': 'Sesi tidak valid, silakan login kembali',
-    'SESSION_EXPIRED': 'Sesi Anda telah berakhir, silakan login kembali',
-    'UNAUTHORIZED': 'Anda tidak memiliki akses ke fitur ini',
-    'ACCOUNT_NOT_VERIFIED': 'Harap verifikasi email Anda sebelum login',
-    'PASSWORD_TOO_WEAK': 'Password minimal harus 8 karakter',
-    'LOGOUT_FAILED': 'Gagal keluar, silakan coba lagi',
-    'GOOGLE_AUTH_CANCELLED': 'Pendaftaran Google dibatalkan',
+    'VALIDATION_ERROR': 'Isi semua kolom dulu ya!',
+    'INVALID_CREDENTIALS': 'Email atau password salah nih',
+    'EMAIL_IN_USE': 'Email ini sudah dipakai orang lain',
+    'INVALID_TOKEN': 'Sesi habis. Login lagi yuk!',
+    'SESSION_EXPIRED': 'Waktunya login lagi nih!',
+    'UNAUTHORIZED': 'Kamu belum punya akses fitur ini',
+    'ACCOUNT_NOT_VERIFIED': 'Cek email dulu, verifikasi akunnya!',
+    'PASSWORD_TOO_WEAK': 'Password minimal 8 karakter ya!',
+    'LOGOUT_FAILED': 'Gagal logout. Coba lagi deh',
+    'GOOGLE_AUTH_CANCELLED': 'Daftar pakai Google dibatalkan',
     'GOOGLE_SIGNIN_CANCELLED': 'Login Google dibatalkan',
 
     // Network / Server Errors
-    'NETWORK_ERROR': 'Tidak ada koneksi internet. Periksa jaringan Anda',
-    'TIMEOUT_ERROR': 'Koneksi terputus. Silakan coba lagi',
-    'SERVER_ERROR': 'Terjadi gangguan pada server. Coba lagi nanti',
-    'UNKNOWN_ERROR': 'Terjadi kesalahan yang tidak terduga',
+    'NETWORK_ERROR': 'Yah, internetnya mati. Cek koneksi kamu ya!',
+    'TIMEOUT_ERROR': 'Lama banget responsnya. Coba lagi yuk!',
+    'SERVER_ERROR': 'Server lagi sibuk. Tunggu sebentar ya!',
+    'UNKNOWN_ERROR': 'Ada yang tidak beres. Coba lagi nanti',
     'REQUEST_CANCELLED': 'Permintaan dibatalkan',
 
     // Food scanning & Recommendation
-    'SCAN_FAILED': 'Gagal memindai makanan. Coba lagi dengan gambar yang lebih jelas',
-    'FOOD_NOT_RECOGNIZED': 'Makanan tidak dikenali. Coba foto yang lain',
-    'SCAN_LIMIT_EXCEEDED': 'Batas pindaian harian tercapai. Coba lagi besok',
-    'RECOMMENDATION_FAILED': 'Gagal memuat rekomendasi. Coba lagi nanti',
-    'NO_RECOMMENDATIONS': 'Belum ada rekomendasi yang tersedia',
-    'INVALID_FOOD_DATA': 'Data makanan tidak lengkap',
+    'SCAN_FAILED': 'Foto kurang jelas. Foto ulang yang lebih terang ya!',
+    'FOOD_NOT_RECOGNIZED': 'Makanan ini belum kenal. Coba foto yang berbeda',
+    'SCAN_LIMIT_EXCEEDED': 'Batas scan harian habis. Besok lagi yuk!',
+    'RECOMMENDATION_FAILED': 'Rekomendasi lagi loading. Tunggu sebentar',
+    'NO_RECOMMENDATIONS': 'Belum ada saran untuk saat ini',
+    'INVALID_FOOD_DATA': 'Data makanan kurang lengkap',
 
     // Meal logging
-    'LOG_FAILED': 'Gagal menyimpan catatan makan. Coba lagi',
-    'LOG_LIMIT_EXCEEDED': 'Anda sudah mencatat terlalu banyak hari ini',
+    'LOG_FAILED': 'Gagal simpan catatan. Coba lagi ya!',
+    'LOG_LIMIT_EXCEEDED': 'Catatan hari ini sudah cukup banyak',
     'DUPLICATE_LOG': 'Makanan ini sudah dicatat sebelumnya',
 
     // Cloudinary & Files
-    'UPLOAD_FAILED': 'Gagal mengunggah gambar. Periksa koneksi Anda',
-    'INVALID_FILE_TYPE': 'Hanya file gambar yang diizinkan',
-    'FILE_TOO_LARGE': 'Ukuran gambar terlalu besar',
+    'UPLOAD_FAILED': 'Gagal upload gambar. Cek internet kamu!',
+    'INVALID_FILE_TYPE': 'File harus gambar ya!',
+    'FILE_TOO_LARGE': 'Gambarnya kegedean. Pilih yang lebih kecil',
 
     // Data Errors
     'INVALID_USER_DATA': 'Data pengguna tidak valid',

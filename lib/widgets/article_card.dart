@@ -14,7 +14,7 @@ class ArticleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -37,7 +37,7 @@ class ArticleCard extends StatelessWidget {
                 Stack(
                   children: [
                     AspectRatio(
-                      aspectRatio: 16 / 10,
+                      aspectRatio: 4 / 3,
                       child: CachedNetworkImage(
                         imageUrl: article.coverImage!,
                         fit: BoxFit.cover,
@@ -74,35 +74,35 @@ class ArticleCard extends StatelessWidget {
                   ],
                 ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       article.title,
                       style: const TextStyle(
-                        fontSize: 15,
+                        fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF2D3142),
-                        height: 1.3,
+                        height: 1.2,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (article.excerpt != null && article.excerpt!.isNotEmpty) ...[
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
                       Text(
                         article.excerpt!,
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 12,
                           color: Colors.grey[600],
-                          height: 1.5,
+                          height: 1.3,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -115,7 +115,7 @@ class ArticleCard extends StatelessWidget {
                                   ? DateFormat('dd MMM yyyy').format(article.publishedAt!)
                                   : 'Baru saja',
                               style: TextStyle(
-                                fontSize: 12, 
+                                fontSize: 11,
                                 color: Colors.grey[500],
                                 fontWeight: FontWeight.w500,
                               ),
@@ -127,7 +127,7 @@ class ArticleCard extends StatelessWidget {
                             Text(
                               'Baca Selengkapnya',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.pink[400],
                               ),
