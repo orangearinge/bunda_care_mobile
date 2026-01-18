@@ -410,7 +410,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _buildNutritionCard(NutritionalTargets targets) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: BoxDecoration(
         gradient: AppStyles.pinkGradient,
         borderRadius: BorderRadius.circular(20),
@@ -425,47 +425,55 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _NutrientItem(
-                label: 'Kalori',
-                value: '${targets.calories.toInt()}',
-                unit: 'kkal',
-                icon: Icons.local_fire_department,
+              Expanded(
+                child: _NutrientItem(
+                  label: 'Kalori',
+                  value: '${targets.calories.toInt()}',
+                  unit: 'kkal',
+                  icon: Icons.local_fire_department,
+                ),
               ),
               Container(
                 width: 1,
                 height: 40,
                 color: Colors.white24,
               ),
-              _NutrientItem(
-                label: 'Protein',
-                value: '${targets.proteinG.toInt()}',
-                unit: 'g',
-                icon: Icons.fitness_center,
+              Expanded(
+                child: _NutrientItem(
+                  label: 'Protein',
+                  value: '${targets.proteinG.toInt()}',
+                  unit: 'g',
+                  icon: Icons.fitness_center,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 24),
+          const Divider(color: Colors.white12, height: 1, indent: 20, endIndent: 20),
+          const SizedBox(height: 24),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _NutrientItem(
-                label: 'Karbohidrat',
-                value: '${targets.carbsG.toInt()}',
-                unit: 'g',
-                icon: Icons.rice_bowl,
+              Expanded(
+                child: _NutrientItem(
+                  label: 'Karbohidrat',
+                  value: '${targets.carbsG.toInt()}',
+                  unit: 'g',
+                  icon: Icons.rice_bowl,
+                ),
               ),
               Container(
                 width: 1,
                 height: 40,
                 color: Colors.white24,
               ),
-              _NutrientItem(
-                label: 'Lemak',
-                value: '${targets.fatG.toInt()}',
-                unit: 'g',
-                icon: Icons.opacity,
+              Expanded(
+                child: _NutrientItem(
+                  label: 'Lemak',
+                  value: '${targets.fatG.toInt()}',
+                  unit: 'g',
+                  icon: Icons.opacity,
+                ),
               ),
             ],
           ),
