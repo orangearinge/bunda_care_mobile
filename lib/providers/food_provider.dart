@@ -39,7 +39,7 @@ class FoodProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } on ApiError catch (e) {
-      _errorMessage = e.message;
+      _errorMessage = ApiConstants.getErrorMessage(e.code);
       _status = FoodStatus.error;
       notifyListeners();
       return false;
@@ -69,7 +69,7 @@ class FoodProvider with ChangeNotifier {
       _status = FoodStatus.success;
       notifyListeners();
     } on ApiError catch (e) {
-      _errorMessage = e.message;
+      _errorMessage = ApiConstants.getErrorMessage(e.code);
       _status = FoodStatus.error;
       notifyListeners();
     } catch (e) {
@@ -89,7 +89,7 @@ class FoodProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } on ApiError catch (e) {
-      _errorMessage = e.message;
+      _errorMessage = ApiConstants.getErrorMessage(e.code);
       _status = FoodStatus.error;
       notifyListeners();
       return false;
@@ -111,7 +111,7 @@ class FoodProvider with ChangeNotifier {
       _status = FoodStatus.success;
       notifyListeners();
     } on ApiError catch (e) {
-      _errorMessage = e.message;
+      _errorMessage = ApiConstants.getErrorMessage(e.code);
       _status = FoodStatus.error;
       notifyListeners();
     } catch (e) {
@@ -134,11 +134,11 @@ class FoodProvider with ChangeNotifier {
       _status = FoodStatus.success;
       notifyListeners();
     } on ApiError catch (e) {
-      _errorMessage = e.message;
+      _errorMessage = ApiConstants.getErrorMessage(e.code);
       _status = FoodStatus.error;
       notifyListeners();
     } catch (e) {
-      _errorMessage = 'Detail makanan gagal dimuat';
+      _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
       _status = FoodStatus.error;
       notifyListeners();
     }

@@ -32,7 +32,7 @@ class HistoryProvider with ChangeNotifier {
       _status = HistoryStatus.success;
       notifyListeners();
     } on ApiError catch (e) {
-      _errorMessage = e.message;
+      _errorMessage = ApiConstants.getErrorMessage(e.code);
       _status = HistoryStatus.error;
       notifyListeners();
     } catch (e) {
@@ -55,11 +55,11 @@ class HistoryProvider with ChangeNotifier {
       _status = HistoryStatus.success;
       notifyListeners();
     } on ApiError catch (e) {
-      _errorMessage = e.message;
+      _errorMessage = ApiConstants.getErrorMessage(e.code);
       _status = HistoryStatus.error;
       notifyListeners();
     } catch (e) {
-      _errorMessage = 'Detail histori gagal dimuat';
+      _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
       _status = HistoryStatus.error;
       notifyListeners();
     }

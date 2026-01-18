@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/api_error.dart';
 import '../models/chat_message.dart';
 import '../services/chat_service.dart';
+import '../utils/constants.dart';
 
 enum ChatStatus { initial, loading, success, error }
 
@@ -43,10 +44,10 @@ class ChatProvider with ChangeNotifier {
       notifyListeners();
     } on ApiError catch (e) {
       _messages.add(ChatMessage.bot(
-        '❌ Maaf, terjadi kesalahan: ${e.message}\n\nSilakan coba lagi.',
+        '❌ Maaf, terjadi kesalahan: ${ApiConstants.getErrorMessage(e.code)}\n\nSilakan coba lagi.',
       ));
       _status = ChatStatus.error;
-      _errorMessage = e.message;
+      _errorMessage = ApiConstants.getErrorMessage(e.code);
       notifyListeners();
     } catch (e) {
       _messages.add(ChatMessage.bot(

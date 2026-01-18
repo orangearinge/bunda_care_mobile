@@ -1,6 +1,7 @@
 
 import 'package:flutter/foundation.dart';
 import '../models/article.dart';
+import '../models/api_error.dart';
 import '../services/article_service.dart';
 import '../utils/constants.dart';
 
@@ -51,6 +52,9 @@ class ArticleProvider with ChangeNotifier {
       _pagination = response.pagination;
       _status = ArticleStatus.success;
       _error = null;
+    } on ApiError catch (e) {
+      _error = ApiConstants.getErrorMessage(e.code);
+      _status = ArticleStatus.error;
     } catch (e) {
       _error = ApiConstants.getErrorMessage('SERVER_ERROR');
       _status = ArticleStatus.error;
@@ -70,6 +74,9 @@ class ArticleProvider with ChangeNotifier {
       final article = await _articleService.getArticleDetail(slug);
       _selectedArticle = article;
       _status = ArticleStatus.success;
+    } on ApiError catch (e) {
+      _error = ApiConstants.getErrorMessage(e.code);
+      _status = ArticleStatus.error;
     } catch (e) {
       _error = ApiConstants.getErrorMessage('SERVER_ERROR');
       _status = ArticleStatus.error;

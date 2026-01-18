@@ -85,7 +85,7 @@ class UserPreferenceProvider with ChangeNotifier {
       notifyListeners();
       return (success: true, token: result.token);
     } on ApiError catch (e) {
-      _prefError = e.message;
+      _prefError = ApiConstants.getErrorMessage(e.code);
       _prefStatus = PreferenceStatus.error;
       notifyListeners();
       return (success: false, token: null);
@@ -128,7 +128,7 @@ class UserPreferenceProvider with ChangeNotifier {
       if (_currentPreference != null && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
          _prefStatus = PreferenceStatus.success;
       } else {
-        _prefError = e.message;
+        _prefError = ApiConstants.getErrorMessage(e.code);
         _prefStatus = PreferenceStatus.error;
       }
       notifyListeners();
@@ -154,7 +154,7 @@ class UserPreferenceProvider with ChangeNotifier {
       _dashboardStatus = PreferenceStatus.success;
       notifyListeners();
     } on ApiError catch (e) {
-      _dashboardError = e.message;
+      _dashboardError = ApiConstants.getErrorMessage(e.code);
       _dashboardStatus = PreferenceStatus.error;
       notifyListeners();
     } catch (e) {
@@ -178,12 +178,12 @@ class UserPreferenceProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } on ApiError catch (e) {
-      _prefError = e.message;
+      _prefError = ApiConstants.getErrorMessage(e.code);
       _prefStatus = PreferenceStatus.error;
       notifyListeners();
       return false;
     } catch (e) {
-      _prefError = e.toString();
+      _prefError = ApiConstants.getErrorMessage('UNKNOWN_ERROR');
       _prefStatus = PreferenceStatus.error;
       notifyListeners();
       return false;

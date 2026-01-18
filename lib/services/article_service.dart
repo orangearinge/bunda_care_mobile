@@ -33,21 +33,22 @@ class ArticleService {
       final data = _api.unwrap(response);
       return ArticleListResponse.fromJson(data);
     } catch (e) {
-      // If network fails, return empty list
+      // For network errors, throw to show offline placeholder
       if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
-         return ArticleListResponse(
-           items: [], 
-           pagination: Pagination(
-             page: page, 
-             limit: limit, 
-             total: 0, 
-             totalPages: 0,
-             hasNext: false,
-             hasPrev: false,
-           ),
-         );
+        throw e; // Re-throw network errors to show offline state
       }
-      throw ErrorHandler.handle(e);
+      // For other errors, return empty list (server errors)
+      return ArticleListResponse(
+        items: [],
+        pagination: Pagination(
+          page: page,
+          limit: limit,
+          total: 0,
+          totalPages: 0,
+          hasNext: false,
+          hasPrev: false,
+        ),
+      );
     }
   }
 

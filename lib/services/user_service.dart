@@ -179,8 +179,9 @@ class UserService {
           .map((e) => HistoryEntry.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
+      // For network errors, throw to show offline placeholder
       if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
-        return [];
+        throw e; // Re-throw network errors to show offline state
       }
       throw ErrorHandler.handle(e);
     }
@@ -201,8 +202,9 @@ class UserService {
           .map((e) => HistoryDetailItem.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
+      // For network errors, throw to show offline placeholder
       if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
-        return [];
+        throw e; // Re-throw network errors to show offline state
       }
       throw ErrorHandler.handle(e);
     }

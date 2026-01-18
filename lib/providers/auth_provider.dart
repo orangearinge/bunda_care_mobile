@@ -219,7 +219,7 @@ class AuthProvider with ChangeNotifier {
         _setError(ApiConstants.getErrorMessage(e.code));
         return false;
       }
-      _setError(e.message);
+      _setError(ApiConstants.getErrorMessage(e.code));
       return false;
     } catch (e) {
       _setError(ApiConstants.getErrorMessage('SERVER_ERROR'));
@@ -250,7 +250,7 @@ class AuthProvider with ChangeNotifier {
         _setError(ApiConstants.getErrorMessage(e.code));
         return false;
       }
-      _setError(e.message);
+      _setError(ApiConstants.getErrorMessage(e.code));
       return false;
     } catch (e) {
       _setError(ApiConstants.getErrorMessage('SERVER_ERROR'));

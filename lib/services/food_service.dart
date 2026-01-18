@@ -81,9 +81,9 @@ class FoodService {
         message: ApiConstants.getErrorMessage('RECOMMENDATION_FAILED'),
       );
     } catch (e) {
-       // If it fails due to network/timeout, return empty data or let cache handle it
+      // For network errors, throw to show offline placeholder
       if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
-        return {};
+        throw e; // Re-throw network errors to show offline state
       }
       throw ErrorHandler.handle(e);
     }
