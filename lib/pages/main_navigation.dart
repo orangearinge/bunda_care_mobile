@@ -15,14 +15,15 @@ class MainNavigation extends StatefulWidget {
 }
 
 class _MainNavigationState extends State<MainNavigation> {
-  bool _showExitDialog = false;
+  bool _isDialogShowing = false;
+  final List<Object> _backInvocationHistory = [];
 
-  Future<bool> _handleBackNavigation() async {
-    if (_showExitDialog) return false;
+  Future<void> _confirmExit() async {
+    if (_isDialogShowing || !mounted) return;
 
-    _showExitDialog = true;
+    _isDialogShowing = true;
     final shouldExit = await Dialogs.showExitConfirmation(context);
-    _showExitDialog = false;
+    _isDialogShowing = false;
 
     if (shouldExit && mounted) {
       if (Platform.isAndroid || Platform.isIOS) {
@@ -31,8 +32,6 @@ class _MainNavigationState extends State<MainNavigation> {
         exit(0);
       }
     }
-
-    return false;
   }
 
   void _onItemTapped(int index) {
@@ -47,8 +46,20 @@ class _MainNavigationState extends State<MainNavigation> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
-        if (!didPop && !_showExitDialog) {
-          await _handleBackNavigation();
+        final invocation = Object();
+        _backInvocationHistory.add(invocation);
+
+        if (_backInvocationHistory.length > 1) {
+          _backInvocationHistory.clear();
+          return;
+        }
+
+        Future.delayed(const Duration(milliseconds: 200), () {
+          _backInvocationHistory.clear();
+        });
+
+        if (!_isDialogShowing && mounted) {
+          await _confirmExit();
         }
       },
       child: Scaffold(
