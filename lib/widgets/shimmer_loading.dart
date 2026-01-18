@@ -706,3 +706,70 @@ class ArticleDetailSkeleton extends StatelessWidget {
     );
   }
 }
+class DashboardSkeleton extends StatelessWidget {
+  const DashboardSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 20),
+            Container(width: 150, height: 20, color: Colors.white),
+            const SizedBox(height: 8),
+            Container(width: 250, height: 32, color: Colors.white),
+            const SizedBox(height: 30),
+            Container(
+              width: double.infinity,
+              height: 160,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(width: 150, height: 24, color: Colors.white),
+                Container(width: 80, height: 24, color: Colors.white),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 220,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 3,
+                itemBuilder: (context, index) => Container(
+                  width: 180,
+                  margin: const EdgeInsets.only(right: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Container(width: 200, height: 24, color: Colors.white),
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              height: 180,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

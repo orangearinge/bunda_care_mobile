@@ -3,18 +3,21 @@ import 'package:flutter/foundation.dart';
 import '../models/article.dart';
 import '../services/article_service.dart';
 
+enum ArticleStatus { initial, loading, success, error }
+
 class ArticleProvider with ChangeNotifier {
   final ArticleService _articleService = ArticleService();
 
+  ArticleStatus _status = ArticleStatus.initial;
   List<Article> _articles = [];
-  bool _isLoading = false;
   bool _isLoadingMore = false;
   Article? _selectedArticle;
   Pagination? _pagination;
   String? _error;
 
+  ArticleStatus get status => _status;
   List<Article> get articles => _articles;
-  bool get isLoading => _isLoading;
+  bool get isLoading => _status == ArticleStatus.loading;
   bool get isLoadingMore => _isLoadingMore;
   Article? get selectedArticle => _selectedArticle;
   String? get error => _error;
@@ -22,7 +25,7 @@ class ArticleProvider with ChangeNotifier {
 
   Future<void> fetchArticles({bool refresh = false}) async {
     if (refresh) {
-      _isLoading = true;
+      _status = ArticleStatus.loading;
       _articles = [];
       _pagination = null;
       _error = null;
@@ -45,18 +48,19 @@ class ArticleProvider with ChangeNotifier {
         _articles.addAll(response.items);
       }
       _pagination = response.pagination;
+      _status = ArticleStatus.success;
       _error = null;
     } catch (e) {
       _error = e.toString();
+      _status = ArticleStatus.error;
     } finally {
-      _isLoading = false;
       _isLoadingMore = false;
       notifyListeners();
     }
   }
 
   Future<void> fetchArticleDetail(String slug) async {
-    _isLoading = true;
+    _status = ArticleStatus.loading;
     _selectedArticle = null;
     _error = null;
     notifyListeners();
@@ -64,10 +68,11 @@ class ArticleProvider with ChangeNotifier {
     try {
       final article = await _articleService.getArticleDetail(slug);
       _selectedArticle = article;
+      _status = ArticleStatus.success;
     } catch (e) {
       _error = e.toString();
+      _status = ArticleStatus.error;
     } finally {
-      _isLoading = false;
       notifyListeners();
     }
   }

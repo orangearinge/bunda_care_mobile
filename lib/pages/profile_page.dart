@@ -56,25 +56,16 @@ class _ProfilePageState extends State<ProfilePage> {
                   isLoading: provider.isLoading,
                 ),
                 builder: (context, data, child) {
-                  if (data.isLoading) {
+                  if (data.isLoading || data.status == PreferenceStatus.initial) {
                     return const ProfileSkeleton();
                   }
 
                   if (data.status == PreferenceStatus.error) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(data.errorMessage ?? 'Gagal memuat data'),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () => context
-                                .read<UserPreferenceProvider>()
-                                .fetchPreference(),
-                            child: const Text('Coba Lagi'),
-                          ),
-                        ],
-                      ),
+                    return OfflinePlaceholder(
+                      message: data.errorMessage ?? 'Gagal memuat data profil.',
+                      onRetry: () => context
+                          .read<UserPreferenceProvider>()
+                          .fetchPreference(),
                     );
                   }
 
@@ -87,13 +78,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     builder: (context, data, _) {
                       final pref = data.pref;
+
                       if (pref == null) {
-                        return OfflinePlaceholder(
-                          message: 'Data profil tidak tersedia secara offline.',
-                          onRetry: () => context
-                              .read<UserPreferenceProvider>()
-                              .fetchPreference(),
-                        );
+                        return const ProfileSkeleton();
                       }
 
                       final avatarUrl = data.avatar;

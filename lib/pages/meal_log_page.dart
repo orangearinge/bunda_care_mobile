@@ -51,7 +51,7 @@ class _MealLogPageState extends State<MealLogPage> {
       ),
       body: Consumer<FoodProvider>(
         builder: (context, foodProvider, child) {
-          if (foodProvider.isLoading && foodProvider.mealLogs.isEmpty) {
+          if ((foodProvider.isLoading || foodProvider.status == FoodStatus.initial) && foodProvider.mealLogs.isEmpty) {
             return ListView.builder(
               padding: const EdgeInsets.all(20),
               itemCount: 5,

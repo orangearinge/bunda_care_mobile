@@ -58,7 +58,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
           final isLoading = historyProvider.isLoading;
           final errorMessage = historyProvider.errorMessage;
 
-          if (isLoading && items.isEmpty) {
+          if ((isLoading || historyProvider.status == HistoryStatus.initial) && items.isEmpty) {
             return const Center(
               child: CircularProgressIndicator(color: Colors.pink),
             );

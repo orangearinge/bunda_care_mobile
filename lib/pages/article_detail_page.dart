@@ -32,7 +32,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
     return Scaffold(
       body: Consumer<ArticleProvider>(
         builder: (context, provider, child) {
-          if (provider.isLoading) {
+          if (provider.isLoading || provider.status == ArticleStatus.initial) {
             return const ArticleDetailSkeleton();
           }
 

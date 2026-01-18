@@ -66,13 +66,17 @@ class _DashboardPageState extends State<DashboardPage> {
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: Selector<UserPreferenceProvider,
-            ({bool isLoading, DashboardSummary? summary})>(
+            ({bool isLoading, PreferenceStatus status, DashboardSummary? summary})>(
           selector: (_, p) =>
-              (isLoading: p.isLoading, summary: p.dashboardSummary),
+              (isLoading: p.isDashboardLoading, status: p.dashboardStatus, summary: p.dashboardSummary),
           builder: (context, data, _) {
-            if (!data.isLoading && data.summary == null) {
+            if (data.status == PreferenceStatus.initial || (data.isLoading && data.summary == null)) {
+               return const DashboardSkeleton();
+            }
+
+            if (data.status == PreferenceStatus.error && data.summary == null) {
               return OfflinePlaceholder(
-                message: 'Data dashboard tidak tersedia secara offline.',
+                message: context.read<UserPreferenceProvider>().dashboardError ?? 'Data dashboard tidak tersedia.',
                 onRetry: _fetchDashboardData,
               );
             }

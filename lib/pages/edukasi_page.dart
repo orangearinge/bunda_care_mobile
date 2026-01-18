@@ -63,7 +63,7 @@ class _EdukasiPageState extends State<EdukasiPage> {
       ),
       body: Consumer<ArticleProvider>(
         builder: (context, provider, child) {
-          if (provider.isLoading && provider.articles.isEmpty) {
+          if ((provider.isLoading || provider.status == ArticleStatus.initial) && provider.articles.isEmpty) {
             return ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: 5,

@@ -51,7 +51,7 @@ class _HistoryPageState extends State<HistoryPage> {
           final isLoading = historyProvider.isLoading;
           final errorMessage = historyProvider.errorMessage;
 
-          if (isLoading && history.isEmpty) {
+          if ((isLoading || historyProvider.status == HistoryStatus.initial) && history.isEmpty) {
             return ListView.builder(
               padding: const EdgeInsets.all(20),
               itemCount: 5,

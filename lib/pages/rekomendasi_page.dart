@@ -107,7 +107,7 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
 
               // --- Content ---
               Expanded(
-                child: foodProvider.isLoading
+                child: foodProvider.isLoading || foodProvider.status == FoodStatus.initial
                     ? ListView.builder(
                         padding: const EdgeInsets.all(16),
                         itemCount: 3,

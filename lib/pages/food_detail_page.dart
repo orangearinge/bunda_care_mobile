@@ -162,7 +162,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             ),
             elevation: 0,
           ),
-          body: isLoading && foodDetail == null
+          body: (isLoading || foodProvider.status == FoodStatus.initial) && foodDetail == null
               ? const FoodDetailSkeleton()
               : errorMessage != null
                   ? OfflinePlaceholder(

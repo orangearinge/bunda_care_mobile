@@ -11,19 +11,32 @@ enum PreferenceStatus { initial, loading, success, error }
 class UserPreferenceProvider with ChangeNotifier {
   final UserService _userService = UserService();
 
-  PreferenceStatus _status = PreferenceStatus.initial;
+  PreferenceStatus _prefStatus = PreferenceStatus.initial;
+  PreferenceStatus _dashboardStatus = PreferenceStatus.initial;
+  
   UserPreference? _currentPreference;
   DashboardSummary? _dashboardSummary;
-  String? _errorMessage;
+  
+  String? _prefError;
+  String? _dashboardError;
 
   // Track profile updates for dashboard refresh
   bool _profileUpdated = false;
 
-  PreferenceStatus get status => _status;
+  PreferenceStatus get prefStatus => _prefStatus;
+  PreferenceStatus get dashboardStatus => _dashboardStatus;
+  
   UserPreference? get currentPreference => _currentPreference;
   DashboardSummary? get dashboardSummary => _dashboardSummary;
-  String? get errorMessage => _errorMessage;
-  bool get isLoading => _status == PreferenceStatus.loading;
+  
+  String? get prefError => _prefError;
+  String? get dashboardError => _dashboardError;
+  
+  // Compatibility getters
+  PreferenceStatus get status => _prefStatus;
+  String? get errorMessage => _prefError;
+  bool get isLoading => _prefStatus == PreferenceStatus.loading;
+  bool get isDashboardLoading => _dashboardStatus == PreferenceStatus.loading;
   bool get profileUpdated => _profileUpdated;
 
   /// Update user preference through API
@@ -40,8 +53,8 @@ class UserPreferenceProvider with ChangeNotifier {
     List<String> foodProhibitions = const [],
     List<String> allergens = const [],
   }) async {
-    _status = PreferenceStatus.loading;
-    _errorMessage = null;
+    _prefStatus = PreferenceStatus.loading;
+    _prefError = null;
     notifyListeners();
 
     try {
@@ -62,7 +75,7 @@ class UserPreferenceProvider with ChangeNotifier {
       final result = await _userService.updatePreference(preference);
       _currentPreference = result.preference;
       markProfileUpdated(); // Trigger dashboard refresh
-      _status = PreferenceStatus.success;
+      _prefStatus = PreferenceStatus.success;
 
       // Update name in AuthProvider if it was provided
       if (name != null && name.isNotEmpty) {
@@ -72,13 +85,13 @@ class UserPreferenceProvider with ChangeNotifier {
       notifyListeners();
       return (success: true, token: result.token);
     } on ApiError catch (e) {
-      _errorMessage = e.message;
-      _status = PreferenceStatus.error;
+      _prefError = e.message;
+      _prefStatus = PreferenceStatus.error;
       notifyListeners();
       return (success: false, token: null);
     } catch (e) {
-      _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
-      _status = PreferenceStatus.error;
+      _prefError = ApiConstants.getErrorMessage('SERVER_ERROR');
+      _prefStatus = PreferenceStatus.error;
       notifyListeners();
       return (success: false, token: null);
     }
@@ -88,52 +101,43 @@ class UserPreferenceProvider with ChangeNotifier {
   void _updateAuthProviderName(String name) {
     try {
       // Access AuthProvider through context - this is a bit of a hack
-      // but necessary since UserPreferenceProvider doesn't have access to AuthProvider
-      // The proper way would be to have a combined provider or use a service locator
-      // For now, this will work since the ProfilePage uses both providers
     } catch (e) {
-      // Silently fail if AuthProvider not available
       AppLogger.e('Could not update AuthProvider name', e);
     }
   }
 
   /// Fetch user preference from API
   Future<void> fetchPreference({bool forceRefresh = false}) async {
-    _status = PreferenceStatus.loading;
-    _errorMessage = null;
+    _prefStatus = PreferenceStatus.loading;
+    _prefError = null;
     notifyListeners();
 
     try {
       final preference = await _userService.getPreference(forceRefresh: forceRefresh);
       
-      // Only update if we actually got something back
       if (preference != null) {
         _currentPreference = preference;
-        _status = PreferenceStatus.success;
+        _prefStatus = PreferenceStatus.success;
       } else if (_currentPreference != null) {
-        // If we have existing data but the refresh failed (returned null)
-        // we stay in success state to keep showing stale data
-        _status = PreferenceStatus.success;
+        _prefStatus = PreferenceStatus.success;
       } else {
-        // No data in memory AND fetch returned null
-        _status = PreferenceStatus.success; // Or success with null pref
+        _prefStatus = PreferenceStatus.success;
       }
       notifyListeners();
     } on ApiError catch (e) {
-      // If we already have data, don't show error state, just keep stale data
       if (_currentPreference != null && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
-         _status = PreferenceStatus.success;
+         _prefStatus = PreferenceStatus.success;
       } else {
-        _errorMessage = e.message;
-        _status = PreferenceStatus.error;
+        _prefError = e.message;
+        _prefStatus = PreferenceStatus.error;
       }
       notifyListeners();
     } catch (e) {
       if (_currentPreference != null) {
-        _status = PreferenceStatus.success;
+        _prefStatus = PreferenceStatus.success;
       } else {
-        _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
-        _status = PreferenceStatus.error;
+        _prefError = ApiConstants.getErrorMessage('SERVER_ERROR');
+        _prefStatus = PreferenceStatus.error;
       }
       notifyListeners();
     }
@@ -141,48 +145,46 @@ class UserPreferenceProvider with ChangeNotifier {
 
   /// Fetch dashboard summary
   Future<void> fetchDashboardSummary({bool forceRefresh = false}) async {
-    // Only set loading if we don't have data yet
-    if (_dashboardSummary == null) {
-      _status = PreferenceStatus.loading;
-      notifyListeners();
-    }
+    _dashboardStatus = PreferenceStatus.loading;
+    _dashboardError = null;
+    notifyListeners();
 
     try {
       _dashboardSummary = await _userService.getDashboardSummary(forceRefresh: forceRefresh);
-      _status = PreferenceStatus.success;
+      _dashboardStatus = PreferenceStatus.success;
       notifyListeners();
     } on ApiError catch (e) {
-      _errorMessage = e.message;
-      _status = PreferenceStatus.error;
+      _dashboardError = e.message;
+      _dashboardStatus = PreferenceStatus.error;
       notifyListeners();
     } catch (e) {
-      _errorMessage = ApiConstants.getErrorMessage('SERVER_ERROR');
-      _status = PreferenceStatus.error;
+      _dashboardError = ApiConstants.getErrorMessage('SERVER_ERROR');
+      _dashboardStatus = PreferenceStatus.error;
       notifyListeners();
     }
   }
 
   /// Update avatar URL via API and refresh profile
   Future<bool> updateAvatar({required String avatarUrl}) async {
-    _status = PreferenceStatus.loading;
-    _errorMessage = null;
+    _prefStatus = PreferenceStatus.loading;
+    _prefError = null;
     notifyListeners();
     try {
       final updated = await _userService.updateAvatar(avatarUrl);
       if (updated.isNotEmpty) {
         await fetchPreference();
       }
-      _status = PreferenceStatus.success;
+      _prefStatus = PreferenceStatus.success;
       notifyListeners();
       return true;
     } on ApiError catch (e) {
-      _errorMessage = e.message;
-      _status = PreferenceStatus.error;
+      _prefError = e.message;
+      _prefStatus = PreferenceStatus.error;
       notifyListeners();
       return false;
     } catch (e) {
-      _errorMessage = e.toString();
-      _status = PreferenceStatus.error;
+      _prefError = e.toString();
+      _prefStatus = PreferenceStatus.error;
       notifyListeners();
       return false;
     }
@@ -202,8 +204,10 @@ class UserPreferenceProvider with ChangeNotifier {
 
   /// Reset status
   void resetStatus() {
-    _status = PreferenceStatus.initial;
-    _errorMessage = null;
+    _prefStatus = PreferenceStatus.initial;
+    _dashboardStatus = PreferenceStatus.initial;
+    _prefError = null;
+    _dashboardError = null;
     notifyListeners();
   }
 }
