@@ -575,13 +575,26 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
   }
 
   void _submitForm() async {
+    // Map internal keys to user-friendly labels
+    final Map<String, String> fieldLabels = {
+      'nama': 'Nama',
+      'usia': 'Usia',
+      'hpht': 'HPHT',
+      'berat_badan': 'Berat Badan',
+      'tinggi_badan': 'Tinggi Badan',
+      'lingkar_lengan_atas': 'Lingkar Lengan Atas',
+      'lactation_phase': 'Fase Menyusui',
+      'usia_bulan': 'Usia (bulan)',
+    };
+
     // Pre-submit validation
     List<String> requiredFields = _roleRequiredFields[widget.userRole] ?? [];
     for (String key in requiredFields) {
-      if (formData[key] == null || formData[key].toString().isEmpty) {
+      if (formData[key] == null || formData[key].toString().trim().isEmpty) {
+        String label = fieldLabels[key] ?? key;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Field $key wajib diisi'),
+            content: Text('$label wajib diisi'),
             backgroundColor: Colors.red,
           ),
         );
@@ -597,9 +610,10 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       ].contains(key)) {
         double? num = double.tryParse(formData[key].toString());
         if (num == null || num < 0) {
+          String label = fieldLabels[key] ?? key;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Field $key harus angka nol atau positif'),
+              content: Text('$label harus angka nol atau positif'),
               backgroundColor: Colors.red,
             ),
           );
@@ -678,6 +692,19 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     setState(() {
       _isLoadingSubmit = true;
     });
+
+    AppLogger.d("=== FINAL DATA BEING SENT ===");
+    AppLogger.d("Role: ${preferenceData['role']}");
+    AppLogger.d("Name: ${preferenceData['name']}");
+    AppLogger.d("HPHT: ${preferenceData['hpht']}");
+    AppLogger.d("Height: ${preferenceData['heightCm']}");
+    AppLogger.d("Weight: ${preferenceData['weightKg']}");
+    AppLogger.d("Age Year: ${preferenceData['ageYear']}");
+    AppLogger.d("Age Month: ${preferenceData['ageMonth']}");
+    AppLogger.d("Lila: ${preferenceData['lilaCm']}");
+    AppLogger.d("Lactation: ${preferenceData['lactationPhase']}");
+    AppLogger.d("Food Prohibitions: ${preferenceData['foodProhibitions']}");
+    AppLogger.d("Allergens: ${preferenceData['allergens']}");
 
     final result = await preferenceProvider.updatePreference(
       role: preferenceData['role'],

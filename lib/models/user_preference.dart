@@ -65,8 +65,11 @@ class UserPreference {
       'age_year': ageYear,
       'food_prohibitions': foodProhibitions,
       'allergens': allergens,
-      'age_month': ageMonth,
     };
+
+    if (ageMonth != null) {
+      data['age_month'] = ageMonth;
+    }
 
     if (role == 'IBU_HAMIL') {
       data['hpht'] = hpht;
