@@ -141,7 +141,8 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false, // Mencegah layout shift/flicker saat keyboard muncul
+      resizeToAvoidBottomInset:
+          false, // Mencegah layout shift/flicker saat keyboard muncul
       body: Consumer<AuthProvider>(
         builder: (context, authProvider, child) {
           return SafeArea(
@@ -442,23 +443,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              _socialButton(
-                                icon: Icons.g_mobiledata,
-                                color: Colors.red,
+                              _socialButtonWithImage(
+                                image: 'lib/assets/images/google_logo.png',
                                 onPressed: () =>
                                     _handleGoogleSignUp(authProvider),
-                              ),
-                              const SizedBox(width: 16),
-                              _socialButton(
-                                icon: Icons.facebook,
-                                color: Colors.blue[700]!,
-                                onPressed: () {},
-                              ),
-                              const SizedBox(width: 16),
-                              _socialButton(
-                                icon: Icons.apple,
-                                color: Colors.black,
-                                onPressed: () {},
                               ),
                             ],
                           ),
@@ -524,6 +512,30 @@ class _SignUpPageState extends State<SignUpPage> {
       child: IconButton(
         icon: Icon(icon, size: 28),
         color: color,
+        onPressed: onPressed,
+      ),
+    );
+  }
+
+  Widget _socialButtonWithImage({
+    required String image,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: IconButton(
+        icon: Image.asset(image, width: 28, height: 28),
         onPressed: onPressed,
       ),
     );
