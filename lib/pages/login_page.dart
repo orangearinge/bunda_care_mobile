@@ -283,7 +283,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 30),
                   // --- Link Sign Up ---
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -305,7 +305,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
