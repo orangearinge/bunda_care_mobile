@@ -33,13 +33,13 @@ class HistoryEntry {
   factory HistoryEntry.fromJson(Map<String, dynamic> json) {
     return HistoryEntry(
       date: json['date'] ?? '',
-      calories: json['calories'] ?? 0,
+      calories: (json['calories'] ?? 0).toInt(),
       proteinG: (json['protein_g'] ?? 0).toDouble(),
       carbsG: (json['carbs_g'] ?? 0).toDouble(),
       fatG: (json['fat_g'] ?? 0).toDouble(),
-      mealCount: json['meal_count'] ?? 0,
-      targetCalories: json['target_calories'] ?? 0,
-      percentage: json['percentage'] ?? 0,
+      mealCount: (json['meal_count'] ?? 0).toInt(),
+      targetCalories: (json['target_calories'] ?? 0).toInt(),
+      percentage: (json['percentage'] ?? 0).toInt(),
     );
   }
 }
@@ -70,7 +70,7 @@ class HistoryDetailItem {
       id: json['id'] ?? 0,
       menuName: json['menu_name'] ?? 'Makanan',
       imageUrl: json['image_url'] ?? '',
-      calories: json['calories'] ?? 0,
+      calories: (json['calories'] ?? 0).toInt(),
       proteinG: (json['protein_g'] ?? 0).toDouble(),
       carbsG: (json['carbs_g'] ?? 0).toDouble(),
       fatG: (json['fat_g'] ?? 0).toDouble(),

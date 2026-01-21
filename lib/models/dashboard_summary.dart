@@ -105,7 +105,7 @@ class DashboardTargets {
 
   factory DashboardTargets.fromJson(Map<String, dynamic> json) {
     return DashboardTargets(
-      calories: json['calories'] ?? 0,
+      calories: (json['calories'] ?? 0).toInt(),
       proteinG: (json['protein_g'] ?? 0).toDouble(),
       carbsG: (json['carbs_g'] ?? 0).toDouble(),
       fatG: (json['fat_g'] ?? 0).toDouble(),
@@ -129,7 +129,7 @@ class DashboardNutrition {
 
   factory DashboardNutrition.fromJson(Map<String, dynamic> json) {
     return DashboardNutrition(
-      calories: json['calories'] ?? 0,
+      calories: (json['calories'] ?? 0).toInt(),
       proteinG: (json['protein_g'] ?? 0).toDouble(),
       carbsG: (json['carbs_g'] ?? 0).toDouble(),
       fatG: (json['fat_g'] ?? 0).toDouble(),
@@ -156,7 +156,7 @@ class DashboardRecommendation {
     return DashboardRecommendation(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
-      calories: json['calories'] ?? 0,
+      calories: (json['calories'] ?? 0).toInt(),
       imageUrl: json['image_url'] ?? '',
       description: json['description'] ?? '',
     );

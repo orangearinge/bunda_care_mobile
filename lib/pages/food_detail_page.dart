@@ -476,11 +476,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   }
 
   Widget _buildNutritionSection(FoodDetail foodDetail) {
+    final servingInfo = foodDetail.servingUnit != null ? ' (per ${foodDetail.servingUnit})' : '';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Informasi Gizi',
+          'Informasi Gizi$servingInfo',
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -616,42 +618,33 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               final ingredient = entry.value;
               final isLast = index == foodDetail.ingredients.length - 1;
 
-              return Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 4),
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: Colors.pink[300],
-                          shape: BoxShape.circle,
+              return Padding(
+                padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 8),
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: Colors.pink[300],
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        ingredient.displayString,
+                        style: GoogleFonts.poppins(
+                          fontSize: 15,
+                          color: Colors.black87,
+                          height: 1.4,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          ingredient.name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '${ingredient.quantity % 1 == 0 ? ingredient.quantity.toInt() : ingredient.quantity.toStringAsFixed(1)} ${ingredient.unit}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (!isLast) const SizedBox(height: 12),
-                ],
+                    ),
+                  ],
+                ),
               );
             }).toList(),
           ),
