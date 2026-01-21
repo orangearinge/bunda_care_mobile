@@ -194,22 +194,6 @@ class _LoginPageState extends State<LoginPage> {
 
                         const SizedBox(height: 8),
 
-                        // --- Link Forgot Password ---
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              // Handle forgot password
-                            },
-                            child: Text(
-                              'Forgot Password?',
-                              style: TextStyle(
-                                color: Colors.blue[400],
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
 
                         // Spasi sebelum tombol login dikurangi
                         const SizedBox(height: 10), // Disesuaikan dari 20
