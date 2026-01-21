@@ -154,11 +154,19 @@ class AuthService {
 
       // Sign out from Google to ensure clean state and show account picker next time
       try {
-        await _googleSignIn.signOut();
-        await _googleSignIn.disconnect();
+        // We try to check if signed in first, or just attempt disconnect.
+        // If it's a fresh app start, we might need disconnect to truly clear the system account picker.
+        if (await _googleSignIn.isSignedIn()) {
+          await _googleSignIn.disconnect();
+        } else {
+          // Fallback to sign out
+          await _googleSignIn.signOut();
+        }
       } catch (e) {
         // Ignore Google-specific logout errors to ensure we still clear local storage
-        AppLogger.w('Google logout/disconnect error: $e');
+        // and just perform a basic signOut as a last resort.
+        await _googleSignIn.signOut();
+        AppLogger.d('Google disconnect failed (likely no active session): $e');
       }
 
       // Clear all local storage
@@ -196,5 +204,14 @@ class AuthService {
   /// Save authentication token
   Future<void> saveToken(String token) async {
     await _storage.saveToken(token);
+  }
+
+  /// Restore Google session silently (background)
+  Future<void> signInSilently() async {
+    try {
+      await _googleSignIn.signInSilently();
+    } catch (e) {
+      AppLogger.d('Google silent sign-in failed: $e');
+    }
   }
 }

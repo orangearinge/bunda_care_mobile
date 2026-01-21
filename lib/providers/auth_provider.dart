@@ -103,6 +103,8 @@ class AuthProvider with ChangeNotifier {
     _setState(AuthState.initial);
 
     try {
+      // Sync Google session state in background
+      _authService.signInSilently();
       // Check if user has stored token
       final hasToken = await _authService.isAuthenticated();
 
