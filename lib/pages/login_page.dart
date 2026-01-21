@@ -149,9 +149,7 @@ class _LoginPageState extends State<LoginPage> {
                         // --- Input Email ---
                         TextFormField(
                           controller: _emailController,
-                          decoration: InputDecoration(
-                            hintText: 'email',
-                          ),
+                          decoration: InputDecoration(hintText: 'email'),
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -285,7 +283,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 10),
                   // --- Link Sign Up ---
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -307,7 +305,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),
@@ -334,7 +332,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       }
-       // Jika sukses, AppRouter akan menangani navigasi otomatis
+      // Jika sukses, AppRouter akan menangani navigasi otomatis
     }
   }
 

@@ -451,7 +451,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             ],
                           ),
 
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 10),
 
                           // Link Login
                           Row(
@@ -477,7 +477,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 10),
                         ],
                       ),
                     ),
