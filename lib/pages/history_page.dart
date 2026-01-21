@@ -126,7 +126,7 @@ class _HistoryPageState extends State<HistoryPage> {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -175,7 +175,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: _getPercentageColor(entry.percentage).withOpacity(0.1),
+                        color: _getPercentageColor(entry.percentage).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(

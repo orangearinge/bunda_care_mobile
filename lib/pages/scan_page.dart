@@ -106,7 +106,7 @@ class _ScanPageState extends State<ScanPage> {
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
-              color: Colors.pink.withOpacity(0.05),
+              color: Colors.pink.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -172,7 +172,7 @@ class _ScanPageState extends State<ScanPage> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: Colors.pink.withOpacity(0.3),
+                            color: Colors.pink.withValues(alpha: 0.3),
                             width: 2,
                           ),
                         ),
@@ -257,7 +257,7 @@ class _ScanPageState extends State<ScanPage> {
                                 ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.pink.withOpacity(0.1),
+                              color: Colors.pink.withValues(alpha: 0.1),
                               blurRadius: 10,
                               spreadRadius: 2,
                             ),

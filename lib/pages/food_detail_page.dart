@@ -63,7 +63,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               title: Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
+                   Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
                   const SizedBox(width: 8),
                   const Text("Target Terpenuhi"),
                 ],
@@ -311,9 +311,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         label,
@@ -391,7 +391,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.pink.withOpacity(0.3),
+            color: Colors.pink.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -476,11 +476,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   }
 
   Widget _buildNutritionSection(FoodDetail foodDetail) {
+    final servingInfo = foodDetail.servingUnit != null ? ' (per ${foodDetail.servingUnit})' : '';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Informasi Gizi',
+          'Informasi Gizi$servingInfo',
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -495,7 +497,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -553,7 +555,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -603,7 +605,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -616,42 +618,33 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               final ingredient = entry.value;
               final isLast = index == foodDetail.ingredients.length - 1;
 
-              return Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 4),
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: Colors.pink[300],
-                          shape: BoxShape.circle,
+              return Padding(
+                padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 8),
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: Colors.pink[300],
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        ingredient.displayString,
+                        style: GoogleFonts.poppins(
+                          fontSize: 15,
+                          color: Colors.black87,
+                          height: 1.4,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          ingredient.name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        '${ingredient.quantity % 1 == 0 ? ingredient.quantity.toInt() : ingredient.quantity.toStringAsFixed(1)} ${ingredient.unit}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (!isLast) const SizedBox(height: 12),
-                ],
+                    ),
+                  ],
+                ),
               );
             }).toList(),
           ),
@@ -680,7 +673,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -713,7 +706,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                 borderRadius: BorderRadius.circular(15),
               ),
               elevation: 4,
-              shadowColor: Colors.pink.withOpacity(0.3),
+              shadowColor: Colors.pink.withValues(alpha: 0.3),
             ),
             child: Ink(
               decoration: BoxDecoration(

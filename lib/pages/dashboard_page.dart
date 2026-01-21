@@ -168,7 +168,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.grey.withOpacity(0.2),
+                                    color: Colors.grey.withValues(alpha: 0.2),
                                     spreadRadius: 2,
                                     blurRadius: 8,
                                   ),
@@ -198,7 +198,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.pink.withOpacity(0.3),
+                                color: Colors.pink.withValues(alpha: 0.3),
                                 spreadRadius: 2,
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
@@ -234,7 +234,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                         vertical: 6,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.3),
+                                        color: Colors.white.withValues(alpha: 0.3),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
@@ -253,7 +253,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 width: 70,
                                 height: 70,
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withValues(alpha: 0.2),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -398,7 +398,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             borderRadius: BorderRadius.circular(25),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.pink.withOpacity(0.08),
+                                color: Colors.pink.withValues(alpha: 0.08),
                                 blurRadius: 20,
                                 offset: const Offset(0, 10),
                               ),
@@ -580,7 +580,7 @@ class _DashboardPageState extends State<DashboardPage> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
+                  color: Colors.grey.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -623,7 +623,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -730,7 +730,7 @@ class _DashboardPageState extends State<DashboardPage> {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: progress,
-            backgroundColor: color.withOpacity(0.1),
+            backgroundColor: color.withValues(alpha: 0.1),
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 6,
           ),

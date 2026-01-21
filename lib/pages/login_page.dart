@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(alpha: 0.1),
                                   blurRadius: 10,
                                   spreadRadius: 2,
                                 ),
@@ -194,22 +194,6 @@ class _LoginPageState extends State<LoginPage> {
 
                         const SizedBox(height: 8),
 
-                        // --- Link Forgot Password ---
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              // Handle forgot password
-                            },
-                            child: Text(
-                              'Forgot Password?',
-                              style: TextStyle(
-                                color: Colors.blue[400],
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
 
                         // Spasi sebelum tombol login dikurangi
                         const SizedBox(height: 10), // Disesuaikan dari 20
@@ -349,7 +333,7 @@ class _LoginPageState extends State<LoginPage> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             spreadRadius: 1,
             blurRadius: 5,
             offset: const Offset(0, 2),

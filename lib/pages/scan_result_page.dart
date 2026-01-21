@@ -46,7 +46,7 @@ class ScanResultPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.pink.withOpacity(0.1),
+                    color: Colors.pink.withValues(alpha: 0.1),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),
@@ -166,7 +166,7 @@ class ScanResultPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   elevation: 5,
-                  shadowColor: Colors.pink.withOpacity(0.3),
+                  shadowColor: Colors.pink.withValues(alpha: 0.3),
                 ),
                 child: Ink(
                   decoration: BoxDecoration(

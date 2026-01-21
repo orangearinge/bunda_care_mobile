@@ -105,9 +105,9 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       padding: const EdgeInsets.all(12),
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: textColor.withOpacity(0.1),
+        color: textColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: textColor.withOpacity(0.3)),
+        border: Border.all(color: textColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -512,7 +512,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           filled: true,
           fillColor: Colors.grey[50],
         ),
-        value: formData[keyName],
+        initialValue: formData[keyName],
         items: items.map((item) {
           return DropdownMenuItem<String>(
             value: item['value'],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import '../models/chat_message.dart';
 import '../providers/chat_provider.dart';
 import '../utils/styles.dart';
@@ -202,7 +202,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 5,
                     offset: const Offset(0, 2),
                   ),
@@ -332,7 +332,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.pink[200]!.withOpacity(0.3),
+                    color: Colors.pink[200]!.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

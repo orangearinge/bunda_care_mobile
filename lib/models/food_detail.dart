@@ -10,6 +10,8 @@ class FoodDetail {
   final int? cookingTimeMinutes;
   final String? tags;
   final bool isActive;
+  final bool nutritionIsManual;
+  final String? servingUnit;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -21,6 +23,8 @@ class FoodDetail {
     required this.category,
     this.tags,
     this.isActive = true,
+    this.nutritionIsManual = false,
+    this.servingUnit,
     required this.nutrition,
     required this.ingredients,
     this.cookingInstructions,
@@ -38,6 +42,8 @@ class FoodDetail {
       category: json['category'] ?? 'LUNCH',
       tags: json['tags'],
       isActive: json['is_active'] ?? true,
+      nutritionIsManual: json['nutrition_is_manual'] ?? false,
+      servingUnit: json['serving_unit'],
       nutrition: FoodNutrition.fromJson(json['nutrition'] ?? {}),
       ingredients: (json['ingredients'] as List<dynamic>?)
               ?.map((i) => FoodIngredient.fromJson(i))
@@ -63,6 +69,8 @@ class FoodDetail {
       'category': category,
       'tags': tags,
       'is_active': isActive,
+      'nutrition_is_manual': nutritionIsManual,
+      'serving_unit': servingUnit,
       'nutrition': nutrition.toJson(),
       'ingredients': ingredients.map((i) => i.toJson()).toList(),
       'cooking_instructions': cookingInstructions,
@@ -110,13 +118,31 @@ class FoodIngredient {
   final String name;
   final double quantity;
   final String unit;
+  final String? displayText;
 
   FoodIngredient({
     required this.id,
     required this.name,
     required this.quantity,
     required this.unit,
+    this.displayText,
   });
+
+  String get displayString {
+    // If displayText is provided, it should be the SOLE description of the ingredient.
+    // This prevents "3 sdm garam Garam" or "3 sdm garam daging ayam".
+    if (displayText != null && displayText!.trim().isNotEmpty) {
+      return displayText!.trim();
+    }
+
+    // If quantity is 0 or less, just show the name
+    if (quantity <= 0) return name;
+
+    final qtyStr = quantity % 1 == 0
+        ? quantity.toInt().toString()
+        : quantity.toStringAsFixed(1);
+    return '$qtyStr $unit $name';
+  }
 
   factory FoodIngredient.fromJson(Map<String, dynamic> json) {
     return FoodIngredient(
@@ -124,6 +150,7 @@ class FoodIngredient {
       name: json['name'] ?? '',
       quantity: (json['quantity'] ?? 0).toDouble(),
       unit: json['unit'] ?? 'gram',
+      displayText: json['display_text'],
     );
   }
 
@@ -133,6 +160,7 @@ class FoodIngredient {
       'name': name,
       'quantity': quantity,
       'unit': unit,
+      'display_text': displayText,
     };
   }
 }
