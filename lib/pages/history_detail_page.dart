@@ -121,7 +121,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -206,7 +206,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
           width: 14,
           height: 14,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: Center(

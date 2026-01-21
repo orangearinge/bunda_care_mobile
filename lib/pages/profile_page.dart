@@ -176,7 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       border: Border.all(color: Colors.pink.shade50, width: 4),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
@@ -233,7 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       border: Border.all(color: Colors.white, width: 2),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.pink.withOpacity(0.3),
+            color: Colors.pink.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -422,7 +422,7 @@ class _ProfilePageState extends State<ProfilePage> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.pink.withOpacity(0.3),
+            color: Colors.pink.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -570,7 +570,7 @@ class _ContentCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -662,7 +662,7 @@ class _MetricCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -674,7 +674,7 @@ class _MetricCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: data.color.withOpacity(0.1),
+              color: data.color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(data.icon, color: data.color, size: 20),
@@ -724,7 +724,7 @@ class _InfoContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -760,15 +760,15 @@ class _InfoContainer extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: color.withOpacity(0.05),
+                      color: color.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: color.withOpacity(0.1)),
+                      border: Border.all(color: color.withValues(alpha: 0.1)),
                     ),
                     child: Text(
                       item,
                       style: TextStyle(
                         fontSize: 12,
-                        color: color.withOpacity(0.8),
+                        color: color.withValues(alpha: 0.8),
                         fontWeight: FontWeight.w600,
                       ),
                     ),

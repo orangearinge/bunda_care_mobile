@@ -63,7 +63,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               title: Row(
                 children: [
-                  Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
+                   Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
                   const SizedBox(width: 8),
                   const Text("Target Terpenuhi"),
                 ],
@@ -311,9 +311,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         label,
@@ -391,7 +391,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.pink.withOpacity(0.3),
+            color: Colors.pink.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -497,7 +497,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -555,7 +555,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, color: color, size: 20),
@@ -605,7 +605,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -673,7 +673,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -706,7 +706,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                 borderRadius: BorderRadius.circular(15),
               ),
               elevation: 4,
-              shadowColor: Colors.pink.withOpacity(0.3),
+              shadowColor: Colors.pink.withValues(alpha: 0.3),
             ),
             child: Ink(
               decoration: BoxDecoration(

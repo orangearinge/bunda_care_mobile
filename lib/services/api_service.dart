@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
+import 'package:http_cache_hive_store/http_cache_hive_store.dart';
 import 'package:path_provider/path_provider.dart';
 import '../utils/constants.dart';
 import '../utils/error_handler.dart';
@@ -93,7 +93,8 @@ class ApiService {
           options: CacheOptions(
             store: _cacheStore,
             policy: CachePolicy.request,
-            hitCacheOnErrorExcept: [401, 403],
+            hitCacheOnErrorCodes: [500, 502, 503, 504],
+            hitCacheOnNetworkFailure: true,
             maxStale: const Duration(days: 7),
             priority: CachePriority.normal,
             keyBuilder: CacheOptions.defaultCacheKeyBuilder,
@@ -228,7 +229,7 @@ class ApiService {
       final fullUrl = url.startsWith('http') ? url : '$baseUrl$url';
       
       final key = CacheOptions.defaultCacheKeyBuilder(
-        RequestOptions(path: fullUrl, baseUrl: baseUrl),
+        url: Uri.parse(fullUrl),
       );
       
       await _cacheStore!.delete(key);

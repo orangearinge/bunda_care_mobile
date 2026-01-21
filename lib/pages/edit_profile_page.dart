@@ -361,7 +361,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: DropdownButtonFormField<String>(
-        value: _selectedRole,
+        initialValue: _selectedRole,
         decoration: InputDecoration(
           labelText: 'Peran',
           prefixIcon: Icon(Icons.people_outline, color: Colors.pink[300]),
@@ -749,7 +749,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: DropdownButtonFormField<String>(
-                          value: _selectedLactationPhase,
+                          initialValue: _selectedLactationPhase,
                           decoration: InputDecoration(
                             labelText: 'Fase Menyusui',
                             border: OutlineInputBorder(
