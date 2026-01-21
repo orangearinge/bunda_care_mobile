@@ -46,21 +46,30 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: Selector2<UserPreferenceProvider, AuthProvider,
                   ({
+                    UserPreference? pref,
+                    String? avatar,
+                    String? name,
                     PreferenceStatus status,
-                    String? errorMessage,
-                    bool isLoading
+                    bool isLoading,
+                    String? errorMessage
                   })>(
                 selector: (_, provider, auth) => (
+                  pref: provider.currentPreference,
+                  avatar: auth.currentUser?.avatar,
+                  name: auth.currentUser?.name,
                   status: provider.status,
-                  errorMessage: provider.errorMessage,
                   isLoading: provider.isLoading,
+                  errorMessage: provider.errorMessage,
                 ),
                 builder: (context, data, child) {
-                  if (data.isLoading || data.status == PreferenceStatus.initial) {
+                  // 1. Tampilkan Skeleton HANYA jika data awal kosong
+                  if (data.status == PreferenceStatus.initial || 
+                     (data.isLoading && data.pref == null)) {
                     return const ProfileSkeleton();
                   }
 
-                  if (data.status == PreferenceStatus.error) {
+                  // 2. Tampilkan OfflinePlaceholder HANYA jika error DAN data kosong
+                  if (data.status == PreferenceStatus.error && data.pref == null) {
                     return OfflinePlaceholder(
                       message: data.errorMessage ?? 'Data profil gagal dimuat',
                       onRetry: () => context
@@ -69,64 +78,61 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   }
 
-                  return Selector2<UserPreferenceProvider, AuthProvider,
-                      ({UserPreference? pref, String? avatar, String? name})>(
-                    selector: (_, provider, auth) => (
-                      pref: provider.currentPreference,
-                      avatar: auth.currentUser?.avatar,
-                      name: auth.currentUser?.name,
-                    ),
-                    builder: (context, data, _) {
-                      final pref = data.pref;
+                  // 3. Jika data sudah ada (meskipun sedang loading di background), tampilkan datanya
+                  final pref = data.pref;
+                  if (pref == null) {
+                    return const ProfileSkeleton();
+                  }
 
-                      if (pref == null) {
-                        return const ProfileSkeleton();
-                      }
+                  final avatarUrl = data.avatar;
+                  final userNameFallback = data.name ?? 'Bunda';
 
-                      final avatarUrl = data.avatar;
-                      final userNameFallback = data.name ?? 'Bunda';
-
-                      return SingleChildScrollView(
-                        padding: const EdgeInsets.only(bottom: 30),
-                        child: Column(
-                          children: [
-                            _buildHeader(
-                                context, pref, avatarUrl, userNameFallback),
-                            const SizedBox(height: 24),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildSectionTitle('Informasi Pribadi'),
-                                  _buildPersonalInfoCard(pref),
+                  return RefreshIndicator(
+                    onRefresh: () => context
+                        .read<UserPreferenceProvider>()
+                        .fetchPreference(forceRefresh: true),
+                    color: Colors.pink,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.only(bottom: 30),
+                      child: Column(
+                        children: [
+                          _buildHeader(
+                              context, pref, avatarUrl, userNameFallback),
+                          const SizedBox(height: 24),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildSectionTitle('Informasi Pribadi'),
+                                _buildPersonalInfoCard(pref),
+                                const SizedBox(height: 24),
+                                _buildSectionTitle('Kesehatan Fisik'),
+                                _buildHealthMetricsGrid(pref),
+                                if (pref.foodProhibitions.isNotEmpty ||
+                                    pref.allergens.isNotEmpty) ...[
                                   const SizedBox(height: 24),
-                                  _buildSectionTitle('Kesehatan Fisik'),
-                                  _buildHealthMetricsGrid(pref),
-                                  if (pref.foodProhibitions.isNotEmpty ||
-                                      pref.allergens.isNotEmpty) ...[
-                                    const SizedBox(height: 24),
-                                    _buildAllergyInfo(pref),
-                                  ],
-                                  const SizedBox(height: 24),
-                                  if (pref.nutritionalTargets != null) ...[
-                                    _buildSectionTitle('Target Nutrisi Harian'),
-                                    _buildNutritionCard(
-                                        pref.nutritionalTargets!),
-                                    const SizedBox(height: 24),
-                                  ],
-                                  _buildSectionTitle('Lainnya'),
-                                  _buildSettingsCard(context),
-                                  const SizedBox(height: 40),
-                                  _buildVersionInfo(),
+                                  _buildAllergyInfo(pref),
                                 ],
-                              ),
+                                const SizedBox(height: 24),
+                                if (pref.nutritionalTargets != null) ...[
+                                  _buildSectionTitle('Target Nutrisi Harian'),
+                                  _buildNutritionCard(
+                                      pref.nutritionalTargets!),
+                                  const SizedBox(height: 24),
+                                ],
+                                _buildSectionTitle('Lainnya'),
+                                _buildSettingsCard(context),
+                                const SizedBox(height: 40),
+                                _buildVersionInfo(),
+                              ],
                             ),
-                          ],
-                        ),
-                      );
-                    },
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 },
               ),
