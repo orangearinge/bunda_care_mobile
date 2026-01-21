@@ -50,15 +50,23 @@ class AppRouter {
 
       // 2. If authenticated...
       if (isAuthenticated) {
-        // If on splash, login, or register -> go to appropriate home
-        if (isSplash || isLoggingIn || isRegistering) {
-          return isUserComplete ? '/' : '/role-selection';
+        final isMultiStep = state.matchedLocation.startsWith('/multi-step-form');
+
+        // If on splash, login, register, or setup pages -> go to home if complete
+        if (isSplash || isLoggingIn || isRegistering || isRoleSelection || isMultiStep) {
+          if (isUserComplete) {
+            return '/';
+          }
+          // If not complete but on a setup page, stay there
+          if (isRoleSelection || isMultiStep) {
+            return null;
+          }
+          // If not complete and on splash/login/register, go to role selection
+          return '/role-selection';
         }
 
         // Forced stay on role-selection if user not complete
-        if (!isUserComplete &&
-            !isRoleSelection &&
-            !state.matchedLocation.startsWith('/multi-step-form')) {
+        if (!isUserComplete && !isRoleSelection && !isMultiStep) {
           return '/role-selection';
         }
 
@@ -154,7 +162,7 @@ class AppRouter {
       GoRoute(
         path: '/role-selection',
         name: 'role-selection',
-        builder: (context, state) => RegistrationFormPage(),
+        builder: (context, state) => const RegistrationFormPage(),
       ),
       GoRoute(
         path: '/multi-step-form/:role',

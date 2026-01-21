@@ -737,14 +737,31 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
 
       String displayName = formData['nama'] ?? widget.userRole;
 
-      // Ensure AuthProvider is updated with the real role from backend
+      // Ensure AuthProvider is updated with the real role and name from backend
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      // Pass the new token if returned
+      
+      // Update name if provided in form
+      final String formName = formData['nama'] ?? '';
+      if (formName.isNotEmpty) {
+        await authProvider.updateUserName(formName);
+      }
+      
+      // Pass the new token and update role
       await authProvider.updateUserRole(backendRole, token: result.token);
 
-      // NOTE: context.go('/') dihapus karena AppRouter akan otomatis
-      // me-redirect ke Home saat AuthProvider mendeteksi perubahan role & user data.
-      // context.go('/', extra: {'userName': displayName});
+      if (mounted) {
+        setState(() {
+          _isLoadingSubmit = false;
+        });
+        
+        // Beri jeda sebentar agar SnackBar terlihat dan state provider tertanam kuat
+        await Future.delayed(const Duration(milliseconds: 600));
+        
+        if (mounted) {
+          // Navigasi ke Dashboard
+          context.go('/', extra: {'userName': formName.isNotEmpty ? formName : displayName});
+        }
+      }
     } else if (mounted) {
       setState(() {
         _isLoadingSubmit = false;

@@ -6,7 +6,7 @@ import '../utils/logger.dart';
 import '../utils/styles.dart';
 
 class RegistrationFormPage extends StatelessWidget {
-  RegistrationFormPage({Key? key}) : super(key: key);
+  const RegistrationFormPage({super.key});
 
   @override
   Widget build(BuildContext context) {
