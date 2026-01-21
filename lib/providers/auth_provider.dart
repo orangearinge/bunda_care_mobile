@@ -25,7 +25,7 @@ class AuthProvider with ChangeNotifier {
   AuthState _state = AuthState.initial;
   User? _currentUser;
   String? _errorMessage;
-  bool _isGoogleSignInInProgress = false;
+
 
   // Getters
   AuthState get state => _state;
@@ -34,7 +34,7 @@ class AuthProvider with ChangeNotifier {
   bool get isLoading => _state == AuthState.loading;
   bool get isAuthenticated => _state == AuthState.authenticated;
   bool get isUnauthenticated => _state == AuthState.unauthenticated;
-  bool get isGoogleSignInInProgress => _isGoogleSignInInProgress;
+
 
   /// Check if user has complete profile data
   bool get isUserComplete {
@@ -54,10 +54,7 @@ class AuthProvider with ChangeNotifier {
     return role.isNotEmpty && validRoles.contains(role);
   }
 
-  /// Complete Google sign-in process (called after navigation)
-  void completeGoogleSignIn() {
-    _setState(AuthState.authenticated);
-  }
+
 
   /// Update current user role
   Future<void> updateUserRole(String role, {String? token}) async {
@@ -261,24 +258,22 @@ class AuthProvider with ChangeNotifier {
   }
 
   // ==================== Google Sign-In ====================
-
+  
   /// Sign in with Google account
   Future<bool> signInWithGoogle() async {
     _setState(AuthState.loading);
     _clearError();
-    _isGoogleSignInInProgress = true;
+    // No need for separate _isGoogleSignInInProgress flag anymore
     notifyListeners();
 
     try {
       final authResponse = await _authService.signInWithGoogle();
 
       _currentUser = authResponse.user;
-      // Don't set authenticated state immediately - let the UI handle navigation
-      _isGoogleSignInInProgress = false;
-      notifyListeners();
+      // Set authenticated immediately - Router will handle navigation
+      _setState(AuthState.authenticated); 
       return true;
     } on ApiError catch (e) {
-      _isGoogleSignInInProgress = false;
       // Handle auth errors specifically
       if (_isAuthError(e)) {
         await logout();
@@ -293,8 +288,7 @@ class AuthProvider with ChangeNotifier {
       }
       return false;
     } catch (e) {
-      _isGoogleSignInInProgress = false;
-      _setError(ApiConstants.getErrorMessage('SERVER_ERROR'));
+       _setError(ApiConstants.getErrorMessage('SERVER_ERROR'));
       return false;
     }
   }

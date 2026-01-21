@@ -12,6 +12,7 @@ import '../pages/scan_page.dart';
 import '../pages/edukasi_page.dart';
 import '../pages/profile_page.dart';
 import '../pages/feedback_page.dart';
+import '../pages/splash_page.dart';
 
 /// Application router configuration with authentication guards
 class AppRouter {
@@ -25,57 +26,64 @@ class AppRouter {
     navigatorKey: navigatorKey,
     refreshListenable: authProvider,
     debugLogDiagnostics: true,
+    initialLocation: '/splash', // Start at splash
 
     // Redirect logic based on authentication state
     redirect: (context, state) {
+      final authState = authProvider.state;
       final isAuthenticated = authProvider.isAuthenticated;
       final isUserComplete = authProvider.isUserComplete;
-      final isAuthenticating =
-          authProvider.state == AuthState.initial ||
-          authProvider.state == AuthState.loading;
-      final isGoogleSignInInProgress = authProvider.isGoogleSignInInProgress;
+      
+      final isSplash = state.matchedLocation == '/splash';
+      final isLoggingIn = state.matchedLocation == '/login';
+      final isRegistering = state.matchedLocation == '/register';
+      final isRoleSelection = state.matchedLocation == '/role-selection';
 
-      final isGoingToAuth =
-          state.matchedLocation == '/login' ||
-          state.matchedLocation == '/register';
-      final isGoingToRoleSelection = state.matchedLocation == '/role-selection';
-
-      // Still checking auth status, Google sign-in in progress, or loading on login page - stay on current route
-      if (isAuthenticating ||
-          isGoogleSignInInProgress ||
-          (authProvider.state == AuthState.loading &&
-              state.matchedLocation == '/login'))
+      // 1. If initializing or loading, stay on Splash (if starting) or stay put
+      if (authState == AuthState.initial || authState == AuthState.loading) {
+        // Only return splash if we are at root or splash, otherwise stay where we are
+        if (isSplash || state.matchedLocation == '/') {
+          return '/splash';
+        }
         return null;
+      }
 
-      // User is authenticated but trying to access auth pages
-      if (isAuthenticated && isGoingToAuth) {
-        // If user is not complete, redirect to role selection
-        if (!isUserComplete) {
+      // 2. If authenticated...
+      if (isAuthenticated) {
+        // If on splash, login, or register -> go to appropriate home
+        if (isSplash || isLoggingIn || isRegistering) {
+          return isUserComplete ? '/' : '/role-selection';
+        }
+
+        // Forced stay on role-selection if user not complete
+        if (!isUserComplete &&
+            !isRoleSelection &&
+            !state.matchedLocation.startsWith('/multi-step-form')) {
           return '/role-selection';
         }
-        return '/';
+
+        return null;
       }
 
-      // User is authenticated but not complete, trying to access home/dashboard
-      if (isAuthenticated && !isUserComplete && state.matchedLocation == '/') {
-        return '/role-selection';
-      }
+      // 3. If NOT authenticated...
+      if (!isAuthenticated) {
+        // Allow access to splash, login, and register
+        if (isSplash || isLoggingIn || isRegistering) {
+          return isSplash ? '/login' : null;
+        }
 
-      // User is authenticated and complete, but trying to access role selection
-      if (isAuthenticated && isUserComplete && isGoingToRoleSelection) {
-        return '/';
-      }
-
-      // User is not authenticated but trying to access protected pages
-      if (!isAuthenticated && !isGoingToAuth && !isGoingToRoleSelection) {
+        // Block everything else
         return '/login';
       }
 
-      // No redirect needed
       return null;
     },
 
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (context, state) => const SplashPage(),
+      ),
       // Auth Routes (Public)
       GoRoute(
         path: '/login',

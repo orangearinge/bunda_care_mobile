@@ -41,14 +41,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (mounted) {
-        if (success) {
-          // Login berhasil - navigasi berdasarkan status user
-          if (authProvider.isUserComplete) {
-            context.go('/');
-          } else {
-            context.go('/role-selection');
-          }
-        } else {
+        if (!success) {
           // Login gagal: Tampilkan pesan error menggunakan SnackBar
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -64,6 +57,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           );
         }
+        // Jika sukses, AppRouter akan menangani navigasi otomatis
       }
     }
   }
@@ -71,6 +65,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false, //  Mencegah resize saat keyboard muncul
       // SafeArea memastikan konten tidak tertutup status bar (di atas)
       body: Consumer<AuthProvider>(
         builder: (context, authProvider, child) => SafeArea(
@@ -327,22 +322,7 @@ class _LoginPageState extends State<LoginPage> {
     final success = await authProvider.signInWithGoogle();
 
     if (mounted) {
-      if (success) {
-        // Add longer delay to ensure Google UI is fully dismissed before navigating
-        Future.delayed(const Duration(milliseconds: 3000), () {
-          if (mounted) {
-            // Set authenticated state after navigation to prevent router conflicts
-            authProvider.completeGoogleSignIn();
-
-            // Login berhasil - navigasi berdasarkan status user
-            if (authProvider.isUserComplete) {
-              context.go('/');
-            } else {
-              context.go('/role-selection');
-            }
-          }
-        });
-      } else if (authProvider.errorMessage != null) {
+      if (!success && authProvider.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(authProvider.errorMessage!),
@@ -354,6 +334,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       }
+       // Jika sukses, AppRouter akan menangani navigasi otomatis
     }
   }
 

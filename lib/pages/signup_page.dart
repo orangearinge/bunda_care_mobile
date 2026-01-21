@@ -86,7 +86,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             ),
           );
-          context.pushReplacement('/role-selection');
+          // Navigasi ditangani otomatis oleh AppRouter saat state berubah jadi authenticated
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -122,7 +122,7 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
           ),
         );
-        context.pushReplacement('/role-selection');
+        // Navigasi otomatis by AppRouter
       } else if (authProvider.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -141,6 +141,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false, // Mencegah layout shift/flicker saat keyboard muncul
       body: Consumer<AuthProvider>(
         builder: (context, authProvider, child) {
           return SafeArea(

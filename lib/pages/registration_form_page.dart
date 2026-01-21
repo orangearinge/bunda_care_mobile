@@ -10,8 +10,6 @@ class RegistrationFormPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color accentColor = Colors.pink[300]!;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Pilih Kategori"),
@@ -24,73 +22,72 @@ class RegistrationFormPage extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () async {
-            // Logout dulu supaya tidak terkena redirect otomatis kembali ke sini
+            // Cukup logout, AppRouter akan otomatis mengarahkan ke halaman login
+            // karena status akan berubah menjadi unauthenticated
             final authProvider = Provider.of<AuthProvider>(
               context,
               listen: false,
             );
             await authProvider.logout();
-
-            // Gunakan context.go untuk pindah ke halaman login
-            if (context.mounted) {
-              context.go('/login');
-            }
           },
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(32.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Judul
-            Text(
-              "Silakan Pilih Kategori Anda",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+      resizeToAvoidBottomInset: false, // Mencegah layout flicker saat keyboard navigasi/transisi
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Judul
+              const Text(
+                "Silakan Pilih Kategori Anda",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              "Pilih salah satu kategori di bawah ini untuk melanjutkan pendaftaran",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            SizedBox(height: 50),
+              const SizedBox(height: 16),
+              const Text(
+                "Pilih salah satu kategori di bawah ini untuk melanjutkan pendaftaran",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              const SizedBox(height: 50),
 
-            // Tombol 1: Ibu Hamil
-            _buildRoleButton(
-              context: context,
-              role: 'IbuHamil',
-              label: 'Ibu Hamil',
-              icon: Icons.pregnant_woman,
-              color: Colors.pink.shade400,
-            ),
-            SizedBox(height: 20),
+              // Tombol 1: Ibu Hamil
+              _buildRoleButton(
+                context: context,
+                role: 'IbuHamil',
+                label: 'Ibu Hamil',
+                icon: Icons.pregnant_woman,
+                color: Colors.pink.shade400,
+              ),
+              const SizedBox(height: 20),
 
-            // Tombol 2: Ibu Menyusui
-            _buildRoleButton(
-              context: context,
-              role: 'IbuMenyusui',
-              label: 'Ibu Menyusui',
-              icon: Icons.child_care,
-              color: Colors.purple.shade400,
-            ),
-            SizedBox(height: 20),
+              // Tombol 2: Ibu Menyusui
+              _buildRoleButton(
+                context: context,
+                role: 'IbuMenyusui',
+                label: 'Ibu Menyusui',
+                icon: Icons.child_care,
+                color: Colors.purple.shade400,
+              ),
+              const SizedBox(height: 20),
 
-            // Tombol 3: Anak Batita
-            _buildRoleButton(
-              context: context,
-              role: 'AnakBatita',
-              label: 'Anak Batita (0-24 bulan)',
-              icon: Icons.baby_changing_station,
-              color: Colors.cyan.shade400,
-            ),
-          ],
+              // Tombol 3: Anak Batita
+              _buildRoleButton(
+                context: context,
+                role: 'AnakBatita',
+                label: 'Anak Batita (0-24 bulan)',
+                icon: Icons.baby_changing_station,
+                color: Colors.cyan.shade400,
+              ),
+            ],
+          ),
         ),
       ),
     );
