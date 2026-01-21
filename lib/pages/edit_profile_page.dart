@@ -483,6 +483,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: false, // Mencegah header melengkung rusak saat keyboard muncul
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(

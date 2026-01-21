@@ -570,7 +570,10 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       );
     } else {
       // Kembali ke halaman pemilihan 'role' (RegistrationFormPage)
-      context.go('/role-selection');
+      // Cek state auth sebelum navigasi manual
+      if (context.mounted) {
+        context.go('/role-selection');
+      }
     }
   }
 
@@ -739,7 +742,9 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       // Pass the new token if returned
       await authProvider.updateUserRole(backendRole, token: result.token);
 
-      context.go('/', extra: {'userName': displayName});
+      // NOTE: context.go('/') dihapus karena AppRouter akan otomatis
+      // me-redirect ke Home saat AuthProvider mendeteksi perubahan role & user data.
+      // context.go('/', extra: {'userName': displayName});
     } else if (mounted) {
       setState(() {
         _isLoadingSubmit = false;
@@ -774,7 +779,9 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           onPressed: _previousPage,
         ),
       ),
-      body: Column(
+      resizeToAvoidBottomInset: false, // Mencegah layout shift saat keyboard muncul
+      body: SafeArea(
+        child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -830,6 +837,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
             ),
           ),
         ],
+      ),
       ),
     );
   }

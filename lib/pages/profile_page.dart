@@ -510,9 +510,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 listen: false,
               );
               await authProvider.logout();
-              if (context.mounted) {
-                context.go('/login');
-              }
+              // Hapus manual nav context.go('/login');
+              // Router otomatis redirect saat auth state berubah jadi unauthenticated
             },
             leading: Container(
               padding: const EdgeInsets.all(8),
