@@ -121,8 +121,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _uploadToCloudinary() async {
     if ((kIsWeb && _avatarImageBytes == null) ||
-        (!kIsWeb && _avatarImage == null))
+        (!kIsWeb && _avatarImage == null)) {
       return;
+    }
 
     try {
       // Show loading

@@ -55,7 +55,9 @@ class FoodService {
   }) async {
     try {
       Map<String, dynamic> queryParams = {};
-      if (mealType != null) queryParams['meal_type'] = mealType;
+      if (mealType != null) {
+        queryParams['meal_type'] = mealType;
+      }
 
       if (detectedIds != null && detectedIds.isNotEmpty) {
         queryParams['detected_ids'] = detectedIds.join(',');
@@ -83,7 +85,7 @@ class FoodService {
     } catch (e) {
       // For network errors, throw to show offline placeholder
       if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
-        throw e; // Re-throw network errors to show offline state
+        rethrow; // Re-throw network errors to show offline state
       }
       throw ErrorHandler.handle(e);
     }

@@ -10,9 +10,6 @@ import 'providers/history_provider.dart';
 import 'providers/chat_provider.dart';
 import 'providers/feedback_provider.dart';
 import 'router/app_router.dart';
-import 'pages/main_navigation.dart';
-import 'pages/splash_page.dart';  // Import SplashPage
-import 'package:shimmer/shimmer.dart';
 import 'utils/constants.dart';
 import 'utils/logger.dart';
 import 'utils/styles.dart';

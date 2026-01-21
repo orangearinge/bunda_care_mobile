@@ -762,37 +762,4 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildLegendItem({
-    required Color color,
-    required String text,
-    required String subText,
-  }) {
-    return Row(
-      children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              text,
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            Text(
-              subText,
-              style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey[500]),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
 }

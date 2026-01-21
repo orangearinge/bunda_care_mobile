@@ -35,7 +35,7 @@ class ArticleService {
     } catch (e) {
       // For network errors, throw to show offline placeholder
       if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
-        throw e; // Re-throw network errors to show offline state
+        rethrow; // Re-throw network errors to show offline state
       }
       // For other errors, return empty list (server errors)
       return ArticleListResponse(

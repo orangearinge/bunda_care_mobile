@@ -244,10 +244,12 @@ class _SignUpPageState extends State<SignUpPage> {
                               icon: Icons.person_outline,
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty)
+                              if (value == null || value.isEmpty) {
                                 return 'Username tidak boleh kosong';
-                              if (value.length < 3)
+                              }
+                              if (value.length < 3) {
                                 return 'Username minimal 3 karakter';
+                              }
                               return null;
                             },
                           ),
@@ -263,12 +265,14 @@ class _SignUpPageState extends State<SignUpPage> {
                             ),
                             keyboardType: TextInputType.emailAddress,
                             validator: (value) {
-                              if (value == null || value.isEmpty)
+                              if (value == null || value.isEmpty) {
                                 return 'Masukkan email Anda';
+                              }
                               if (!RegExp(
                                 r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                              ).hasMatch(value))
+                              ).hasMatch(value)) {
                                 return 'Format email tidak valid';
+                              }
                               return null;
                             },
                           ),
@@ -295,10 +299,12 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty)
+                              if (value == null || value.isEmpty) {
                                 return 'Password tidak boleh kosong';
-                              if (value.length < 6)
+                              }
+                              if (value.length < 6) {
                                 return 'Password minimal 6 karakter';
+                              }
                               return null;
                             },
                           ),
@@ -326,10 +332,12 @@ class _SignUpPageState extends State<SignUpPage> {
                               ),
                             ),
                             validator: (value) {
-                              if (value == null || value.isEmpty)
+                              if (value == null || value.isEmpty) {
                                 return 'Konfirmasi password Anda';
-                              if (value != _passwordController.text)
+                              }
+                              if (value != _passwordController.text) {
                                 return 'Password tidak cocok';
+                              }
                               return null;
                             },
                           ),

@@ -181,14 +181,14 @@ class UserService {
     } catch (e) {
       // For network errors, throw to show offline placeholder
       if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
-        throw e; // Re-throw network errors to show offline state
+        rethrow; // Re-throw network errors to show offline state
       }
       throw ErrorHandler.handle(e);
     }
   }
 
   /// Get nutritional history detail
-  /// GET /api/user/history/<date_str>
+  /// GET /api/user/history/&lt;date_str&gt;
   Future<List<HistoryDetailItem>> getHistoryDetail(String dateStr) async {
     try {
       final response = await _api.get('${ApiConstants.userHistory}/$dateStr');
@@ -204,7 +204,7 @@ class UserService {
     } catch (e) {
       // For network errors, throw to show offline placeholder
       if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
-        throw e; // Re-throw network errors to show offline state
+        rethrow; // Re-throw network errors to show offline state
       }
       throw ErrorHandler.handle(e);
     }
