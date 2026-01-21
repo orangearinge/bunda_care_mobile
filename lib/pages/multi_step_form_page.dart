@@ -10,7 +10,7 @@ import '../utils/styles.dart';
 class MultiStepFormPage extends StatefulWidget {
   final String userRole; // 'IbuHamil', 'IbuMenyusui', atau 'AnakBatita'
 
-  const MultiStepFormPage({Key? key, required this.userRole}) : super(key: key);
+  const MultiStepFormPage({super.key, required this.userRole});
 
   @override
   State<MultiStepFormPage> createState() => _MultiStepFormPageState();

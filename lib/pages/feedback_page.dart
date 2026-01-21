@@ -148,7 +148,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: provider.feedbacks.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 14),
+                    separatorBuilder: (_, _) => const SizedBox(height: 14),
                     itemBuilder: (context, index) {
                       return _buildFeedbackCard(provider.feedbacks[index]);
                     },

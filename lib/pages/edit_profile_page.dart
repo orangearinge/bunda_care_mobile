@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import '../utils/constants.dart';
 import '../utils/cloudinary_uploader.dart';
@@ -142,6 +141,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         uploadPreset: uploadPreset,
         folder: folder,
       );
+
+      if (!mounted) return;
 
       setState(() {
         _avatarUrl = uploadedUrl;
@@ -446,23 +447,27 @@ class _EditProfilePageState extends State<EditProfilePage> {
           // Always update role and pass potential new token (e.g. if role changed)
           await authProvider.updateUserRole(_selectedRole, token: result.token);
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profil berhasil diperbarui'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          Navigator.pop(context);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                provider.errorMessage ??
-                    ApiConstants.getErrorMessage('SERVER_ERROR'),
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Profil berhasil diperbarui'),
+                backgroundColor: Colors.green,
               ),
-              backgroundColor: Colors.red,
-            ),
-          );
+            );
+            Navigator.pop(context);
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  provider.errorMessage ??
+                      ApiConstants.getErrorMessage('SERVER_ERROR'),
+                ),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         }
       }
     }

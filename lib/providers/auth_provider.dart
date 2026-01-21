@@ -108,23 +108,22 @@ class AuthProvider with ChangeNotifier {
       if (hasToken) {
         // Validate token with server before setting authenticated
         try {
-          final userProfile = await _userService.getUserProfile();
+          // Validate token by calling getUserProfile (will throw if invalid)
+          await _userService.getUserProfile();
 
-          if (userProfile != null) {
-            // Token is valid, load user data and set authenticated
-            final user = await _authService.getCurrentUser();
-            if (user != null) {
-              _currentUser = user;
-              _setState(AuthState.authenticated);
+          // Token is valid, load user data and set authenticated
+          final user = await _authService.getCurrentUser();
+          if (user != null) {
+            _currentUser = user;
+            _setState(AuthState.authenticated);
 
-              // Refresh user data from backend in background
-              _refreshUser();
-              return;
-            }
+            // Refresh user data from backend in background
+            _refreshUser();
+            return;
           }
-        } on ApiError catch (e) {
+        } catch (e) {
           // Token is invalid/expired, clear session
-          if (_isAuthError(e)) {
+          if (e is ApiError && _isAuthError(e)) {
             AppLogger.w('Token validation failed: ${e.code}');
             await _authService.logout();
             _setState(AuthState.unauthenticated);
@@ -149,7 +148,7 @@ class AuthProvider with ChangeNotifier {
       // 1. Fetch current user profile data
       final userProfile = await _userService.getUserProfile();
 
-      if (userProfile != null && _currentUser != null) {
+      if (_currentUser != null) {
         // Update user data with fresh profile info
         final updatedUser = _currentUser!.copyWith(
           name: userProfile['name'] as String?,

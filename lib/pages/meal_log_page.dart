@@ -153,7 +153,7 @@ class _MealLogPageState extends State<MealLogPage> {
                         height: 60,
                         borderRadius: 12,
                       ),
-                      errorWidget: (_, __, ___) => _buildIconPlaceholder(isConsumed),
+                      errorWidget: (_, _, _) => _buildIconPlaceholder(isConsumed),
                     ),
                   )
                 else

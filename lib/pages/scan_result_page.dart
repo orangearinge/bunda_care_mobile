@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../utils/styles.dart';
@@ -138,7 +137,7 @@ class ScanResultPage extends StatelessWidget {
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  ...results.candidates.map((c) => _buildCandidateTile(c)).toList(),
+                  ...results.candidates.map((c) => _buildCandidateTile(c)),
                 ],
               ),
             

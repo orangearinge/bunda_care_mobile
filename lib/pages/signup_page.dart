@@ -32,11 +32,6 @@ class _SignUpPageState extends State<SignUpPage> {
   // State untuk checkbox persetujuan syarat & ketentuan
   bool _agreeToTerms = false;
 
-  // Konstanta warna untuk konsistensi desain di seluruh halaman
-  static const Color primaryColor = Color(
-    0xFFE91E63,
-  ); // Pink (disesuaikan dengan tema login)
-  static const Color secondaryColor = Color(0xFFF06292); // Pink Muda
 
   /// Fungsi helper untuk membuat dekorasi input field yang konsisten
   InputDecoration _buildInputDecoration({
@@ -499,31 +494,6 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _socialButton({
-    required IconData icon,
-    required Color color,
-    required VoidCallback onPressed,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.2),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: IconButton(
-        icon: Icon(icon, size: 28),
-        color: color,
-        onPressed: onPressed,
-      ),
-    );
-  }
 
   Widget _socialButtonWithImage({
     required String image,

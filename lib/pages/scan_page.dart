@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/food_provider.dart';
 import '../utils/constants.dart';
-import 'rekomendasi_page.dart';
 import 'scan_result_page.dart';
 import '../models/scan_result.dart';
 import '../utils/styles.dart';

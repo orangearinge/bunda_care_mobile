@@ -51,7 +51,7 @@ class _RekomendasiPageState extends State<RekomendasiPage> {
     return Scaffold(
       backgroundColor: Colors.pink[50],
       appBar: AppBar(
-        title: Text("Rekomendasi ${_selectedMealType}"),
+        title: Text("Rekomendasi $_selectedMealType"),
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: AppStyles.pinkGradient,
