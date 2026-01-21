@@ -127,8 +127,11 @@ class AuthService {
 
       return authResponse;
     } catch (e) {
-      // Sign out from Google on error
-      await _googleSignIn.signOut();
+      // Sign out and disconnect from Google on error to ensure a clean state
+      try {
+        await _googleSignIn.signOut();
+        await _googleSignIn.disconnect();
+      } catch (_) {}
 
       AppLogger.e('Google sign-in error', e);
       throw ErrorHandler.handle(e);
@@ -149,9 +152,13 @@ class AuthService {
         AppLogger.w('Backend logout failed: $e');
       }
 
-      // Sign out from Google if user signed in with Google
-      if (await _googleSignIn.isSignedIn()) {
+      // Sign out from Google to ensure clean state and show account picker next time
+      try {
         await _googleSignIn.signOut();
+        await _googleSignIn.disconnect();
+      } catch (e) {
+        // Ignore Google-specific logout errors to ensure we still clear local storage
+        AppLogger.w('Google logout/disconnect error: $e');
       }
 
       // Clear all local storage
