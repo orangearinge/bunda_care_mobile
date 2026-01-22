@@ -707,6 +707,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         if (height == null || height <= 0) {
                           return 'Tinggi badan harus berupa angka positif';
                         }
+                        // Khusus untuk batita
+                        if (_selectedRole == 'ANAK_BATITA') {
+                          if (height < 45) return 'Tinggi badan anak batita minimal 45 cm';
+                          if (height > 100) return 'Tinggi badan anak batita maksimal 100 cm';
+                        }
                         return null;
                       },
                     ),
@@ -722,6 +727,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         final weight = double.tryParse(value);
                         if (weight == null || weight <= 0) {
                           return 'Berat badan harus berupa angka positif';
+                        }
+                        // Khusus untuk batita
+                        if (_selectedRole == 'ANAK_BATITA') {
+                          if (weight < 4) return 'Berat badan anak batita minimal 4 kg';
+                          if (weight > 16) return 'Berat badan anak batita maksimal 16 kg';
                         }
                         return null;
                       },

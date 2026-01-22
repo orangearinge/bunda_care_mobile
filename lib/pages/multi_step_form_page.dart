@@ -342,11 +342,31 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               "Berat Badan (kg)",
               "berat_badan",
               TextInputType.number,
+              customValidator: (value) {
+                if (value == null || value.isEmpty) return 'Berat badan anak wajib diisi';
+
+                double? weight = double.tryParse(value);
+                if (weight == null || weight <= 0) return 'Berat badan harus angka positif';
+                if (weight < 4) return 'Berat badan anak batita minimal 4 kg';
+                if (weight > 16) return 'Berat badan anak batita maksimal 16 kg';
+
+                return null;
+              },
             ),
             _buildTextField(
               "Tinggi Badan (cm)",
               "tinggi_badan",
               TextInputType.number,
+              customValidator: (value) {
+                if (value == null || value.isEmpty) return 'Tinggi badan anak wajib diisi';
+
+                double? height = double.tryParse(value);
+                if (height == null || height <= 0) return 'Tinggi badan harus angka positif';
+                if (height < 45) return 'Tinggi badan anak batita minimal 45 cm';
+                if (height > 100) return 'Tinggi badan anak batita maksimal 100 cm';
+
+                return null;
+              },
             ),
           ],
         );
