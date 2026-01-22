@@ -575,31 +575,39 @@ class _DashboardPageState extends State<DashboardPage> {
                                           const SizedBox(height: 10),
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceAround,
+                                                MainAxisAlignment.spaceEvenly,
                                             children: [
-                                              _buildRemainingItem(
-                                                "Sisa Kalori",
-                                                "${dashboardSummary.remaining.calories} kkal",
-                                                Icons.local_fire_department,
-                                                Colors.pink[300]!,
+                                              Expanded(
+                                                child: _buildRemainingItem(
+                                                  "Sisa Kalori",
+                                                  "${dashboardSummary.remaining.calories} kkal",
+                                                  Icons.local_fire_department,
+                                                  Colors.pink[300]!,
+                                                ),
                                               ),
-                                              _buildRemainingItem(
-                                                "Protein",
-                                                "${dashboardSummary.remaining.proteinG.toStringAsFixed(1)}g",
-                                                Icons.egg_outlined,
-                                                Colors.orange[300]!,
+                                              Expanded(
+                                                child: _buildRemainingItem(
+                                                  "Protein",
+                                                  "${dashboardSummary.remaining.proteinG.toStringAsFixed(1)}g",
+                                                  Icons.egg_outlined,
+                                                  Colors.orange[300]!,
+                                                ),
                                               ),
-                                              _buildRemainingItem(
-                                                "Karbo",
-                                                "${dashboardSummary.remaining.carbsG.toStringAsFixed(1)}g",
-                                                Icons.bakery_dining_outlined,
-                                                Colors.blue[300]!,
+                                              Expanded(
+                                                child: _buildRemainingItem(
+                                                  "Karbo",
+                                                  "${dashboardSummary.remaining.carbsG.toStringAsFixed(1)}g",
+                                                  Icons.bakery_dining_outlined,
+                                                  Colors.blue[300]!,
+                                                ),
                                               ),
-                                              _buildRemainingItem(
-                                                "Lemak",
-                                                "${dashboardSummary.remaining.fatG.toStringAsFixed(1)}g",
-                                                Icons.water_drop_outlined,
-                                                Colors.teal[300]!,
+                                              Expanded(
+                                                child: _buildRemainingItem(
+                                                  "Lemak",
+                                                  "${dashboardSummary.remaining.fatG.toStringAsFixed(1)}g",
+                                                  Icons.water_drop_outlined,
+                                                  Colors.teal[300]!,
+                                                ),
                                               ),
                                             ],
                                           ),
