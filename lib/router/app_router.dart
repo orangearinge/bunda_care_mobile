@@ -13,6 +13,7 @@ import '../pages/edukasi_page.dart';
 import '../pages/profile_page.dart';
 import '../pages/feedback_page.dart';
 import '../pages/splash_page.dart';
+import '../pages/meal_notification_settings_page.dart';
 
 /// Application router configuration with authentication guards
 class AppRouter {
@@ -176,6 +177,11 @@ class AppRouter {
         path: '/feedback',
         name: 'feedback',
         builder: (context, state) => const FeedbackPage(),
+      ),
+      GoRoute(
+        path: '/meal-notification-settings',
+        name: 'meal-notification-settings',
+        builder: (context, state) => const MealNotificationSettingsPage(),
       ),
     ],
 

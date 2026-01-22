@@ -1,6 +1,8 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/services.dart';
 import 'dart:convert';
 import '../models/user.dart';
+import '../models/meal_schedule.dart';
 import '../utils/constants.dart';
 
 /// Service for securely storing authentication data
@@ -81,6 +83,46 @@ class StorageService {
       await _storage.delete(key: ApiConstants.userKey);
     } catch (e) {
       throw Exception('Failed to delete user: $e');
+    }
+  }
+
+  // ==================== Meal Schedule Management ====================
+
+  /// Save meal schedules
+  Future<void> saveMealSchedules(List<MealSchedule> schedules) async {
+    try {
+      final schedulesJson = jsonEncode(schedules.map((s) => s.toJson()).toList());
+      await _storage.write(key: 'meal_schedules', value: schedulesJson);
+
+      // Also sync to Android SharedPreferences for AlarmManager access
+      await _syncToAndroidSharedPreferences(schedulesJson);
+    } catch (e) {
+      throw Exception('Failed to save meal schedules: $e');
+    }
+  }
+
+  /// Sync meal schedules to Android SharedPreferences
+  Future<void> _syncToAndroidSharedPreferences(String schedulesJson) async {
+    try {
+      const platform = MethodChannel('com.example.bunda_care/meal_notifications');
+      await platform.invokeMethod('syncMealSchedules', {
+        'schedules': schedulesJson,
+      });
+    } catch (e) {
+      // If platform channel fails, continue without error
+      // This might happen during initial setup or on unsupported platforms
+    }
+  }
+
+  /// Get stored meal schedules
+  Future<List<MealSchedule>> getMealSchedules() async {
+    try {
+      final schedulesJson = await _storage.read(key: 'meal_schedules');
+      if (schedulesJson == null) return [];
+      final schedulesList = jsonDecode(schedulesJson) as List<dynamic>;
+      return schedulesList.map((json) => MealSchedule.fromJson(json as Map<String, dynamic>)).toList();
+    } catch (e) {
+      throw Exception('Failed to read meal schedules: $e');
     }
   }
 

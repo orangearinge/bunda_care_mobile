@@ -2,6 +2,10 @@
     <!-- Internet permission for API calls and Google Sign-In -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Notification permissions -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:label="com.example.bunda_care"
         android:name="${applicationName}"
@@ -41,6 +45,17 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <!-- Boot completed receiver for notifications -->
+        <receiver android:name="com.dexterous.flutterlocalnotifications.BootCompletedReceiver" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Meal notification receiver for alarm manager -->
+        <receiver android:name=".MealNotificationReceiver" android:exported="true">
+        </receiver>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

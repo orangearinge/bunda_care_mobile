@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/user_preference_provider.dart';
 import '../providers/auth_provider.dart';
 import '../models/user_preference.dart';
@@ -504,6 +505,23 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             title: const Text(
               'Beri Feedback',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+            ),
+            trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+          ),
+          const Divider(height: 1),
+          ListTile(
+            onTap: () => context.push('/meal-notification-settings'),
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.pink[50],
+                shape: BoxShape.circle,
+              ),
+              child: Icon(FontAwesomeIcons.bell, color: Colors.pink[400], size: 18),
+            ),
+            title: const Text(
+              'Pengaturan Notifikasi Makan',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
             ),
             trailing: const Icon(Icons.chevron_right, color: Colors.grey),
