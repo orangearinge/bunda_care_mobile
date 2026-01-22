@@ -143,13 +143,6 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                               IconButton(
                                 icon: const Icon(
-                                  Icons.refresh,
-                                  color: Colors.grey,
-                                ),
-                                onPressed: _fetchDashboardData,
-                              ),
-                              IconButton(
-                                icon: const Icon(
                                   Icons.history,
                                   color: Colors.grey,
                                 ),
