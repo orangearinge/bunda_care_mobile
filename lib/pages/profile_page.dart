@@ -511,23 +511,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const Divider(height: 1),
           ListTile(
-            onTap: () => context.push('/meal-notification-settings'),
-            leading: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.pink[50],
-                shape: BoxShape.circle,
-              ),
-              child: Icon(FontAwesomeIcons.bell, color: Colors.pink[400], size: 18),
-            ),
-            title: const Text(
-              'Pengaturan Notifikasi Makan',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
-            ),
-            trailing: const Icon(Icons.chevron_right, color: Colors.grey),
-          ),
-          const Divider(height: 1),
-          ListTile(
             onTap: () async {
               final authProvider = Provider.of<AuthProvider>(
                 context,

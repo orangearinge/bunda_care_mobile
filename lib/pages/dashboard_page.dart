@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../providers/user_preference_provider.dart';
 import '../models/dashboard_summary.dart';
@@ -153,6 +155,16 @@ class _DashboardPageState extends State<DashboardPage> {
                                       builder: (_) => const HistoryPage(),
                                     ),
                                   );
+                                },
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  FontAwesomeIcons.bell,
+                                  color: Colors.pink[400],
+                                  size: 20,
+                                ),
+                                onPressed: () {
+                                  context.push('/meal-notification-settings');
                                 },
                               ),
                             Container(
