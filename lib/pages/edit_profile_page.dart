@@ -712,10 +712,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           if (height < 45) return 'Tinggi badan anak batita minimal 45 cm';
                           if (height > 100) return 'Tinggi badan anak batita maksimal 100 cm';
                         }
-                        // Khusus untuk ibu hamil
-                        if (_selectedRole == 'IBU_HAMIL') {
-                          if (height < 140) return 'Tinggi badan ibu hamil minimal 140 cm';
-                          if (height > 180) return 'Tinggi badan ibu hamil maksimal 180 cm';
+                        // Khusus untuk ibu hamil dan ibu menyusui
+                        if (_selectedRole == 'IBU_HAMIL' || _selectedRole == 'IBU_MENYUSUI') {
+                          if (height < 140) return 'Tinggi badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} minimal 140 cm';
+                          if (height > 180) return 'Tinggi badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} maksimal 180 cm';
                         }
                         return null;
                       },
@@ -738,10 +738,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           if (weight < 4) return 'Berat badan anak batita minimal 4 kg';
                           if (weight > 16) return 'Berat badan anak batita maksimal 16 kg';
                         }
-                        // Khusus untuk ibu hamil
-                        if (_selectedRole == 'IBU_HAMIL') {
-                          if (weight < 35) return 'Berat badan ibu hamil minimal 35 kg';
-                          if (weight > 120) return 'Berat badan ibu hamil maksimal 120 kg';
+                        // Khusus untuk ibu hamil dan ibu menyusui
+                        if (_selectedRole == 'IBU_HAMIL' || _selectedRole == 'IBU_MENYUSUI') {
+                          if (weight < 35) return 'Berat badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} minimal 35 kg';
+                          if (weight > 120) return 'Berat badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} maksimal 120 kg';
                         }
                         return null;
                       },
