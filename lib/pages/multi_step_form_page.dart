@@ -193,7 +193,21 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           titleColor: primaryPink,
           fields: [
             _buildTextField("Nama Lengkap", "nama", TextInputType.name),
-            _buildTextField("Usia", "usia", TextInputType.number),
+            _buildTextField(
+              "Usia",
+              "usia",
+              TextInputType.number,
+              customValidator: (value) {
+                if (value == null || value.isEmpty) return 'Usia ibu hamil wajib diisi';
+
+                int? age = int.tryParse(value);
+                if (age == null || age < 0) return 'Usia harus berupa angka positif';
+                if (age < 19) return 'Usia ibu hamil minimal 19 tahun';
+                if (age > 45) return 'Usia ibu hamil maksimal 45 tahun';
+
+                return null;
+              },
+            ),
           ],
         );
 
@@ -286,7 +300,21 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
           titleColor: secondaryBlue,
           fields: [
             _buildTextField("Nama Lengkap", "nama", TextInputType.name),
-            _buildTextField("Usia", "usia", TextInputType.number),
+            _buildTextField(
+              "Usia",
+              "usia",
+              TextInputType.number,
+              customValidator: (value) {
+                if (value == null || value.isEmpty) return 'Usia ibu menyusui wajib diisi';
+
+                int? age = int.tryParse(value);
+                if (age == null || age < 0) return 'Usia harus berupa angka positif';
+                if (age < 15) return 'Usia ibu menyusui minimal 15 tahun';
+                if (age > 65) return 'Usia ibu menyusui maksimal 65 tahun';
+
+                return null;
+              },
+            ),
           ],
         );
 

@@ -674,6 +674,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         if (_selectedRole == 'ANAK_BATITA' && age > 2) {
                           return 'Usia anak batita maksimal 2 tahun';
                         }
+                        // Special validation for mothers
+                        if (_selectedRole == 'IBU_HAMIL') {
+                          if (age < 19) return 'Usia ibu hamil minimal 19 tahun';
+                          if (age > 45) return 'Usia ibu hamil maksimal 45 tahun';
+                        } else if (_selectedRole == 'IBU_MENYUSUI') {
+                          if (age < 15) return 'Usia ibu menyusui minimal 15 tahun';
+                          if (age > 65) return 'Usia ibu menyusui maksimal 65 tahun';
+                        }
                         return null;
                       },
                     ),
