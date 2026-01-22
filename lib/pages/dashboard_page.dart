@@ -595,6 +595,12 @@ class _DashboardPageState extends State<DashboardPage> {
                                                 Icons.bakery_dining_outlined,
                                                 Colors.blue[300]!,
                                               ),
+                                              _buildRemainingItem(
+                                                "Lemak",
+                                                "${dashboardSummary.remaining.fatG.toStringAsFixed(1)}g",
+                                                Icons.water_drop_outlined,
+                                                Colors.teal[300]!,
+                                              ),
                                             ],
                                           ),
                                         ],
