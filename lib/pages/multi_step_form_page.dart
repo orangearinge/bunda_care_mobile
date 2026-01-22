@@ -227,11 +227,31 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
                 "Berat Badan (kg)",
                 "berat_badan",
                 TextInputType.number,
+                customValidator: (value) {
+                  if (value == null || value.isEmpty) return 'Berat badan ibu hamil wajib diisi';
+
+                  double? weight = double.tryParse(value);
+                  if (weight == null || weight <= 0) return 'Berat badan harus angka positif';
+                  if (weight < 35) return 'Berat badan ibu hamil minimal 35 kg';
+                  if (weight > 120) return 'Berat badan ibu hamil maksimal 120 kg';
+
+                  return null;
+                },
               ),
               _buildTextField(
                 "Tinggi Badan (cm)",
                 "tinggi_badan",
                 TextInputType.number,
+                customValidator: (value) {
+                  if (value == null || value.isEmpty) return 'Tinggi badan ibu hamil wajib diisi';
+
+                  double? height = double.tryParse(value);
+                  if (height == null || height <= 0) return 'Tinggi badan harus angka positif';
+                  if (height < 140) return 'Tinggi badan ibu hamil minimal 140 cm';
+                  if (height > 180) return 'Tinggi badan ibu hamil maksimal 180 cm';
+
+                  return null;
+                },
               ),
             ],
           ),
