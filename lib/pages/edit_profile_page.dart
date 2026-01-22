@@ -779,6 +779,20 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         label: 'LiLA (cm)',
                         hint: 'Masukkan LiLA',
                         keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (_selectedRole == 'IBU_HAMIL') {
+                            if (value == null || value.isEmpty) {
+                              return 'LiLA ibu hamil wajib diisi';
+                            }
+                            final lila = double.tryParse(value);
+                            if (lila == null || lila <= 0) {
+                              return 'LiLA harus berupa angka positif';
+                            }
+                            if (lila < 15) return 'LiLA ibu hamil minimal 15 cm';
+                            if (lila > 50) return 'LiLA ibu hamil maksimal 50 cm';
+                          }
+                          return null;
+                        },
                       ),
                     ],
                     if (_selectedRole == 'IBU_MENYUSUI') ...[

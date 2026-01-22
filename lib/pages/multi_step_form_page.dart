@@ -281,6 +281,16 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               "Lingkar Lengan Atas (cm)",
               "lingkar_lengan_atas",
               TextInputType.number,
+              customValidator: (value) {
+                if (value == null || value.isEmpty) return 'LiLA ibu hamil wajib diisi';
+
+                double? lila = double.tryParse(value);
+                if (lila == null || lila <= 0) return 'LiLA harus angka positif';
+                if (lila < 15) return 'LiLA ibu hamil minimal 15 cm';
+                if (lila > 50) return 'LiLA ibu hamil maksimal 50 cm';
+
+                return null;
+              },
             ),
           ],
         );
