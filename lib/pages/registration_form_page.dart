@@ -5,92 +5,103 @@ import '../providers/auth_provider.dart';
 import '../utils/logger.dart';
 import '../utils/styles.dart';
 
-class RegistrationFormPage extends StatelessWidget {
+class RegistrationFormPage extends StatefulWidget {
   const RegistrationFormPage({super.key});
 
   @override
+  State<RegistrationFormPage> createState() => _RegistrationFormPageState();
+}
+
+class _RegistrationFormPageState extends State<RegistrationFormPage> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Pilih Kategori"),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) {
+        if (!didPop) {
+          _handleLogout();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Pilih Kategori"),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
+          ),
+          foregroundColor: Colors.white,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: _handleLogout,
           ),
         ),
-        foregroundColor: Colors.white,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () async {
-            // Cukup logout, AppRouter akan otomatis mengarahkan ke halaman login
-            // karena status akan berubah menjadi unauthenticated
-            final authProvider = Provider.of<AuthProvider>(
-              context,
-              listen: false,
-            );
-            await authProvider.logout();
-          },
-        ),
-      ),
-      resizeToAvoidBottomInset: false, // Mencegah layout flicker saat keyboard navigasi/transisi
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Judul
-              const Text(
-                "Silakan Pilih Kategori Anda",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+        resizeToAvoidBottomInset:
+            false, // Mencegah layout flicker saat keyboard navigasi/transisi
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Judul
+                const Text(
+                  "Silakan Pilih Kategori Anda",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                "Pilih salah satu kategori di bawah ini untuk melanjutkan pendaftaran",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 50),
+                const SizedBox(height: 16),
+                const Text(
+                  "Pilih salah satu kategori di bawah ini untuk melanjutkan pendaftaran",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                const SizedBox(height: 50),
 
-              // Tombol 1: Ibu Hamil
-              _buildRoleButton(
-                context: context,
-                role: 'IbuHamil',
-                label: 'Ibu Hamil',
-                icon: Icons.pregnant_woman,
-                color: Colors.pink.shade400,
-              ),
-              const SizedBox(height: 20),
+                // Tombol 1: Ibu Hamil
+                _buildRoleButton(
+                  context: context,
+                  role: 'IbuHamil',
+                  label: 'Ibu Hamil',
+                  icon: Icons.pregnant_woman,
+                  color: Colors.pink.shade400,
+                ),
+                const SizedBox(height: 20),
 
-              // Tombol 2: Ibu Menyusui
-              _buildRoleButton(
-                context: context,
-                role: 'IbuMenyusui',
-                label: 'Ibu Menyusui',
-                icon: Icons.child_care,
-                color: Colors.purple.shade400,
-              ),
-              const SizedBox(height: 20),
+                // Tombol 2: Ibu Menyusui
+                _buildRoleButton(
+                  context: context,
+                  role: 'IbuMenyusui',
+                  label: 'Ibu Menyusui',
+                  icon: Icons.child_care,
+                  color: Colors.purple.shade400,
+                ),
+                const SizedBox(height: 20),
 
-              // Tombol 3: Anak Batita
-              _buildRoleButton(
-                context: context,
-                role: 'AnakBatita',
-                label: 'Anak Batita (0-24 bulan)',
-                icon: Icons.baby_changing_station,
-                color: Colors.cyan.shade400,
-              ),
-            ],
+                // Tombol 3: Anak Batita
+                _buildRoleButton(
+                  context: context,
+                  role: 'AnakBatita',
+                  label: 'Anak Batita (0-24 bulan)',
+                  icon: Icons.baby_changing_station,
+                  color: Colors.cyan.shade400,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  void _handleLogout() async {
+    // Cukup logout, AppRouter akan otomatis mengarahkan ke halaman login
+    // karena status akan berubah menjadi unauthenticated
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    await authProvider.logout();
   }
 
   // Widget untuk membuat tombol dengan icon
