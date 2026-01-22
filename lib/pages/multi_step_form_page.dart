@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/user_preference_provider.dart';
@@ -135,6 +136,14 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       setState(() {
         _currentPage = _pageController.page!.round();
       });
+    });
+
+    // Intercept Android back button
+    SystemChannels.platform.setMethodCallHandler((MethodCall call) async {
+      if (call.method == 'SystemNavigator.pop') {
+        _previousPage();
+        return;
+      }
     });
   }
 
@@ -892,8 +901,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     final Color accentColor = primaryPink;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Langkah ${_currentPage + 1} dari $_totalSteps"),
+        appBar: AppBar(
+          title: Text("Langkah ${_currentPage + 1} dari $_totalSteps"),
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: AppStyles.pinkGradient,
