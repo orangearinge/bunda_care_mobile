@@ -144,9 +144,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                 },
                               ),
                               IconButton(
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.history,
-                                  color: Colors.grey,
+                                  color: Colors.pink[400],
                                 ),
                                 onPressed: () {
                                   Navigator.push(
