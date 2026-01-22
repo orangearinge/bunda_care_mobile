@@ -670,6 +670,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         if (age == null || age < 0) {
                           return 'Usia harus berupa angka positif';
                         }
+                        // Special validation for batita: max 2 years
+                        if (_selectedRole == 'ANAK_BATITA' && age > 2) {
+                          return 'Usia anak batita maksimal 2 tahun';
+                        }
                         return null;
                       },
                     ),

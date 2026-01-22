@@ -362,6 +362,16 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               "usia",
               TextInputType.number,
               hintText: "Contoh: 0 untuk bayi, 1 untuk anak 1 tahun",
+              customValidator: (value) {
+                if (value == null || value.isEmpty) return 'Usia anak wajib diisi';
+
+                int? age = int.tryParse(value);
+                if (age == null) return 'Usia harus berupa angka';
+                if (age < 0) return 'Usia tidak boleh negatif';
+                if (age > 2) return 'Usia anak batita maksimal 2 tahun';
+
+                return null;
+              },
             ),
             _buildTextField(
               "Usia Anak (bulan)",
@@ -412,6 +422,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     bool required = true,
     String? hintText,
     int? maxLines,
+    String? Function(String?)? customValidator,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -429,7 +440,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         ),
         keyboardType: inputType,
         maxLines: maxLines ?? 1,
-        validator: (value) {
+        validator: customValidator ?? (value) {
           bool isRequired =
               required ||
               (_roleRequiredFields[widget.userRole]?.contains(key) ?? false);
