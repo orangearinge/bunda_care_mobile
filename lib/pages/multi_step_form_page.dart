@@ -138,13 +138,6 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       });
     });
 
-    // Intercept Android back button
-    SystemChannels.platform.setMethodCallHandler((MethodCall call) async {
-      if (call.method == 'SystemNavigator.pop') {
-        _previousPage();
-        return;
-      }
-    });
   }
 
   Widget _getFormStep(int step) {
@@ -900,7 +893,14 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
   Widget build(BuildContext context) {
     final Color accentColor = primaryPink;
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) {
+        if (!didPop) {
+          _previousPage();
+        }
+      },
+      child: Scaffold(
         appBar: AppBar(
           title: Text("Langkah ${_currentPage + 1} dari $_totalSteps"),
         flexibleSpace: Container(
@@ -974,6 +974,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         ],
       ),
       ),
+    ),
     );
   }
 
