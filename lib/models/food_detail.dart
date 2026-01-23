@@ -45,7 +45,8 @@ class FoodDetail {
       nutritionIsManual: json['nutrition_is_manual'] ?? false,
       servingUnit: json['serving_unit'],
       nutrition: FoodNutrition.fromJson(json['nutrition'] ?? {}),
-      ingredients: (json['ingredients'] as List<dynamic>?)
+      ingredients:
+          (json['ingredients'] as List<dynamic>?)
               ?.map((i) => FoodIngredient.fromJson(i))
               .toList() ??
           [],

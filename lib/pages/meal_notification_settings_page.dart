@@ -17,12 +17,13 @@ class MealNotificationSettingsPage extends StatelessWidget {
       appBar: AppBar(
         title: Text(
           "Pengaturan Notifikasi Makan",
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: Colors.white),
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
-          ),
+          decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
         ),
         foregroundColor: Colors.white,
         elevation: 0,
@@ -101,7 +102,10 @@ class MealNotificationSettingsPage extends StatelessWidget {
                 Switch(
                   value: schedule.isEnabled,
                   onChanged: (value) {
-                    context.read<MealScheduleProvider>().toggleSchedule(schedule.id, value);
+                    context.read<MealScheduleProvider>().toggleSchedule(
+                      schedule.id,
+                      value,
+                    );
                   },
                   thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
                     if (states.contains(WidgetState.selected)) {
@@ -134,7 +138,9 @@ class MealNotificationSettingsPage extends StatelessWidget {
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppStyles.radiusSmall),
+                        borderRadius: BorderRadius.circular(
+                          AppStyles.radiusSmall,
+                        ),
                       ),
                     ),
                   ),
@@ -146,28 +152,34 @@ class MealNotificationSettingsPage extends StatelessWidget {
                       final provider = context.read<MealScheduleProvider>();
 
                       // First check permission
-                      final hasPermission = await provider.checkNotificationPermission();
+                      final hasPermission = await provider
+                          .checkNotificationPermission();
                       if (!hasPermission) {
                         // Show permission dialog
                         await _showPermissionDialog(context);
                         return;
                       }
 
-                      final success = await provider.testNotification(schedule.id);
+                      final success = await provider.testNotification(
+                        schedule.id,
+                      );
 
                       // Use post-frame callback for safe snackbar display
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        final mainContext = AppRouter.navigatorKey.currentContext;
+                        final mainContext =
+                            AppRouter.navigatorKey.currentContext;
                         if (mainContext != null && mainContext.mounted) {
                           ScaffoldMessenger.of(mainContext).showSnackBar(
                             SnackBar(
                               content: Text(
                                 success
-                                  ? '🔔 Notifikasi test muncul sekarang!'
-                                  : '❌ Gagal mengirim notifikasi test',
+                                    ? '🔔 Notifikasi test muncul sekarang!'
+                                    : '❌ Gagal mengirim notifikasi test',
                                 style: GoogleFonts.poppins(),
                               ),
-                              backgroundColor: success ? AppStyles.primaryPink : Colors.red,
+                              backgroundColor: success
+                                  ? AppStyles.primaryPink
+                                  : Colors.red,
                               duration: const Duration(seconds: 3),
                             ),
                           );
@@ -184,7 +196,9 @@ class MealNotificationSettingsPage extends StatelessWidget {
                       foregroundColor: AppStyles.primaryPink,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppStyles.radiusSmall),
+                        borderRadius: BorderRadius.circular(
+                          AppStyles.radiusSmall,
+                        ),
                       ),
                     ),
                   ),
@@ -289,7 +303,9 @@ class _ScheduleDialogState extends State<_ScheduleDialog> {
   void initState() {
     super.initState();
     _selectedTime = widget.schedule.scheduledTime;
-    _messageController = TextEditingController(text: widget.schedule.customMessage);
+    _messageController = TextEditingController(
+      text: widget.schedule.customMessage,
+    );
   }
 
   @override
@@ -349,7 +365,10 @@ class _ScheduleDialogState extends State<_ScheduleDialog> {
                 }
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey[300]!),
                   borderRadius: BorderRadius.circular(AppStyles.radiusSmall),
@@ -404,7 +423,9 @@ class _ScheduleDialogState extends State<_ScheduleDialog> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       side: BorderSide(color: AppStyles.primaryPink),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppStyles.radiusSmall),
+                        borderRadius: BorderRadius.circular(
+                          AppStyles.radiusSmall,
+                        ),
                       ),
                     ),
                     child: Text(
@@ -427,7 +448,9 @@ class _ScheduleDialogState extends State<_ScheduleDialog> {
                             : _messageController.text,
                       );
 
-                      await context.read<MealScheduleProvider>().updateMealSchedule(updatedSchedule);
+                      await context
+                          .read<MealScheduleProvider>()
+                          .updateMealSchedule(updatedSchedule);
 
                       // Close dialog first
                       if (mounted) {
@@ -437,7 +460,8 @@ class _ScheduleDialogState extends State<_ScheduleDialog> {
                       // Show success message after dialog closes
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         // Get the parent context from the main page
-                        final mainContext = AppRouter.navigatorKey.currentContext;
+                        final mainContext =
+                            AppRouter.navigatorKey.currentContext;
                         if (mainContext != null && mainContext.mounted) {
                           ScaffoldMessenger.of(mainContext).showSnackBar(
                             SnackBar(
@@ -456,7 +480,9 @@ class _ScheduleDialogState extends State<_ScheduleDialog> {
                       backgroundColor: AppStyles.primaryPink,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppStyles.radiusSmall),
+                        borderRadius: BorderRadius.circular(
+                          AppStyles.radiusSmall,
+                        ),
                       ),
                     ),
                     child: Text(

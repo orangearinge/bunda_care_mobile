@@ -147,9 +147,7 @@ class _ScanPageState extends State<ScanPage> {
         ),
         centerTitle: true,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
-          ),
+          decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
         ),
         elevation: 0,
       ),

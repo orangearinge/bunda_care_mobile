@@ -10,14 +10,10 @@ import '../widgets/offline_placeholder.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
 
-
 class FoodDetailPage extends StatefulWidget {
   final int menuId;
 
-  const FoodDetailPage({
-    super.key,
-    required this.menuId,
-  });
+  const FoodDetailPage({super.key, required this.menuId});
 
   @override
   State<FoodDetailPage> createState() => _FoodDetailPageState();
@@ -60,10 +56,12 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           final bool? proceed = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               title: Row(
                 children: [
-                   Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
+                  Icon(Icons.warning_amber_rounded, color: Colors.orange[700]),
                   const SizedBox(width: 8),
                   const Text("Target Terpenuhi"),
                 ],
@@ -77,7 +75,10 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
-                  child: Text("Batal", style: TextStyle(color: Colors.grey[600])),
+                  child: Text(
+                    "Batal",
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -85,7 +86,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                   },
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   child: Ink(
                     decoration: BoxDecoration(
@@ -93,8 +96,14 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: const Text("Tetap Simpan", style: TextStyle(color: Colors.white)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      child: const Text(
+                        "Tetap Simpan",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
@@ -108,9 +117,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     }
 
     final success = await foodProvider.logMeal(
-          menuId: foodDetail.id,
-          isConsumed: isConsumed,
-        );
+      menuId: foodDetail.id,
+      isConsumed: isConsumed,
+    );
 
     if (mounted && success) {
       // Refresh dashboard summary in provider after logging
@@ -149,9 +158,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
           backgroundColor: Colors.pink[50],
           appBar: AppBar(
             flexibleSpace: Container(
-              decoration: BoxDecoration(
-                gradient: AppStyles.pinkGradient,
-              ),
+              decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
             ),
             foregroundColor: Colors.white,
             title: Text(
@@ -160,20 +167,20 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
             ),
             elevation: 0,
           ),
-          body: (isLoading || foodProvider.status == FoodStatus.initial) && foodDetail == null
+          body:
+              (isLoading || foodProvider.status == FoodStatus.initial) &&
+                  foodDetail == null
               ? const FoodDetailSkeleton()
               : errorMessage != null
-                  ? OfflinePlaceholder(
-                      message: errorMessage,
-                      onRetry: _fetchFoodDetail,
-                    )
-                  : _buildContent(foodDetail),
+              ? OfflinePlaceholder(
+                  message: errorMessage,
+                  onRetry: _fetchFoodDetail,
+                )
+              : _buildContent(foodDetail),
         );
       },
     );
   }
-
-
 
   Widget _buildContent(FoodDetail? foodDetail) {
     if (foodDetail == null) return const SizedBox.shrink();
@@ -224,9 +231,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.grey[200],
-        borderRadius: const BorderRadius.vertical(
-          bottom: Radius.circular(30),
-        ),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
       ),
       child: foodDetail.imageUrl != null && foodDetail.imageUrl!.isNotEmpty
           ? ClipRRect(
@@ -236,22 +241,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
               child: CachedNetworkImage(
                 imageUrl: foodDetail.imageUrl!,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => const ShimmerImage(
-                  width: double.infinity,
-                  height: 250,
-                ),
-                errorWidget: (context, url, error) => Icon(
-                  Icons.restaurant,
-                  size: 64,
-                  color: Colors.grey[400],
-                ),
+                placeholder: (context, url) =>
+                    const ShimmerImage(width: double.infinity, height: 250),
+                errorWidget: (context, url, error) =>
+                    Icon(Icons.restaurant, size: 64, color: Colors.grey[400]),
               ),
             )
-          : Icon(
-              Icons.restaurant,
-              size: 64,
-              color: Colors.grey[400],
-            ),
+          : Icon(Icons.restaurant, size: 64, color: Colors.grey[400]),
     );
   }
 
@@ -296,13 +292,13 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
     final categoryColors = {
       'BREAKFAST': Colors.orange,
       'LUNCH': Colors.green,
-      'DINNER': Colors.blue
+      'DINNER': Colors.blue,
     };
 
     final categoryLabels = {
       'BREAKFAST': 'BREAKFAST',
       'LUNCH': 'LUNCH',
-      'DINNER': 'DINNER'
+      'DINNER': 'DINNER',
     };
 
     final color = categoryColors[foodDetail.category] ?? Colors.grey;
@@ -363,22 +359,26 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       child: Wrap(
         spacing: 6,
         runSpacing: 6,
-        children: tagsList.map((tag) => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.pink[50],
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.pink[100]!),
-          ),
-          child: Text(
-            tag,
-            style: TextStyle(
-              color: Colors.pink[400],
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        )).toList(),
+        children: tagsList
+            .map(
+              (tag) => Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.pink[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.pink[100]!),
+                ),
+                child: Text(
+                  tag,
+                  style: TextStyle(
+                    color: Colors.pink[400],
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            )
+            .toList(),
       ),
     );
   }
@@ -454,11 +454,7 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.info_outline,
-            color: Colors.pink[400],
-            size: 24,
-          ),
+          Icon(Icons.info_outline, color: Colors.pink[400], size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -476,7 +472,9 @@ class _FoodDetailPageState extends State<FoodDetailPage> {
   }
 
   Widget _buildNutritionSection(FoodDetail foodDetail) {
-    final servingInfo = foodDetail.servingUnit != null ? ' (per ${foodDetail.servingUnit})' : '';
+    final servingInfo = foodDetail.servingUnit != null
+        ? ' (per ${foodDetail.servingUnit})'
+        : '';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

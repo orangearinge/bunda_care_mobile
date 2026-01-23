@@ -13,10 +13,10 @@ class UserPreferenceProvider with ChangeNotifier {
 
   PreferenceStatus _prefStatus = PreferenceStatus.initial;
   PreferenceStatus _dashboardStatus = PreferenceStatus.initial;
-  
+
   UserPreference? _currentPreference;
   DashboardSummary? _dashboardSummary;
-  
+
   String? _prefError;
   String? _dashboardError;
 
@@ -25,13 +25,13 @@ class UserPreferenceProvider with ChangeNotifier {
 
   PreferenceStatus get prefStatus => _prefStatus;
   PreferenceStatus get dashboardStatus => _dashboardStatus;
-  
+
   UserPreference? get currentPreference => _currentPreference;
   DashboardSummary? get dashboardSummary => _dashboardSummary;
-  
+
   String? get prefError => _prefError;
   String? get dashboardError => _dashboardError;
-  
+
   // Compatibility getters
   PreferenceStatus get status => _prefStatus;
   String? get errorMessage => _prefError;
@@ -113,8 +113,10 @@ class UserPreferenceProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final preference = await _userService.getPreference(forceRefresh: forceRefresh);
-      
+      final preference = await _userService.getPreference(
+        forceRefresh: forceRefresh,
+      );
+
       if (preference != null) {
         _currentPreference = preference;
         _prefStatus = PreferenceStatus.success;
@@ -125,8 +127,9 @@ class UserPreferenceProvider with ChangeNotifier {
       }
       notifyListeners();
     } on ApiError catch (e) {
-      if (_currentPreference != null && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
-         _prefStatus = PreferenceStatus.success;
+      if (_currentPreference != null &&
+          (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+        _prefStatus = PreferenceStatus.success;
       } else {
         _prefError = ApiConstants.getErrorMessage(e.code);
         _prefStatus = PreferenceStatus.error;
@@ -150,7 +153,9 @@ class UserPreferenceProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      _dashboardSummary = await _userService.getDashboardSummary(forceRefresh: forceRefresh);
+      _dashboardSummary = await _userService.getDashboardSummary(
+        forceRefresh: forceRefresh,
+      );
       _dashboardStatus = PreferenceStatus.success;
       notifyListeners();
     } on ApiError catch (e) {

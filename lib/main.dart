@@ -27,7 +27,9 @@ void main() async {
 
   // Initialize timezone data
   tz.initializeTimeZones();
-  tz.setLocalLocation(tz.getLocation('Asia/Jakarta')); // Set to Indonesian timezone
+  tz.setLocalLocation(
+    tz.getLocation('Asia/Jakarta'),
+  ); // Set to Indonesian timezone
 
   try {
     await dotenv.load(fileName: ".env");

@@ -34,7 +34,8 @@ class ArticleService {
       return ArticleListResponse.fromJson(data);
     } catch (e) {
       // For network errors, throw to show offline placeholder
-      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+      if (e is ApiError &&
+          (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
         rethrow; // Re-throw network errors to show offline state
       }
       // For other errors, return empty list (server errors)
@@ -52,7 +53,10 @@ class ArticleService {
     }
   }
 
-  Future<Article> getArticleDetail(String slug, {bool forceRefresh = false}) async {
+  Future<Article> getArticleDetail(
+    String slug, {
+    bool forceRefresh = false,
+  }) async {
     try {
       final cacheOptions = forceRefresh
           ? _api.getCacheOptions(CacheConfig.forceRefresh)
@@ -63,10 +67,11 @@ class ArticleService {
         options: _api.applyCacheOptions(cacheOptions),
       );
       final data = _api.unwrap(response);
-      
+
       return Article.fromJson(data);
     } catch (e) {
-      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+      if (e is ApiError &&
+          (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
         // Handle network error
       }
       throw ErrorHandler.handle(e);

@@ -9,7 +9,6 @@ import '../widgets/offline_placeholder.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
 
-
 class MealLogPage extends StatefulWidget {
   const MealLogPage({super.key});
 
@@ -33,12 +32,13 @@ class _MealLogPageState extends State<MealLogPage> {
       appBar: AppBar(
         title: Text(
           "Rencana Makan Bunda",
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold, color: Colors.white),
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
-          ),
+          decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
         ),
         foregroundColor: Colors.white,
         elevation: 0,
@@ -51,14 +51,17 @@ class _MealLogPageState extends State<MealLogPage> {
       ),
       body: Consumer<FoodProvider>(
         builder: (context, foodProvider, child) {
-          if ((foodProvider.isLoading || foodProvider.status == FoodStatus.initial) && foodProvider.mealLogs.isEmpty) {
+          if ((foodProvider.isLoading ||
+                  foodProvider.status == FoodStatus.initial) &&
+              foodProvider.mealLogs.isEmpty) {
             return ListView.builder(
               padding: const EdgeInsets.all(20),
               itemCount: 5,
               itemBuilder: (context, index) => const MealLogSkeleton(),
             );
           }
-          if (foodProvider.errorMessage != null && foodProvider.mealLogs.isEmpty) {
+          if (foodProvider.errorMessage != null &&
+              foodProvider.mealLogs.isEmpty) {
             return OfflinePlaceholder(
               message: foodProvider.errorMessage!,
               onRetry: () => foodProvider.fetchMealLogs(),
@@ -69,18 +72,27 @@ class _MealLogPageState extends State<MealLogPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.restaurant_menu_outlined, size: 80, color: Colors.grey[300]),
+                  Icon(
+                    Icons.restaurant_menu_outlined,
+                    size: 80,
+                    color: Colors.grey[300],
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     "Belum ada rencana makan",
-                    style: GoogleFonts.poppins(color: Colors.grey, fontSize: 16),
+                    style: GoogleFonts.poppins(
+                      color: Colors.grey,
+                      fontSize: 16,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: Ink(
                       decoration: BoxDecoration(
@@ -88,8 +100,14 @@ class _MealLogPageState extends State<MealLogPage> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: const Text("Cari Rekomendasi", style: TextStyle(color: Colors.white)),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                        child: const Text(
+                          "Cari Rekomendasi",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
@@ -153,7 +171,8 @@ class _MealLogPageState extends State<MealLogPage> {
                         height: 60,
                         borderRadius: 12,
                       ),
-                      errorWidget: (_, _, _) => _buildIconPlaceholder(isConsumed),
+                      errorWidget: (_, _, _) =>
+                          _buildIconPlaceholder(isConsumed),
                     ),
                   )
                 else
@@ -180,7 +199,10 @@ class _MealLogPageState extends State<MealLogPage> {
                 ),
                 if (isConsumed)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.green[100],
                       borderRadius: BorderRadius.circular(8),
@@ -188,14 +210,18 @@ class _MealLogPageState extends State<MealLogPage> {
                     child: const Text(
                       "Selesai",
                       style: TextStyle(
-                          color: Colors.green,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10),
+                        color: Colors.green,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      ),
                     ),
                   )
                 else
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.orange[100],
                       borderRadius: BorderRadius.circular(8),
@@ -203,9 +229,10 @@ class _MealLogPageState extends State<MealLogPage> {
                     child: const Text(
                       "Terencana",
                       style: TextStyle(
-                          color: Colors.orange,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10),
+                        color: Colors.orange,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      ),
                     ),
                   ),
               ],
@@ -224,11 +251,14 @@ class _MealLogPageState extends State<MealLogPage> {
                     context: context,
                     builder: (context) => AlertDialog(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                       title: Row(
                         children: [
-                          Icon(Icons.warning_amber_rounded,
-                              color: Colors.orange[700]),
+                          Icon(
+                            Icons.warning_amber_rounded,
+                            color: Colors.orange[700],
+                          ),
                           const SizedBox(width: 8),
                           const Text("Target Terpenuhi"),
                         ],
@@ -242,15 +272,18 @@ class _MealLogPageState extends State<MealLogPage> {
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context, false),
-                          child: Text("Batal",
-                              style: TextStyle(color: Colors.grey[600])),
+                          child: Text(
+                            "Batal",
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
                         ),
                         ElevatedButton(
                           onPressed: () => Navigator.pop(context, true),
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.zero,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                           child: Ink(
                             decoration: BoxDecoration(
@@ -258,8 +291,14 @@ class _MealLogPageState extends State<MealLogPage> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              child: const Text("Tetap Konfirmasi", style: TextStyle(color: Colors.white)),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              child: const Text(
+                                "Tetap Konfirmasi",
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
                         ),
@@ -280,8 +319,10 @@ class _MealLogPageState extends State<MealLogPage> {
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                        content:
-                            Text('Selamat Makan! Gizi Anda telah diperbarui.')),
+                      content: Text(
+                        'Selamat Makan! Gizi Anda telah diperbarui.',
+                      ),
+                    ),
                   );
                 }
               },
@@ -291,13 +332,16 @@ class _MealLogPageState extends State<MealLogPage> {
                 decoration: BoxDecoration(
                   gradient: AppStyles.pinkGradient,
                   borderRadius: const BorderRadius.vertical(
-                      bottom: Radius.circular(20)),
+                    bottom: Radius.circular(20),
+                  ),
                 ),
                 child: const Center(
                   child: Text(
                     "KONFIRMASI MAKAN",
                     style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

@@ -7,10 +7,7 @@ class AuthResponse {
   final String token;
   final User user;
 
-  AuthResponse({
-    required this.token,
-    required this.user,
-  });
+  AuthResponse({required this.token, required this.user});
 
   /// Create AuthResponse from backend JSON success response
   /// Supports multiple formats:
@@ -31,16 +28,13 @@ class AuthResponse {
     if (token == null || token is! String) {
       throw ApiError(code: 'INVALID_TOKEN');
     }
- 
+
     final userData = data['user'];
     if (userData == null || userData is! Map<String, dynamic>) {
       throw ApiError(code: 'INVALID_USER_DATA');
     }
 
-    return AuthResponse(
-      token: token,
-      user: User.fromJson(userData),
-    );
+    return AuthResponse(token: token, user: User.fromJson(userData));
   }
 
   /// Alternative factory for direct data (without "data" wrapper)

@@ -14,9 +14,7 @@ class StorageService {
   StorageService._internal();
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
   );
 
   // ==================== Token Management ====================
@@ -91,7 +89,9 @@ class StorageService {
   /// Save meal schedules
   Future<void> saveMealSchedules(List<MealSchedule> schedules) async {
     try {
-      final schedulesJson = jsonEncode(schedules.map((s) => s.toJson()).toList());
+      final schedulesJson = jsonEncode(
+        schedules.map((s) => s.toJson()).toList(),
+      );
       await _storage.write(key: 'meal_schedules', value: schedulesJson);
 
       // Also sync to Android SharedPreferences for AlarmManager access
@@ -104,7 +104,9 @@ class StorageService {
   /// Sync meal schedules to Android SharedPreferences
   Future<void> _syncToAndroidSharedPreferences(String schedulesJson) async {
     try {
-      const platform = MethodChannel('com.example.bunda_care/meal_notifications');
+      const platform = MethodChannel(
+        'com.example.bunda_care/meal_notifications',
+      );
       await platform.invokeMethod('syncMealSchedules', {
         'schedules': schedulesJson,
       });
@@ -120,7 +122,9 @@ class StorageService {
       final schedulesJson = await _storage.read(key: 'meal_schedules');
       if (schedulesJson == null) return [];
       final schedulesList = jsonDecode(schedulesJson) as List<dynamic>;
-      return schedulesList.map((json) => MealSchedule.fromJson(json as Map<String, dynamic>)).toList();
+      return schedulesList
+          .map((json) => MealSchedule.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       throw Exception('Failed to read meal schedules: $e');
     }

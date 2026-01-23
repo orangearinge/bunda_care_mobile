@@ -30,17 +30,14 @@ class UserService {
       if (unwrapped is Map<String, dynamic>) {
         final pref = UserPreference.fromJson(unwrapped);
         final token = data['token'] as String?;
-        
+
         // Invalidate user preference cache after update
         await _api.clearCacheForUrl(ApiConstants.userPreference);
         await _api.clearCacheForUrl(ApiConstants.userProfile);
-        
+
         return (preference: pref, token: token);
       } else {
-        throw ApiError(
-          code: 'UPDATE_FAILED',
-          message: 'Format respons salah',
-        );
+        throw ApiError(code: 'UPDATE_FAILED', message: 'Format respons salah');
       }
     } catch (e) {
       throw ErrorHandler.handle(e);
@@ -60,18 +57,21 @@ class UserService {
         options: _api.applyCacheOptions(cacheOptions),
       );
       final data = _api.unwrap(response);
-      
-      if (data != null && data is Map<String, dynamic> && data.containsKey('role')) {
+
+      if (data != null &&
+          data is Map<String, dynamic> &&
+          data.containsKey('role')) {
         return UserPreference.fromJson(data);
       }
       return null;
     } catch (e) {
       AppLogger.e('GET PREFERENCE ERROR', e);
-      // For preference, if it fails due to network/timeout, we return null 
+      // For preference, if it fails due to network/timeout, we return null
       // instead of rethrowing, let the provider handle the null state.
-      // If we got here, DioCacheInterceptor might have already tried and failed 
+      // If we got here, DioCacheInterceptor might have already tried and failed
       // or it was a non-cacheable error.
-      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+      if (e is ApiError &&
+          (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
         return null;
       }
       // For other errors, we might still want to know what happened
@@ -81,7 +81,9 @@ class UserService {
 
   /// Get dashboard summary
   /// GET /api/user/dashboard
-  Future<DashboardSummary> getDashboardSummary({bool forceRefresh = false}) async {
+  Future<DashboardSummary> getDashboardSummary({
+    bool forceRefresh = false,
+  }) async {
     try {
       final cacheOptions = forceRefresh
           ? _api.getCacheOptions(CacheConfig.forceRefresh)
@@ -103,11 +105,8 @@ class UserService {
       if (data is Map<String, dynamic>) {
         return DashboardSummary.fromJson(data);
       }
-      
-      throw ApiError(
-        code: 'FETCH_FAILED',
-        message: 'Format dashboard salah',
-      );
+
+      throw ApiError(code: 'FETCH_FAILED', message: 'Format dashboard salah');
     } catch (e) {
       throw ErrorHandler.handle(e);
     }
@@ -115,7 +114,9 @@ class UserService {
 
   /// Get user profile
   /// GET /api/user/profile
-  Future<Map<String, dynamic>> getUserProfile({bool forceRefresh = false}) async {
+  Future<Map<String, dynamic>> getUserProfile({
+    bool forceRefresh = false,
+  }) async {
     try {
       final cacheOptions = forceRefresh
           ? _api.getCacheOptions(CacheConfig.forceRefresh)
@@ -130,7 +131,7 @@ class UserService {
       if (data != null && data is Map<String, dynamic>) {
         return data;
       }
-      
+
       throw ApiError(
         code: 'PROFILE_FETCH_FAILED',
         message: 'Gagal mengambil data profil pengguna',
@@ -149,8 +150,10 @@ class UserService {
         data: {'avatar': avatarUrl},
       );
       final data = _api.unwrap(response);
-      
-      if (data != null && data is Map<String, dynamic> && data['avatar'] != null) {
+
+      if (data != null &&
+          data is Map<String, dynamic> &&
+          data['avatar'] != null) {
         // Invalidate profile cache after avatar update
         await _api.clearCacheForUrl(ApiConstants.userProfile);
         return data['avatar'] as String;
@@ -180,7 +183,8 @@ class UserService {
           .toList();
     } catch (e) {
       // For network errors, throw to show offline placeholder
-      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+      if (e is ApiError &&
+          (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
         rethrow; // Re-throw network errors to show offline state
       }
       throw ErrorHandler.handle(e);
@@ -203,7 +207,8 @@ class UserService {
           .toList();
     } catch (e) {
       // For network errors, throw to show offline placeholder
-      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+      if (e is ApiError &&
+          (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
         rethrow; // Re-throw network errors to show offline state
       }
       throw ErrorHandler.handle(e);

@@ -37,9 +37,7 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
         ),
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
-          ),
+          decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
         ),
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -50,7 +48,8 @@ class _HistoryPageState extends State<HistoryPage> {
           final isLoading = historyProvider.isLoading;
           final errorMessage = historyProvider.errorMessage;
 
-          if ((isLoading || historyProvider.status == HistoryStatus.initial) && history.isEmpty) {
+          if ((isLoading || historyProvider.status == HistoryStatus.initial) &&
+              history.isEmpty) {
             return ListView.builder(
               padding: const EdgeInsets.all(20),
               itemCount: 5,
@@ -85,8 +84,6 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-
-
   Widget _buildEmptyState() {
     return Center(
       child: Column(
@@ -105,10 +102,7 @@ class _HistoryPageState extends State<HistoryPage> {
           const SizedBox(height: 8),
           Text(
             "Mulailah mencatat makanan Bunda hari ini!",
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              color: Colors.grey[400],
-            ),
+            style: GoogleFonts.poppins(fontSize: 14, color: Colors.grey[400]),
           ),
         ],
       ),
@@ -117,7 +111,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   Widget _buildHistoryCard(HistoryEntry entry) {
     final String formattedDate = entry.formattedDate;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
@@ -139,7 +133,10 @@ class _HistoryPageState extends State<HistoryPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => HistoryDetailPage(date: entry.date, formattedDate: formattedDate),
+                builder: (_) => HistoryDetailPage(
+                  date: entry.date,
+                  formattedDate: formattedDate,
+                ),
               ),
             );
           },
@@ -172,9 +169,14 @@ class _HistoryPageState extends State<HistoryPage> {
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: _getPercentageColor(entry.percentage).withValues(alpha: 0.1),
+                        color: _getPercentageColor(
+                          entry.percentage,
+                        ).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -192,7 +194,9 @@ class _HistoryPageState extends State<HistoryPage> {
                 LinearProgressIndicator(
                   value: entry.percentage / 100,
                   backgroundColor: Colors.grey[100],
-                  valueColor: AlwaysStoppedAnimation<Color>(_getPercentageColor(entry.percentage)),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    _getPercentageColor(entry.percentage),
+                  ),
                   minHeight: 8,
                   borderRadius: BorderRadius.circular(4),
                 ),

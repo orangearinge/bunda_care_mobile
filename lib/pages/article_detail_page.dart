@@ -45,7 +45,8 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                 foregroundColor: Colors.white,
               ),
               body: OfflinePlaceholder(
-                message: provider.error ?? 'Server lagi maintenance. Tunggu ya!',
+                message:
+                    provider.error ?? 'Server lagi maintenance. Tunggu ya!',
                 onRetry: () => provider.fetchArticleDetail(widget.slug),
               ),
             );

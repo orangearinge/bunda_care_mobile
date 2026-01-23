@@ -20,9 +20,11 @@ class ChatProvider with ChangeNotifier {
 
   ChatProvider() {
     // Add welcome message on initialization
-    _messages.add(ChatMessage.bot(
-      'Halo Bunda! 👋\n\nSaya Bunda Care AI Assistant, siap membantu menjawab pertanyaan seputar kesehatan ibu dan anak.\n\nSilakan tanyakan tentang:\n• Nutrisi kehamilan\n• ASI dan menyusui\n• MPASI\n• Menu harian\n• Dan topik kesehatan lainnya',
-    ));
+    _messages.add(
+      ChatMessage.bot(
+        'Halo Bunda! 👋\n\nSaya Bunda Care AI Assistant, siap membantu menjawab pertanyaan seputar kesehatan ibu dan anak.\n\nSilakan tanyakan tentang:\n• Nutrisi kehamilan\n• ASI dan menyusui\n• MPASI\n• Menu harian\n• Dan topik kesehatan lainnya',
+      ),
+    );
   }
 
   /// Send query to RAG chatbot
@@ -37,22 +39,26 @@ class ChatProvider with ChangeNotifier {
 
     try {
       final response = await _chatService.sendQuery(text);
-      
+
       // Add bot response
       _messages.add(ChatMessage.bot(response['answer']));
       _status = ChatStatus.success;
       notifyListeners();
     } on ApiError catch (e) {
-      _messages.add(ChatMessage.bot(
-        '❌ Maaf, terjadi kesalahan: ${ApiConstants.getErrorMessage(e.code)}\n\nSilakan coba lagi.',
-      ));
+      _messages.add(
+        ChatMessage.bot(
+          '❌ Maaf, terjadi kesalahan: ${ApiConstants.getErrorMessage(e.code)}\n\nSilakan coba lagi.',
+        ),
+      );
       _status = ChatStatus.error;
       _errorMessage = ApiConstants.getErrorMessage(e.code);
       notifyListeners();
     } catch (e) {
-      _messages.add(ChatMessage.bot(
-        '❌ Terjadi kesalahan yang tidak terduga.\n\nSilakan coba lagi.',
-      ));
+      _messages.add(
+        ChatMessage.bot(
+          '❌ Terjadi kesalahan yang tidak terduga.\n\nSilakan coba lagi.',
+        ),
+      );
       _status = ChatStatus.error;
       _errorMessage = 'Terjadi kesalahan yang tidak terduga';
       notifyListeners();
@@ -62,9 +68,11 @@ class ChatProvider with ChangeNotifier {
   /// Clear chat history
   void clearChat() {
     _messages.clear();
-    _messages.add(ChatMessage.bot(
-      'Halo Bunda! 👋\n\nSaya Bunda Care AI Assistant, siap membantu menjawab pertanyaan seputar kesehatan ibu dan anak.\n\nSilakan tanyakan tentang:\n• Nutrisi kehamilan\n• ASI dan menyusui\n• MPASI\n• Menu harian\n• Dan topik kesehatan lainnya',
-    ));
+    _messages.add(
+      ChatMessage.bot(
+        'Halo Bunda! 👋\n\nSaya Bunda Care AI Assistant, siap membantu menjawab pertanyaan seputar kesehatan ibu dan anak.\n\nSilakan tanyakan tentang:\n• Nutrisi kehamilan\n• ASI dan menyusui\n• MPASI\n• Menu harian\n• Dan topik kesehatan lainnya',
+      ),
+    );
     notifyListeners();
   }
 }

@@ -30,14 +30,17 @@ class DashboardSummary {
       ? (todayNutrition.calories / targets.calories * 100).clamp(0, 100).toInt()
       : 0;
 
-  double get proteinPercentage =>
-      targets.proteinG > 0 ? (todayNutrition.proteinG / targets.proteinG).clamp(0.0, 1.0) : 0.0;
+  double get proteinPercentage => targets.proteinG > 0
+      ? (todayNutrition.proteinG / targets.proteinG).clamp(0.0, 1.0)
+      : 0.0;
 
-  double get carbsPercentage =>
-      targets.carbsG > 0 ? (todayNutrition.carbsG / targets.carbsG).clamp(0.0, 1.0) : 0.0;
+  double get carbsPercentage => targets.carbsG > 0
+      ? (todayNutrition.carbsG / targets.carbsG).clamp(0.0, 1.0)
+      : 0.0;
 
-  double get fatPercentage =>
-      targets.fatG > 0 ? (todayNutrition.fatG / targets.fatG).clamp(0.0, 1.0) : 0.0;
+  double get fatPercentage => targets.fatG > 0
+      ? (todayNutrition.fatG / targets.fatG).clamp(0.0, 1.0)
+      : 0.0;
 
   bool wouldExceedTarget(num additionalCalories) {
     return (todayNutrition.calories + additionalCalories) > targets.calories;

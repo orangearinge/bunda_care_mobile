@@ -11,7 +11,8 @@ class ScanResult {
 
   factory ScanResult.fromJson(Map<String, dynamic> json) {
     var detectedItems = List<String>.from(json['detected_items'] ?? []);
-    final candidates = (json['candidates'] as List<dynamic>?)
+    final candidates =
+        (json['candidates'] as List<dynamic>?)
             ?.map((c) => FoodCandidate.fromJson(c))
             .toList() ??
         [];
@@ -32,10 +33,7 @@ class FoodCandidate {
   final String name;
   final ScanNutrition nutrition;
 
-  FoodCandidate({
-    required this.name,
-    required this.nutrition,
-  });
+  FoodCandidate({required this.name, required this.nutrition});
 
   factory FoodCandidate.fromJson(Map<String, dynamic> json) {
     return FoodCandidate(

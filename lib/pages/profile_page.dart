@@ -45,98 +45,112 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Column(
           children: [
             Expanded(
-              child: Selector2<UserPreferenceProvider, AuthProvider,
-                  ({
-                    UserPreference? pref,
-                    String? avatar,
-                    String? name,
-                    PreferenceStatus status,
-                    bool isLoading,
-                    String? errorMessage
-                  })>(
-                selector: (_, provider, auth) => (
-                  pref: provider.currentPreference,
-                  avatar: auth.currentUser?.avatar,
-                  name: auth.currentUser?.name,
-                  status: provider.status,
-                  isLoading: provider.isLoading,
-                  errorMessage: provider.errorMessage,
-                ),
-                builder: (context, data, child) {
-                  // 1. Tampilkan Skeleton HANYA jika data awal kosong
-                  if (data.status == PreferenceStatus.initial || 
-                     (data.isLoading && data.pref == null)) {
-                    return const ProfileSkeleton();
-                  }
-
-                  // 2. Tampilkan OfflinePlaceholder HANYA jika error DAN data kosong
-                  if (data.status == PreferenceStatus.error && data.pref == null) {
-                    return OfflinePlaceholder(
-                      message: data.errorMessage ?? 'Data profil gagal dimuat',
-                      onRetry: () => context
-                          .read<UserPreferenceProvider>()
-                          .fetchPreference(),
-                    );
-                  }
-
-                  // 3. Jika data sudah ada (meskipun sedang loading di background), tampilkan datanya
-                  final pref = data.pref;
-                  if (pref == null) {
-                    return const ProfileSkeleton();
-                  }
-
-                  final avatarUrl = data.avatar;
-                  final userNameFallback = data.name ?? 'Bunda';
-
-                  return RefreshIndicator(
-                    onRefresh: () => context
-                        .read<UserPreferenceProvider>()
-                        .fetchPreference(forceRefresh: true),
-                    color: Colors.pink,
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.only(bottom: 30),
-                      child: Column(
-                        children: [
-                          _buildHeader(
-                              context, pref, avatarUrl, userNameFallback),
-                          const SizedBox(height: 24),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _buildSectionTitle('Informasi Pribadi'),
-                                _buildPersonalInfoCard(pref),
-                                const SizedBox(height: 24),
-                                _buildSectionTitle('Kesehatan Fisik'),
-                                _buildHealthMetricsGrid(pref),
-                                if (pref.foodProhibitions.isNotEmpty ||
-                                    pref.allergens.isNotEmpty) ...[
-                                  const SizedBox(height: 24),
-                                  _buildAllergyInfo(pref),
-                                ],
-                                const SizedBox(height: 24),
-                                if (pref.nutritionalTargets != null) ...[
-                                  _buildSectionTitle('Target Nutrisi Harian'),
-                                  _buildNutritionCard(
-                                      pref.nutritionalTargets!),
-                                  const SizedBox(height: 24),
-                                ],
-                                _buildSectionTitle('Lainnya'),
-                                _buildSettingsCard(context),
-                                const SizedBox(height: 40),
-                                _buildVersionInfo(),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+              child:
+                  Selector2<
+                    UserPreferenceProvider,
+                    AuthProvider,
+                    ({
+                      UserPreference? pref,
+                      String? avatar,
+                      String? name,
+                      PreferenceStatus status,
+                      bool isLoading,
+                      String? errorMessage,
+                    })
+                  >(
+                    selector: (_, provider, auth) => (
+                      pref: provider.currentPreference,
+                      avatar: auth.currentUser?.avatar,
+                      name: auth.currentUser?.name,
+                      status: provider.status,
+                      isLoading: provider.isLoading,
+                      errorMessage: provider.errorMessage,
                     ),
-                  );
-                },
-              ),
+                    builder: (context, data, child) {
+                      // 1. Tampilkan Skeleton HANYA jika data awal kosong
+                      if (data.status == PreferenceStatus.initial ||
+                          (data.isLoading && data.pref == null)) {
+                        return const ProfileSkeleton();
+                      }
+
+                      // 2. Tampilkan OfflinePlaceholder HANYA jika error DAN data kosong
+                      if (data.status == PreferenceStatus.error &&
+                          data.pref == null) {
+                        return OfflinePlaceholder(
+                          message:
+                              data.errorMessage ?? 'Data profil gagal dimuat',
+                          onRetry: () => context
+                              .read<UserPreferenceProvider>()
+                              .fetchPreference(),
+                        );
+                      }
+
+                      // 3. Jika data sudah ada (meskipun sedang loading di background), tampilkan datanya
+                      final pref = data.pref;
+                      if (pref == null) {
+                        return const ProfileSkeleton();
+                      }
+
+                      final avatarUrl = data.avatar;
+                      final userNameFallback = data.name ?? 'Bunda';
+
+                      return RefreshIndicator(
+                        onRefresh: () => context
+                            .read<UserPreferenceProvider>()
+                            .fetchPreference(forceRefresh: true),
+                        color: Colors.pink,
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.only(bottom: 30),
+                          child: Column(
+                            children: [
+                              _buildHeader(
+                                context,
+                                pref,
+                                avatarUrl,
+                                userNameFallback,
+                              ),
+                              const SizedBox(height: 24),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildSectionTitle('Informasi Pribadi'),
+                                    _buildPersonalInfoCard(pref),
+                                    const SizedBox(height: 24),
+                                    _buildSectionTitle('Kesehatan Fisik'),
+                                    _buildHealthMetricsGrid(pref),
+                                    if (pref.foodProhibitions.isNotEmpty ||
+                                        pref.allergens.isNotEmpty) ...[
+                                      const SizedBox(height: 24),
+                                      _buildAllergyInfo(pref),
+                                    ],
+                                    const SizedBox(height: 24),
+                                    if (pref.nutritionalTargets != null) ...[
+                                      _buildSectionTitle(
+                                        'Target Nutrisi Harian',
+                                      ),
+                                      _buildNutritionCard(
+                                        pref.nutritionalTargets!,
+                                      ),
+                                      const SizedBox(height: 24),
+                                    ],
+                                    _buildSectionTitle('Lainnya'),
+                                    _buildSettingsCard(context),
+                                    const SizedBox(height: 40),
+                                    _buildVersionInfo(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
             ),
           ],
         ),
@@ -144,8 +158,12 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, UserPreference pref,
-      String? avatarUrl, String userNameFallback) {
+  Widget _buildHeader(
+    BuildContext context,
+    UserPreference pref,
+    String? avatarUrl,
+    String userNameFallback,
+  ) {
     return Container(
       width: double.infinity,
       color: Colors.white,
@@ -156,8 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Builder(
                 builder: (context) {
-                  final hasAvatar =
-                      avatarUrl != null && avatarUrl.isNotEmpty;
+                  final hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
 
                   String? finalUrl;
                   if (hasAvatar) {
@@ -220,9 +237,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditProfilePage(
-                          initialPreference: pref,
-                        ),
+                        builder: (context) =>
+                            EditProfilePage(initialPreference: pref),
                       ),
                     );
                   },
@@ -234,7 +250,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       border: Border.all(color: Colors.white, width: 2),
                       boxShadow: [
                         BoxShadow(
-            color: Colors.pink.withValues(alpha: 0.3),
+                          color: Colors.pink.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -304,8 +320,8 @@ class _ProfilePageState extends State<ProfilePage> {
             label: pref.role == 'ANAK_BATITA' ? 'Usia Anak' : 'Usia',
             value: pref.role == 'ANAK_BATITA'
                 ? (pref.ageYear > 0
-                    ? '${pref.ageYear} Tahun ${pref.ageMonth ?? 0} Bulan'
-                    : '${pref.ageMonth ?? 0} Bulan')
+                      ? '${pref.ageYear} Tahun ${pref.ageMonth ?? 0} Bulan'
+                      : '${pref.ageMonth ?? 0} Bulan')
                 : '${pref.ageYear} Tahun',
           ),
           const Divider(height: 24, indent: 44),
@@ -322,8 +338,7 @@ class _ProfilePageState extends State<ProfilePage> {
               value: pref.hpht!,
             ),
           ],
-          if (pref.role == 'IBU_HAMIL' &&
-              pref.gestationalAgeWeeks != null) ...[
+          if (pref.role == 'IBU_HAMIL' && pref.gestationalAgeWeeks != null) ...[
             const Divider(height: 24, indent: 44),
             _ProfileRow(
               icon: Icons.child_friendly_outlined,
@@ -331,8 +346,7 @@ class _ProfilePageState extends State<ProfilePage> {
               value: '${pref.gestationalAgeWeeks} Minggu',
             ),
           ],
-           if (pref.role == 'IBU_MENYUSUI' &&
-              pref.lactationPhase != null) ...[
+          if (pref.role == 'IBU_MENYUSUI' && pref.lactationPhase != null) ...[
             const Divider(height: 24, indent: 44),
             _ProfileRow(
               icon: Icons.baby_changing_station_outlined,
@@ -370,25 +384,29 @@ class _ProfilePageState extends State<ProfilePage> {
     ];
 
     if (pref.lilaCm != null) {
-      metrics.add(_MetricData(
-        'LiLA',
-        '${pref.lilaCm} cm',
-        Icons.straighten,
-        Colors.purple,
-      ));
+      metrics.add(
+        _MetricData(
+          'LiLA',
+          '${pref.lilaCm} cm',
+          Icons.straighten,
+          Colors.purple,
+        ),
+      );
     }
 
-    return LayoutBuilder(builder: (context, constraints) {
-      // Simple grid calculation
-      return Wrap(
-        spacing: 12,
-        runSpacing: 12,
-        children: metrics.map((m) {
-          final width = (constraints.maxWidth - 12) / 2;
-          return _MetricCard(data: m, width: width);
-        }).toList(),
-      );
-    });
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Simple grid calculation
+        return Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: metrics.map((m) {
+            final width = (constraints.maxWidth - 12) / 2;
+            return _MetricCard(data: m, width: width);
+          }).toList(),
+        );
+      },
+    );
   }
 
   Widget _buildAllergyInfo(UserPreference pref) {
@@ -441,11 +459,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   icon: Icons.local_fire_department,
                 ),
               ),
-              Container(
-                width: 1,
-                height: 40,
-                color: Colors.white24,
-              ),
+              Container(width: 1, height: 40, color: Colors.white24),
               Expanded(
                 child: _NutrientItem(
                   label: 'Protein',
@@ -457,7 +471,12 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
           const SizedBox(height: 24),
-          const Divider(color: Colors.white12, height: 1, indent: 20, endIndent: 20),
+          const Divider(
+            color: Colors.white12,
+            height: 1,
+            indent: 20,
+            endIndent: 20,
+          ),
           const SizedBox(height: 24),
           Row(
             children: [
@@ -469,11 +488,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   icon: Icons.rice_bowl,
                 ),
               ),
-              Container(
-                width: 1,
-                height: 40,
-                color: Colors.white24,
-              ),
+              Container(width: 1, height: 40, color: Colors.white24),
               Expanded(
                 child: _NutrientItem(
                   label: 'Lemak',
@@ -501,7 +516,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: Colors.amber[50],
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
+              child: const Icon(
+                Icons.star_rounded,
+                color: Colors.amber,
+                size: 20,
+              ),
             ),
             title: const Text(
               'Beri Feedback',
@@ -615,10 +634,7 @@ class _ProfileRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Colors.grey[500], fontSize: 12),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -692,10 +708,7 @@ class _MetricCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             data.label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey[500]),
           ),
         ],
       ),
@@ -812,10 +825,7 @@ class _NutrientItem extends StatelessWidget {
         ),
         Text(
           '$unit $label',
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 12,
-          ),
+          style: const TextStyle(color: Colors.white70, fontSize: 12),
         ),
       ],
     );

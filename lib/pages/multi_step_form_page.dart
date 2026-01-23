@@ -31,7 +31,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
   Map<String, dynamic> formData = {};
 
   final Color primaryPink = Colors.pink[400]!;
-  final Color secondaryBlue = Colors.pink[400]!; // Changed to pink for consistency
+  final Color secondaryBlue =
+      Colors.pink[400]!; // Changed to pink for consistency
 
   // Required fields per role (excluding optional dietary preferences)
   final Map<String, List<String>> _roleRequiredFields = {
@@ -137,7 +138,6 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         _currentPage = _pageController.page!.round();
       });
     });
-
   }
 
   Widget _getFormStep(int step) {
@@ -200,10 +200,12 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               "usia",
               TextInputType.number,
               customValidator: (value) {
-                if (value == null || value.isEmpty) return 'Usia ibu hamil wajib diisi';
+                if (value == null || value.isEmpty)
+                  return 'Usia ibu hamil wajib diisi';
 
                 int? age = int.tryParse(value);
-                if (age == null || age < 0) return 'Usia harus berupa angka positif';
+                if (age == null || age < 0)
+                  return 'Usia harus berupa angka positif';
                 if (age < 19) return 'Usia ibu hamil minimal 19 tahun';
                 if (age > 45) return 'Usia ibu hamil maksimal 45 tahun';
 
@@ -244,12 +246,15 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
                 "berat_badan",
                 TextInputType.number,
                 customValidator: (value) {
-                  if (value == null || value.isEmpty) return 'Berat badan ibu hamil wajib diisi';
+                  if (value == null || value.isEmpty)
+                    return 'Berat badan ibu hamil wajib diisi';
 
                   double? weight = double.tryParse(value);
-                  if (weight == null || weight <= 0) return 'Berat badan harus angka positif';
+                  if (weight == null || weight <= 0)
+                    return 'Berat badan harus angka positif';
                   if (weight < 35) return 'Berat badan ibu hamil minimal 35 kg';
-                  if (weight > 120) return 'Berat badan ibu hamil maksimal 120 kg';
+                  if (weight > 120)
+                    return 'Berat badan ibu hamil maksimal 120 kg';
 
                   return null;
                 },
@@ -259,12 +264,16 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
                 "tinggi_badan",
                 TextInputType.number,
                 customValidator: (value) {
-                  if (value == null || value.isEmpty) return 'Tinggi badan ibu hamil wajib diisi';
+                  if (value == null || value.isEmpty)
+                    return 'Tinggi badan ibu hamil wajib diisi';
 
                   double? height = double.tryParse(value);
-                  if (height == null || height <= 0) return 'Tinggi badan harus angka positif';
-                  if (height < 140) return 'Tinggi badan ibu hamil minimal 140 cm';
-                  if (height > 180) return 'Tinggi badan ibu hamil maksimal 180 cm';
+                  if (height == null || height <= 0)
+                    return 'Tinggi badan harus angka positif';
+                  if (height < 140)
+                    return 'Tinggi badan ibu hamil minimal 140 cm';
+                  if (height > 180)
+                    return 'Tinggi badan ibu hamil maksimal 180 cm';
 
                   return null;
                 },
@@ -284,10 +293,12 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               "lingkar_lengan_atas",
               TextInputType.number,
               customValidator: (value) {
-                if (value == null || value.isEmpty) return 'LiLA ibu hamil wajib diisi';
+                if (value == null || value.isEmpty)
+                  return 'LiLA ibu hamil wajib diisi';
 
                 double? lila = double.tryParse(value);
-                if (lila == null || lila <= 0) return 'LiLA harus angka positif';
+                if (lila == null || lila <= 0)
+                  return 'LiLA harus angka positif';
                 if (lila < 15) return 'LiLA ibu hamil minimal 15 cm';
                 if (lila > 50) return 'LiLA ibu hamil maksimal 50 cm';
 
@@ -317,10 +328,12 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               "usia",
               TextInputType.number,
               customValidator: (value) {
-                if (value == null || value.isEmpty) return 'Usia ibu menyusui wajib diisi';
+                if (value == null || value.isEmpty)
+                  return 'Usia ibu menyusui wajib diisi';
 
                 int? age = int.tryParse(value);
-                if (age == null || age < 0) return 'Usia harus berupa angka positif';
+                if (age == null || age < 0)
+                  return 'Usia harus berupa angka positif';
                 if (age < 15) return 'Usia ibu menyusui minimal 15 tahun';
                 if (age > 65) return 'Usia ibu menyusui maksimal 65 tahun';
 
@@ -368,12 +381,16 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               "tinggi_badan",
               TextInputType.number,
               customValidator: (value) {
-                if (value == null || value.isEmpty) return 'Tinggi badan ibu menyusui wajib diisi';
+                if (value == null || value.isEmpty)
+                  return 'Tinggi badan ibu menyusui wajib diisi';
 
                 double? height = double.tryParse(value);
-                if (height == null || height <= 0) return 'Tinggi badan harus angka positif';
-                if (height < 140) return 'Tinggi badan ibu menyusui minimal 140 cm';
-                if (height > 180) return 'Tinggi badan ibu menyusui maksimal 180 cm';
+                if (height == null || height <= 0)
+                  return 'Tinggi badan harus angka positif';
+                if (height < 140)
+                  return 'Tinggi badan ibu menyusui minimal 140 cm';
+                if (height > 180)
+                  return 'Tinggi badan ibu menyusui maksimal 180 cm';
 
                 return null;
               },
@@ -383,12 +400,16 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               "berat_badan",
               TextInputType.number,
               customValidator: (value) {
-                if (value == null || value.isEmpty) return 'Berat badan ibu menyusui wajib diisi';
+                if (value == null || value.isEmpty)
+                  return 'Berat badan ibu menyusui wajib diisi';
 
                 double? weight = double.tryParse(value);
-                if (weight == null || weight <= 0) return 'Berat badan harus angka positif';
-                if (weight < 35) return 'Berat badan ibu menyusui minimal 35 kg';
-                if (weight > 120) return 'Berat badan ibu menyusui maksimal 120 kg';
+                if (weight == null || weight <= 0)
+                  return 'Berat badan harus angka positif';
+                if (weight < 35)
+                  return 'Berat badan ibu menyusui minimal 35 kg';
+                if (weight > 120)
+                  return 'Berat badan ibu menyusui maksimal 120 kg';
 
                 return null;
               },
@@ -423,12 +444,15 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               "berat_badan",
               TextInputType.number,
               customValidator: (value) {
-                if (value == null || value.isEmpty) return 'Berat badan anak wajib diisi';
+                if (value == null || value.isEmpty)
+                  return 'Berat badan anak wajib diisi';
 
                 double? weight = double.tryParse(value);
-                if (weight == null || weight <= 0) return 'Berat badan harus angka positif';
+                if (weight == null || weight <= 0)
+                  return 'Berat badan harus angka positif';
                 if (weight < 4) return 'Berat badan anak batita minimal 4 kg';
-                if (weight > 16) return 'Berat badan anak batita maksimal 16 kg';
+                if (weight > 16)
+                  return 'Berat badan anak batita maksimal 16 kg';
 
                 return null;
               },
@@ -438,12 +462,16 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               "tinggi_badan",
               TextInputType.number,
               customValidator: (value) {
-                if (value == null || value.isEmpty) return 'Tinggi badan anak wajib diisi';
+                if (value == null || value.isEmpty)
+                  return 'Tinggi badan anak wajib diisi';
 
                 double? height = double.tryParse(value);
-                if (height == null || height <= 0) return 'Tinggi badan harus angka positif';
-                if (height < 45) return 'Tinggi badan anak batita minimal 45 cm';
-                if (height > 100) return 'Tinggi badan anak batita maksimal 100 cm';
+                if (height == null || height <= 0)
+                  return 'Tinggi badan harus angka positif';
+                if (height < 45)
+                  return 'Tinggi badan anak batita minimal 45 cm';
+                if (height > 100)
+                  return 'Tinggi badan anak batita maksimal 100 cm';
 
                 return null;
               },
@@ -463,7 +491,8 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
               TextInputType.number,
               hintText: "Contoh: 0 untuk bayi, 1 untuk anak 1 tahun",
               customValidator: (value) {
-                if (value == null || value.isEmpty) return 'Usia anak wajib diisi';
+                if (value == null || value.isEmpty)
+                  return 'Usia anak wajib diisi';
 
                 int? age = int.tryParse(value);
                 if (age == null) return 'Usia harus berupa angka';
@@ -540,19 +569,22 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         ),
         keyboardType: inputType,
         maxLines: maxLines ?? 1,
-        validator: customValidator ?? (value) {
-          bool isRequired =
-              required ||
-              (_roleRequiredFields[widget.userRole]?.contains(key) ?? false);
-          if (!isRequired) return null;
-          if (value == null || value.isEmpty) return '$label wajib diisi';
-          // Additional validation for numeric fields
-          if (inputType == TextInputType.number) {
-            double? num = double.tryParse(value);
-            if (num == null || num < 0) return '$label harus angka positif';
-          }
-          return null;
-        },
+        validator:
+            customValidator ??
+            (value) {
+              bool isRequired =
+                  required ||
+                  (_roleRequiredFields[widget.userRole]?.contains(key) ??
+                      false);
+              if (!isRequired) return null;
+              if (value == null || value.isEmpty) return '$label wajib diisi';
+              // Additional validation for numeric fields
+              if (inputType == TextInputType.number) {
+                double? num = double.tryParse(value);
+                if (num == null || num < 0) return '$label harus angka positif';
+              }
+              return null;
+            },
         onSaved: (value) => formData[key] = value,
       ),
     );
@@ -850,13 +882,13 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
 
       // Ensure AuthProvider is updated with the real role and name from backend
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
+
       // Update name if provided in form
       final String formName = formData['nama'] ?? '';
       if (formName.isNotEmpty) {
         await authProvider.updateUserName(formName);
       }
-      
+
       // Pass the new token and update role
       await authProvider.updateUserRole(backendRole, token: result.token);
 
@@ -864,13 +896,16 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
         setState(() {
           _isLoadingSubmit = false;
         });
-        
+
         // Beri jeda sebentar agar SnackBar terlihat dan state provider tertanam kuat
         await Future.delayed(const Duration(milliseconds: 600));
-        
+
         if (mounted) {
           // Navigasi ke Dashboard
-          context.go('/', extra: {'userName': formName.isNotEmpty ? formName : displayName});
+          context.go(
+            '/',
+            extra: {'userName': formName.isNotEmpty ? formName : displayName},
+          );
         }
       }
     } else if (mounted) {
@@ -903,78 +938,80 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text("Langkah ${_currentPage + 1} dari $_totalSteps"),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
+          ),
+          foregroundColor: Colors.white,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: _previousPage,
           ),
         ),
-        foregroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: _previousPage,
+        resizeToAvoidBottomInset:
+            false, // Mencegah layout shift saat keyboard muncul
+        body: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: LinearProgressIndicator(
+                  value: (_currentPage + 1) / _totalSteps,
+                  backgroundColor: Colors.grey.shade300,
+                  valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+                ),
+              ),
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _totalSteps,
+                  itemBuilder: (context, index) {
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.all(32.0),
+                      child: _getFormStep(index),
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32, 10, 32, 32),
+                child: ElevatedButton(
+                  onPressed: _nextPage,
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: AppStyles.pinkGradient,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      height: 50,
+                      alignment: Alignment.center,
+                      child: _isLoadingSubmit
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : Text(
+                              _currentPage == _totalSteps - 1
+                                  ? 'Selesai & Masuk'
+                                  : 'Lanjut',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      resizeToAvoidBottomInset: false, // Mencegah layout shift saat keyboard muncul
-      body: SafeArea(
-        child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: LinearProgressIndicator(
-              value: (_currentPage + 1) / _totalSteps,
-              backgroundColor: Colors.grey.shade300,
-              valueColor: AlwaysStoppedAnimation<Color>(accentColor),
-            ),
-          ),
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _totalSteps,
-              itemBuilder: (context, index) {
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(32.0),
-                  child: _getFormStep(index),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(32, 10, 32, 32),
-            child: ElevatedButton(
-              onPressed: _nextPage,
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: Ink(
-                decoration: BoxDecoration(
-                  gradient: AppStyles.pinkGradient,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Container(
-                  width: double.infinity,
-                  height: 50,
-                  alignment: Alignment.center,
-                  child: _isLoadingSubmit
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(
-                          _currentPage == _totalSteps - 1
-                              ? 'Selesai & Masuk'
-                              : 'Lanjut',
-                          style: const TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-      ),
-    ),
     );
   }
 

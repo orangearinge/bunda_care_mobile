@@ -150,9 +150,7 @@ class FoodProvider with ChangeNotifier {
       final success = await _foodService.confirmMeal(mealLogId);
       if (success) {
         // Update local list
-        final index = _mealLogs.indexWhere(
-          (l) => l.id == mealLogId,
-        );
+        final index = _mealLogs.indexWhere((l) => l.id == mealLogId);
         if (index != -1) {
           final oldLog = _mealLogs[index];
           _mealLogs[index] = MealLog(

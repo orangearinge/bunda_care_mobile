@@ -26,9 +26,7 @@ class ScanResultPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Hasil Scan"),
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
-          ),
+          decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
         ),
         foregroundColor: Colors.white,
         elevation: 0,
@@ -55,7 +53,9 @@ class ScanResultPage extends StatelessWidget {
                 children: [
                   if (imageBytes != null || imagePath != null)
                     ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(30),
+                      ),
                       child: kIsWeb
                           ? Image.memory(
                               imageBytes!,
@@ -92,26 +92,37 @@ class ScanResultPage extends StatelessWidget {
                           spacing: 8,
                           runSpacing: 8,
                           alignment: WrapAlignment.center,
-                          children: results.detectedItems.map((item) => Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.pink[50],
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.pink[200]!),
-                            ),
-                            child: Text(
-                              item,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.pink[800],
-                              ),
-                            ),
-                          )).toList(),
+                          children: results.detectedItems
+                              .map(
+                                (item) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.pink[50],
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: Colors.pink[200]!,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    item,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.pink[800],
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          results.detectedItems.isEmpty ? "Tidak ada makanan terdeteksi" : "Identifikasi Terdeteksi",
+                          results.detectedItems.isEmpty
+                              ? "Tidak ada makanan terdeteksi"
+                              : "Identifikasi Terdeteksi",
                           style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 14,
@@ -124,7 +135,7 @@ class ScanResultPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 30),
-            
+
             // Nutrition Candidates
             if (results.candidates.isNotEmpty)
               Column(
@@ -134,15 +145,18 @@ class ScanResultPage extends StatelessWidget {
                     padding: EdgeInsets.only(left: 8.0, bottom: 12),
                     child: Text(
                       "Detail Nutrisi (estimasi per 100g)",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   ...results.candidates.map((c) => _buildCandidateTile(c)),
                 ],
               ),
-            
+
             const SizedBox(height: 40),
-            
+
             // Action Buttons
             SizedBox(
               width: double.infinity,
@@ -221,7 +235,10 @@ class ScanResultPage extends StatelessWidget {
               children: [
                 Text(
                   candidate.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -234,11 +251,20 @@ class ScanResultPage extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text("P: ${nutrition.proteinG}g", style: const TextStyle(fontSize: 12)),
-              Text("K: ${nutrition.carbsG}g", style: const TextStyle(fontSize: 12)),
-              Text("L: ${nutrition.fatG}g", style: const TextStyle(fontSize: 12)),
+              Text(
+                "P: ${nutrition.proteinG}g",
+                style: const TextStyle(fontSize: 12),
+              ),
+              Text(
+                "K: ${nutrition.carbsG}g",
+                style: const TextStyle(fontSize: 12),
+              ),
+              Text(
+                "L: ${nutrition.fatG}g",
+                style: const TextStyle(fontSize: 12),
+              ),
             ],
-          )
+          ),
         ],
       ),
     );

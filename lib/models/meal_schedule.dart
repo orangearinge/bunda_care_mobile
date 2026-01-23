@@ -19,10 +19,7 @@ class MealSchedule {
     return MealSchedule(
       id: json['id'],
       mealType: json['meal_type'],
-      scheduledTime: TimeOfDay(
-        hour: json['hour'],
-        minute: json['minute'],
-      ),
+      scheduledTime: TimeOfDay(hour: json['hour'], minute: json['minute']),
       isEnabled: json['is_enabled'] ?? true,
       customMessage: json['custom_message'],
     );

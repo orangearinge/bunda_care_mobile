@@ -15,29 +15,17 @@ class ChatMessage {
 
   /// Create a user message
   factory ChatMessage.user(String text) {
-    return ChatMessage(
-      text: text,
-      isUser: true,
-      isLoading: false,
-    );
+    return ChatMessage(text: text, isUser: true, isLoading: false);
   }
 
   /// Create a bot message
   factory ChatMessage.bot(String text) {
-    return ChatMessage(
-      text: text,
-      isUser: false,
-      isLoading: false,
-    );
+    return ChatMessage(text: text, isUser: false, isLoading: false);
   }
 
   /// Create a loading placeholder message
   factory ChatMessage.loading() {
-    return ChatMessage(
-      text: '...',
-      isUser: false,
-      isLoading: true,
-    );
+    return ChatMessage(text: '...', isUser: false, isLoading: true);
   }
 
   /// Format timestamp untuk display

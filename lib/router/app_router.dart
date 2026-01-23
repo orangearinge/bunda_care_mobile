@@ -28,13 +28,12 @@ class AppRouter {
     refreshListenable: authProvider,
     debugLogDiagnostics: true,
     initialLocation: '/splash', // Start at splash
-
     // Redirect logic based on authentication state
     redirect: (context, state) {
       final authState = authProvider.state;
       final isAuthenticated = authProvider.isAuthenticated;
       final isUserComplete = authProvider.isUserComplete;
-      
+
       final isSplash = state.matchedLocation == '/splash';
       final isLoggingIn = state.matchedLocation == '/login';
       final isRegistering = state.matchedLocation == '/register';
@@ -51,10 +50,16 @@ class AppRouter {
 
       // 2. If authenticated...
       if (isAuthenticated) {
-        final isMultiStep = state.matchedLocation.startsWith('/multi-step-form');
+        final isMultiStep = state.matchedLocation.startsWith(
+          '/multi-step-form',
+        );
 
         // If on splash, login, register, or setup pages -> go to home if complete
-        if (isSplash || isLoggingIn || isRegistering || isRoleSelection || isMultiStep) {
+        if (isSplash ||
+            isLoggingIn ||
+            isRegistering ||
+            isRoleSelection ||
+            isMultiStep) {
           if (isUserComplete) {
             return '/';
           }
@@ -89,10 +94,7 @@ class AppRouter {
     },
 
     routes: [
-      GoRoute(
-        path: '/splash',
-        builder: (context, state) => const SplashPage(),
-      ),
+      GoRoute(path: '/splash', builder: (context, state) => const SplashPage()),
       // Auth Routes (Public)
       GoRoute(
         path: '/login',

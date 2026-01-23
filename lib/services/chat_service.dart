@@ -14,10 +14,7 @@ class ChatService {
     try {
       // Validasi input
       if (query.trim().isEmpty) {
-        throw ApiError(
-          code: 'EMPTY_QUERY',
-          message: 'Pertanyaan wajib diisi',
-        );
+        throw ApiError(code: 'EMPTY_QUERY', message: 'Pertanyaan wajib diisi');
       }
 
       final response = await _apiService.post(
@@ -35,10 +32,7 @@ class ChatService {
         };
       }
 
-      throw ApiError(
-        code: 'INVALID_RESPONSE',
-        message: 'Respons server salah',
-      );
+      throw ApiError(code: 'INVALID_RESPONSE', message: 'Respons server salah');
     } catch (e) {
       throw ErrorHandler.handle(e);
     }

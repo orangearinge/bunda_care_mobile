@@ -32,7 +32,6 @@ class _SignUpPageState extends State<SignUpPage> {
   // State untuk checkbox persetujuan syarat & ketentuan
   bool _agreeToTerms = false;
 
-
   /// Fungsi helper untuk membuat dekorasi input field yang konsisten
   InputDecoration _buildInputDecoration({
     required String hintText,
@@ -169,7 +168,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.1),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.1,
+                                        ),
                                         blurRadius: 10,
                                         spreadRadius: 2,
                                       ),
@@ -493,7 +494,6 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
-
 
   Widget _socialButtonWithImage({
     required String image,

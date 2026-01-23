@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
@@ -48,7 +47,10 @@ class ArticleCard extends StatelessWidget {
                         ),
                         errorWidget: (context, url, error) => Container(
                           color: Colors.grey[100],
-                          child: const Icon(Icons.broken_image, color: Colors.grey),
+                          child: const Icon(
+                            Icons.broken_image,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),
@@ -56,7 +58,10 @@ class ArticleCard extends StatelessWidget {
                       top: 12,
                       left: 12,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.pink[400]!.withValues(alpha: 0.9),
                           borderRadius: BorderRadius.circular(20),
@@ -89,7 +94,8 @@ class ArticleCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (article.excerpt != null && article.excerpt!.isNotEmpty) ...[
+                    if (article.excerpt != null &&
+                        article.excerpt!.isNotEmpty) ...[
                       const SizedBox(height: 6),
                       Text(
                         article.excerpt!,
@@ -108,11 +114,17 @@ class ArticleCard extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.access_time_rounded, size: 14, color: Colors.grey[500]),
+                            Icon(
+                              Icons.access_time_rounded,
+                              size: 14,
+                              color: Colors.grey[500],
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               article.publishedAt != null
-                                  ? DateFormat('dd MMM yyyy').format(article.publishedAt!)
+                                  ? DateFormat(
+                                      'dd MMM yyyy',
+                                    ).format(article.publishedAt!)
                                   : 'Baru saja',
                               style: TextStyle(
                                 fontSize: 11,

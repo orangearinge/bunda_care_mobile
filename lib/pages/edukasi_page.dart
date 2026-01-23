@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/article_provider.dart';
@@ -30,7 +29,8 @@ class _EdukasiPageState extends State<EdukasiPage> {
     });
 
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200) {
         final provider = context.read<ArticleProvider>();
         if (!provider.isLoadingMore && provider.hasMore) {
           provider.fetchArticles();
@@ -55,15 +55,15 @@ class _EdukasiPageState extends State<EdukasiPage> {
         ),
         centerTitle: true,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
-          ),
+          decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
         ),
         elevation: 0,
       ),
       body: Consumer<ArticleProvider>(
         builder: (context, provider, child) {
-          if ((provider.isLoading || provider.status == ArticleStatus.initial) && provider.articles.isEmpty) {
+          if ((provider.isLoading ||
+                  provider.status == ArticleStatus.initial) &&
+              provider.articles.isEmpty) {
             return ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: 5,
@@ -79,18 +79,27 @@ class _EdukasiPageState extends State<EdukasiPage> {
           }
 
           if (provider.articles.isEmpty) {
-             return Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.article_outlined, size: 48, color: Colors.grey),
+                  const Icon(
+                    Icons.article_outlined,
+                    size: 48,
+                    color: Colors.grey,
+                  ),
                   const SizedBox(height: 16),
                   const Text('Belum ada artikel edukasi saat ini.'),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => provider.fetchArticles(refresh: true),
-                     style: ElevatedButton.styleFrom(backgroundColor: Colors.pink),
-                     child: const Text('Refresh', style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pink,
+                    ),
+                    child: const Text(
+                      'Refresh',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
@@ -105,7 +114,7 @@ class _EdukasiPageState extends State<EdukasiPage> {
               padding: const EdgeInsets.all(16),
               itemCount: provider.articles.length + (provider.hasMore ? 1 : 0),
               itemBuilder: (context, index) {
-                 if (index == provider.articles.length) {
+                if (index == provider.articles.length) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),
                     child: Center(child: ShimmerCircle(size: 30)),
@@ -119,7 +128,8 @@ class _EdukasiPageState extends State<EdukasiPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ArticleDetailPage(slug: article.slug),
+                        builder: (context) =>
+                            ArticleDetailPage(slug: article.slug),
                       ),
                     );
                   },

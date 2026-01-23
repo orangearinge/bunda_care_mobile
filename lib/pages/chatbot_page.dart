@@ -63,9 +63,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
         ),
         centerTitle: true,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
-          ),
+          decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
         ),
         elevation: 0,
         actions: [
@@ -189,15 +187,14 @@ class _ChatbotPageState extends State<ChatbotPage> {
           maxWidth: MediaQuery.of(context).size.width * 0.75,
         ),
         child: Column(
-          crossAxisAlignment:
-              message.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: message.isUser
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                gradient: message.isUser
-                    ? AppStyles.pinkGradient
-                    : null,
+                gradient: message.isUser ? AppStyles.pinkGradient : null,
                 color: message.isUser ? null : Colors.grey[100],
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
@@ -208,48 +205,43 @@ class _ChatbotPageState extends State<ChatbotPage> {
                   ),
                 ],
               ),
-                child: message.isUser
-                    ? Text(
-                        message.text,
-                        style: TextStyle(
-                          color: Colors.white,
+              child: message.isUser
+                  ? Text(
+                      message.text,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        height: 1.4,
+                      ),
+                    )
+                  : MarkdownBody(
+                      data: message.text,
+                      styleSheet: MarkdownStyleSheet(
+                        p: TextStyle(
+                          color: Colors.grey[800],
                           fontSize: 15,
                           height: 1.4,
                         ),
-                      )
-                    : MarkdownBody(
-                        data: message.text,
-                        styleSheet: MarkdownStyleSheet(
-                          p: TextStyle(
-                            color: Colors.grey[800],
-                            fontSize: 15,
-                            height: 1.4,
-                          ),
-                          h3: TextStyle(
-                            color: Colors.grey[900],
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            height: 1.5,
-                          ),
-                          strong: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey[900],
-                          ),
-                          listBullet: TextStyle(
-                            color: Colors.grey[800],
-                          ),
+                        h3: TextStyle(
+                          color: Colors.grey[900],
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          height: 1.5,
                         ),
+                        strong: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[900],
+                        ),
+                        listBullet: TextStyle(color: Colors.grey[800]),
                       ),
-              ),
+                    ),
+            ),
             const SizedBox(height: 4),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text(
                 message.formattedTime,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.grey[500],
-                ),
+                style: TextStyle(fontSize: 11, color: Colors.grey[500]),
               ),
             ),
           ],
@@ -283,10 +275,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
             const SizedBox(width: 12),
             Text(
               'Bunda Care sedang berpikir...',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.grey[600], fontSize: 14),
             ),
           ],
         ),
@@ -345,7 +334,9 @@ class _ChatbotPageState extends State<ChatbotPage> {
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : const Icon(Icons.send, color: Colors.white),

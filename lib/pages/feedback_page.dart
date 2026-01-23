@@ -39,9 +39,9 @@ class _FeedbackPageState extends State<FeedbackPage> {
     }
 
     final success = await context.read<FeedbackProvider>().submitFeedback(
-          _rating,
-          _commentController.text,
-        );
+      _rating,
+      _commentController.text,
+    );
 
     if (success && mounted) {
       _commentController.clear();
@@ -68,13 +68,15 @@ class _FeedbackPageState extends State<FeedbackPage> {
         ),
         centerTitle: true,
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
-          ),
+          decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
         ),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: Colors.white,
+            size: 20,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -82,7 +84,10 @@ class _FeedbackPageState extends State<FeedbackPage> {
         builder: (context, provider, child) {
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 24.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -113,7 +118,9 @@ class _FeedbackPageState extends State<FeedbackPage> {
                 if (provider.isLoading)
                   const Padding(
                     padding: EdgeInsets.only(top: 40),
-                    child: Center(child: CircularProgressIndicator(strokeWidth: 3)),
+                    child: Center(
+                      child: CircularProgressIndicator(strokeWidth: 3),
+                    ),
                   )
                 else if (provider.feedbacks.isEmpty)
                   Center(
@@ -127,8 +134,11 @@ class _FeedbackPageState extends State<FeedbackPage> {
                               color: Colors.grey[100],
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(Icons.chat_bubble_outline_rounded,
-                                size: 48, color: Colors.grey[300]),
+                            child: Icon(
+                              Icons.chat_bubble_outline_rounded,
+                              size: 48,
+                              color: Colors.grey[300],
+                            ),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -209,7 +219,9 @@ class _FeedbackPageState extends State<FeedbackPage> {
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.all(4),
                     child: Icon(
-                      isSelected ? Icons.star_rounded : Icons.star_outline_rounded,
+                      isSelected
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
                       color: isSelected ? Colors.amber[400] : Colors.grey[300],
                       size: 42,
                     ),
@@ -277,7 +289,9 @@ class _FeedbackPageState extends State<FeedbackPage> {
                           width: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : const Text(
@@ -319,14 +333,21 @@ class _FeedbackPageState extends State<FeedbackPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.amber[50],
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.star_rounded, color: Colors.amber[600], size: 16),
+                    Icon(
+                      Icons.star_rounded,
+                      color: Colors.amber[600],
+                      size: 16,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       '${feedback.rating}.0',
@@ -342,7 +363,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
               Text(
                 DateFormat('dd MMM yyyy').format(feedback.createdAt),
                 style: TextStyle(
-                  color: Colors.grey[400], 
+                  color: Colors.grey[400],
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                 ),

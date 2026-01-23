@@ -15,10 +15,7 @@ class FeedbackService {
     try {
       final response = await _api.post(
         ApiConstants.feedback,
-        data: {
-          'rating': rating,
-          'comment': comment,
-        },
+        data: {'rating': rating, 'comment': comment},
       );
 
       final unwrapped = _api.unwrap(response);

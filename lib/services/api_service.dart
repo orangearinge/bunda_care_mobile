@@ -81,22 +81,19 @@ class ApiService {
         final cacheDir = await getTemporaryDirectory();
         cachePath = cacheDir.path;
       }
-      
-      _cacheStore = HiveCacheStore(
-        cachePath,
-        hiveBoxName: 'bunda_care_cache',
-      );
+
+      _cacheStore = HiveCacheStore(cachePath, hiveBoxName: 'bunda_care_cache');
 
       _dio.interceptors.insert(
         0,
         DioCacheInterceptor(
           options: CacheOptions(
             store: _cacheStore,
-            policy: CachePolicy.request,
-            hitCacheOnErrorCodes: [500, 502, 503, 504],
+            policy: CachePolicy.refreshForceCache, // Try network first, then cache
+            hitCacheOnErrorCodes: [500, 502, 503, 504, 404],
             hitCacheOnNetworkFailure: true,
-            maxStale: const Duration(days: 7),
-            priority: CachePriority.normal,
+            maxStale: const Duration(days: 30), // Increased to 30 days for offline
+            priority: CachePriority.high,
             keyBuilder: CacheOptions.defaultCacheKeyBuilder,
             allowPostMethod: false,
           ),
@@ -206,8 +203,6 @@ class ApiService {
     return data;
   }
 
-
-
   Future<void> clearAllCache() async {
     await _ensureCacheInitialized();
     if (_cacheStore == null) return;
@@ -227,11 +222,9 @@ class ApiService {
       // The default use the URI itself as key base
       final baseUrl = _dio.options.baseUrl;
       final fullUrl = url.startsWith('http') ? url : '$baseUrl$url';
-      
-      final key = CacheOptions.defaultCacheKeyBuilder(
-        url: Uri.parse(fullUrl),
-      );
-      
+
+      final key = CacheOptions.defaultCacheKeyBuilder(url: Uri.parse(fullUrl));
+
       await _cacheStore!.delete(key);
       AppLogger.i('🗑️ Cache cleared for: $fullUrl (key: $key)');
     } catch (e) {

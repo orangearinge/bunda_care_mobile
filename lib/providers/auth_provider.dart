@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../models/user.dart';
 import '../models/api_error.dart';
@@ -102,39 +103,24 @@ class AuthProvider with ChangeNotifier {
     try {
       // Sync Google session state in background
       _authService.signInSilently();
-      // Check if user has stored token
+      
+      // Step 1: Check if user has stored token and user data
       final hasToken = await _authService.isAuthenticated();
+      final storedUser = await _authService.getCurrentUser();
 
-      if (hasToken) {
-        // Validate token with server before setting authenticated
-        try {
-          // Validate token by calling getUserProfile (will throw if invalid)
-          await _userService.getUserProfile();
-
-          // Token is valid, load user data and set authenticated
-          final user = await _authService.getCurrentUser();
-          if (user != null) {
-            _currentUser = user;
-            _setState(AuthState.authenticated);
-
-            // Refresh user data from backend in background
-            _refreshUser();
-            return;
-          }
-        } catch (e) {
-          // Token is invalid/expired, clear session
-          if (e is ApiError && _isAuthError(e)) {
-            AppLogger.w('Token validation failed: ${e.code}');
-            await _authService.logout();
-            _setState(AuthState.unauthenticated);
-            return;
-          }
-          // Re-throw other errors
-          rethrow;
-        }
+      if (hasToken && storedUser != null) {
+        // OPTIMISTIC AUTH: If we have a token and user data locally, 
+        // assume authenticated immediately so user can enter the app.
+        _currentUser = storedUser;
+        _setState(AuthState.authenticated);
+        
+        // Step 2: Validate token and refresh data in background
+        // We do this without blocking the UI
+        unawaited(_refreshUser(isInitialCheck: true));
+        return;
       }
 
-      // No valid session
+      // No valid session found locally
       _setState(AuthState.unauthenticated);
     } catch (e) {
       AppLogger.e('Error checking auth status', e);
@@ -143,7 +129,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   /// Refresh user data from backend
-  Future<void> _refreshUser() async {
+  Future<void> _refreshUser({bool isInitialCheck = false}) async {
     try {
       // 1. Fetch current user profile data
       final userProfile = await _userService.getUserProfile();
@@ -168,8 +154,6 @@ class AuthProvider with ChangeNotifier {
       final preference = await _userService.getPreference();
 
       if (preference != null && _currentUser != null) {
-        // If preferences exist, the user definitely has a role
-        // Update local user role from preference if it differs
         if (_currentUser!.role != preference.role) {
           _currentUser = _currentUser!.copyWith(role: preference.role);
           await _authService.updateUser(_currentUser!);
@@ -177,15 +161,22 @@ class AuthProvider with ChangeNotifier {
         }
       }
     } on ApiError catch (e) {
-      // Handle authentication errors by logging out
-      if (_isAuthError(e)) {
+      // CRITICAL: Only logout if it's strictly an AUTH error
+      if (e.isAuthError) {
         AppLogger.w('Authentication error during user refresh: ${e.code}');
         await logout();
         return;
       }
-      AppLogger.e('Error refreshing user data', e);
+      
+      // If it's a connection error or server down, we stay authenticated
+      // but log the warning.
+      if (e.isConnectionError) {
+        AppLogger.w('Network/Server error during background refresh. Staying offline.');
+      } else {
+        AppLogger.e('Error refreshing user data: ${e.code}', e);
+      }
     } catch (e) {
-      AppLogger.e('Error refreshing user data', e);
+      AppLogger.e('Unexpected error refreshing user data', e);
     }
   }
 
@@ -312,11 +303,7 @@ class AuthProvider with ChangeNotifier {
 
   /// Check if error is authentication-related
   bool _isAuthError(ApiError error) {
-    return error.code == 'SESSION_EXPIRED' ||
-        error.code == 'UNAUTHORIZED' ||
-        error.code == 'TOKEN_EXPIRED' ||
-        error.code == 'INVALID_TOKEN' ||
-        error.code == 'UNAUTHORIZED';
+    return error.isAuthError;
   }
 
   /// Set authentication state

@@ -29,6 +29,7 @@ class FeedbackModel {
     };
   }
 }
+
 class FeedbackListResponse {
   final List<FeedbackModel> items;
   final Pagination pagination;
@@ -37,7 +38,9 @@ class FeedbackListResponse {
 
   factory FeedbackListResponse.fromJson(Map<String, dynamic> json) {
     var list = json['items'] as List;
-    List<FeedbackModel> itemsList = list.map((i) => FeedbackModel.fromJson(i)).toList();
+    List<FeedbackModel> itemsList = list
+        .map((i) => FeedbackModel.fromJson(i))
+        .toList();
 
     return FeedbackListResponse(
       items: itemsList,

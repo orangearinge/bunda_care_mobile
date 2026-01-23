@@ -36,13 +36,13 @@ class OfflinePlaceholder extends StatelessWidget {
                   ],
                 ),
                 borderRadius: BorderRadius.circular(AppStyles.radiusMedium),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.06),
-                        blurRadius: 15,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 15,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
               ),
               child: Column(
                 children: [
@@ -60,11 +60,7 @@ class OfflinePlaceholder extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Icon(
-                      icon,
-                      size: 40,
-                      color: Colors.white,
-                    ),
+                    child: Icon(icon, size: 40, color: Colors.white),
                   ),
                   const SizedBox(height: 16),
                   // Title
@@ -104,7 +100,10 @@ class OfflinePlaceholder extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppStyles.primaryPink,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 16,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(AppStyles.radiusLarge),
                   ),

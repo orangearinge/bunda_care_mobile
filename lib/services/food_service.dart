@@ -6,7 +6,6 @@ import '../utils/cache_config.dart';
 import '../utils/error_handler.dart';
 import 'api_service.dart';
 
-
 /// Service for food-related API calls
 class FoodService {
   final ApiService _api = ApiService();
@@ -84,7 +83,8 @@ class FoodService {
       );
     } catch (e) {
       // For network errors, throw to show offline placeholder
-      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+      if (e is ApiError &&
+          (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
         rethrow; // Re-throw network errors to show offline state
       }
       throw ErrorHandler.handle(e);
@@ -93,7 +93,10 @@ class FoodService {
 
   /// Get food/menu detail by ID
   /// GET /api/menus/:id
-  Future<FoodDetail> getFoodDetail(int menuId, {bool forceRefresh = false}) async {
+  Future<FoodDetail> getFoodDetail(
+    int menuId, {
+    bool forceRefresh = false,
+  }) async {
     try {
       final cacheOptions = forceRefresh
           ? _api.getCacheOptions(CacheConfig.forceRefresh)
@@ -115,8 +118,9 @@ class FoodService {
       );
     } catch (e) {
       // Allow detail to be null if network error (might be in cache)
-      if (e is ApiError && (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
-        // We throw so the provider knows it's an error, 
+      if (e is ApiError &&
+          (e.code == 'NETWORK_ERROR' || e.code == 'TIMEOUT_ERROR')) {
+        // We throw so the provider knows it's an error,
         // but it could potentially be caught and handled if we want to show stale data.
         // Actually, let's throw but make sure the provider handles it nicely.
       }
@@ -155,7 +159,7 @@ class FoodService {
         queryParameters: {"limit": limit},
       );
       final data = _api.unwrap(response);
-      
+
       if (data != null && data is Map<String, dynamic>) {
         return data['items'] ?? [];
       } else if (data is List) {
@@ -171,7 +175,9 @@ class FoodService {
   /// POST /api/meal-log/:id/confirm
   Future<bool> confirmMeal(int mealLogId) async {
     try {
-      final response = await _api.post('${ApiConstants.mealLog}/$mealLogId/confirm');
+      final response = await _api.post(
+        '${ApiConstants.mealLog}/$mealLogId/confirm',
+      );
       return response.statusCode == 200;
     } catch (e) {
       throw ErrorHandler.handle(e);

@@ -80,11 +80,7 @@ class ShimmerCircle extends StatelessWidget {
   final double size;
   final EdgeInsetsGeometry? margin;
 
-  const ShimmerCircle({
-    super.key,
-    required this.size,
-    this.margin,
-  });
+  const ShimmerCircle({super.key, required this.size, this.margin});
 
   @override
   Widget build(BuildContext context) {
@@ -161,11 +157,7 @@ class FoodCardSkeleton extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 100,
-                    height: 14,
-                    color: Colors.white,
-                  ),
+                  Container(width: 100, height: 14, color: Colors.white),
                   const SizedBox(height: 8),
                   Container(
                     width: double.infinity,
@@ -173,11 +165,7 @@ class FoodCardSkeleton extends StatelessWidget {
                     color: Colors.white,
                   ),
                   const SizedBox(height: 4),
-                  Container(
-                    width: 80,
-                    height: 10,
-                    color: Colors.white,
-                  ),
+                  Container(width: 80, height: 10, color: Colors.white),
                 ],
               ),
             ),
@@ -231,11 +219,7 @@ class ArticleCardSkeleton extends StatelessWidget {
                     color: Colors.white,
                   ),
                   const SizedBox(height: 6),
-                  Container(
-                    width: 200,
-                    height: 12,
-                    color: Colors.white,
-                  ),
+                  Container(width: 200, height: 12, color: Colors.white),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -292,7 +276,11 @@ class MenuCardSkeleton extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Container(width: double.infinity, height: 14, color: Colors.white),
+                  Container(
+                    width: double.infinity,
+                    height: 14,
+                    color: Colors.white,
+                  ),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -310,7 +298,9 @@ class MenuCardSkeleton extends StatelessWidget {
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(20),
+                ),
               ),
             ),
           ],
@@ -350,11 +340,25 @@ class HistoryCardSkeleton extends StatelessWidget {
                       Container(width: 100, height: 14, color: Colors.white),
                     ],
                   ),
-                  Container(width: 80, height: 30, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12))),
+                  Container(
+                    width: 80,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
-              Container(width: double.infinity, height: 8, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(4))),
+              Container(
+                width: double.infinity,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
               const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -410,7 +414,14 @@ class MealLogSkeleton extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(width: 70, height: 24, decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8))),
+              Container(
+                width: 70,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
             ],
           ),
         ),
@@ -436,7 +447,9 @@ class FoodDetailSkeleton extends StatelessWidget {
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(30),
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -451,43 +464,59 @@ class FoodDetailSkeleton extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(width: 200, height: 24, color: Colors.white),
+                          Container(
+                            width: 200,
+                            height: 24,
+                            color: Colors.white,
+                          ),
                           const SizedBox(height: 12),
                           Row(
                             children: [
                               Container(
-                                  width: 80,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(15))),
+                                width: 80,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
                               const SizedBox(width: 8),
                               Container(
-                                  width: 60,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(15))),
+                                width: 60,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
                             ],
                           ),
                         ],
                       ),
                       Container(
-                          width: 80,
-                          height: 40,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15))),
+                        width: 80,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 24),
                   Container(width: 150, height: 20, color: Colors.white),
                   const SizedBox(height: 12),
                   Container(
-                      width: double.infinity, height: 14, color: Colors.white),
+                    width: double.infinity,
+                    height: 14,
+                    color: Colors.white,
+                  ),
                   const SizedBox(height: 8),
                   Container(
-                      width: double.infinity, height: 14, color: Colors.white),
+                    width: double.infinity,
+                    height: 14,
+                    color: Colors.white,
+                  ),
                   const SizedBox(height: 8),
                   Container(width: 150, height: 14, color: Colors.white),
                   const SizedBox(height: 24),
@@ -684,7 +713,11 @@ class ArticleDetailSkeleton extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(width: double.infinity, height: 32, color: Colors.white),
+                  Container(
+                    width: double.infinity,
+                    height: 32,
+                    color: Colors.white,
+                  ),
                   const SizedBox(height: 8),
                   Container(width: 150, height: 16, color: Colors.white),
                   const SizedBox(height: 24),
@@ -706,6 +739,7 @@ class ArticleDetailSkeleton extends StatelessWidget {
     );
   }
 }
+
 class DashboardSkeleton extends StatelessWidget {
   const DashboardSkeleton({super.key});
 

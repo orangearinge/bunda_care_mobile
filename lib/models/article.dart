@@ -1,4 +1,3 @@
-
 class Article {
   final int id;
   final String title;
@@ -29,8 +28,8 @@ class Article {
       content: json['content'] as String?,
       coverImage: json['cover_image'] as String?,
       status: json['status'] as String?,
-      publishedAt: json['published_at'] != null 
-          ? DateTime.parse(json['published_at'] as String) 
+      publishedAt: json['published_at'] != null
+          ? DateTime.parse(json['published_at'] as String)
           : null,
     );
   }

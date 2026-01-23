@@ -7,7 +7,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../widgets/offline_placeholder.dart';
 import '../utils/styles.dart';
 
-
 class HistoryDetailPage extends StatefulWidget {
   final String date;
   final String formattedDate;
@@ -45,9 +44,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
           ),
         ),
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
-          ),
+          decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
         ),
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -58,7 +55,8 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
           final isLoading = historyProvider.isLoading;
           final errorMessage = historyProvider.errorMessage;
 
-          if ((isLoading || historyProvider.status == HistoryStatus.initial) && items.isEmpty) {
+          if ((isLoading || historyProvider.status == HistoryStatus.initial) &&
+              items.isEmpty) {
             return const Center(
               child: CircularProgressIndicator(color: Colors.pink),
             );
@@ -67,9 +65,9 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
           if (errorMessage != null && items.isEmpty) {
             return OfflinePlaceholder(
               message: errorMessage,
-              onRetry: () => context
-                  .read<HistoryProvider>()
-                  .fetchHistoryDetail(widget.date),
+              onRetry: () => context.read<HistoryProvider>().fetchHistoryDetail(
+                widget.date,
+              ),
             );
           }
 
@@ -88,8 +86,6 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
       ),
     );
   }
-
-
 
   Widget _buildEmptyState() {
     return Center(
@@ -212,7 +208,11 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
           child: Center(
             child: Text(
               label,
-              style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: color),
+              style: TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
           ),
         ),

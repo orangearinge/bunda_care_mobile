@@ -1,4 +1,4 @@
-import '../utils/constants.dart';
+  import '../utils/constants.dart';
 
 /// API Error model for consistent error handling
 class ApiError {
@@ -62,4 +62,17 @@ class ApiError {
   String toString() {
     return 'ApiError(code: $code, message: $message)';
   }
+
+  /// Check if the error is related to authentication (session expired, unauthorized)
+  bool get isAuthError =>
+      code == 'SESSION_EXPIRED' ||
+      code == 'UNAUTHORIZED' ||
+      code == 'TOKEN_EXPIRED' ||
+      code == 'INVALID_TOKEN';
+
+  /// Check if the error is related to network or server connectivity
+  bool get isConnectionError =>
+      code == 'NETWORK_ERROR' ||
+      code == 'TIMEOUT_ERROR' ||
+      code == 'SERVER_ERROR';
 }

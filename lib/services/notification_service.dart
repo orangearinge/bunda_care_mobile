@@ -24,10 +24,11 @@ class NotificationService {
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings();
 
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
@@ -56,7 +57,8 @@ class NotificationService {
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
   }
 
@@ -97,11 +99,12 @@ class NotificationService {
       // For now, just show notification immediately for testing
       // The actual scheduling is handled natively via Android AlarmManager
       await showNotification(id: id, title: title, body: body);
-      AppLogger.i('Notification shown immediately for ID: $id (scheduled for: $scheduledTime)');
+      AppLogger.i(
+        'Notification shown immediately for ID: $id (scheduled for: $scheduledTime)',
+      );
 
       // NOTE: Real scheduling is handled by MainActivity.kt and MealNotificationReceiver.kt
       // using AlarmManager for exact timing execution.
-
     } catch (e) {
       AppLogger.e('Failed to show notification: $e');
       rethrow;

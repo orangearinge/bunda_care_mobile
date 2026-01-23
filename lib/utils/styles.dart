@@ -29,13 +29,13 @@ class AppStyles {
       useMaterial3: true,
       colorSchemeSeed: primaryPink,
       scaffoldBackgroundColor: scaffoldBackground,
-      
+
       // Default Typography (Poppins)
       textTheme: GoogleFonts.poppinsTextTheme(),
 
       // AppBar Theme
       appBarTheme: AppBarTheme(
-        backgroundColor: primaryPink, 
+        backgroundColor: primaryPink,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
@@ -55,12 +55,10 @@ class AppStyles {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusLarge),
           ),
-          textStyle: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-          )
+          textStyle: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
       ),
-      
+
       // Outlined Button Theme (Secondary)
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
@@ -69,9 +67,7 @@ class AppStyles {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusLarge),
           ),
-          textStyle: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-          )
+          textStyle: GoogleFonts.poppins(fontWeight: FontWeight.bold),
         ),
       ),
 
@@ -79,7 +75,10 @@ class AppStyles {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.grey[50], // Or white depending on preference
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusLarge),
           borderSide: BorderSide(color: Colors.grey[300]!),

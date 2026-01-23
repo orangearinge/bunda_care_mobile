@@ -13,7 +13,9 @@ class MealScheduleProvider with ChangeNotifier {
   List<MealSchedule> _mealSchedules = [];
   bool _isLoading = false;
 
-  static const platform = MethodChannel('com.example.bunda_care/meal_notifications');
+  static const platform = MethodChannel(
+    'com.example.bunda_care/meal_notifications',
+  );
 
   List<MealSchedule> get mealSchedules => _mealSchedules;
   bool get isLoading => _isLoading;
@@ -58,7 +60,9 @@ class MealScheduleProvider with ChangeNotifier {
 
     try {
       final schedules = await _storageService.getMealSchedules();
-      _mealSchedules = schedules.isNotEmpty ? schedules : _getDefaultSchedules();
+      _mealSchedules = schedules.isNotEmpty
+          ? schedules
+          : _getDefaultSchedules();
     } catch (e) {
       // If loading fails, use default schedules
       _mealSchedules = _getDefaultSchedules();
@@ -104,7 +108,9 @@ class MealScheduleProvider with ChangeNotifier {
   Future<void> toggleSchedule(int id, bool isEnabled) async {
     final index = _mealSchedules.indexWhere((s) => s.id == id);
     if (index != -1) {
-      final updatedSchedule = _mealSchedules[index].copyWith(isEnabled: isEnabled);
+      final updatedSchedule = _mealSchedules[index].copyWith(
+        isEnabled: isEnabled,
+      );
       await updateMealSchedule(updatedSchedule);
     }
   }

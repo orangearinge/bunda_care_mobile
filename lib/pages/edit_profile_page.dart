@@ -12,7 +12,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../utils/styles.dart';
 import '../widgets/shimmer_loading.dart';
 
-
 class EditProfilePage extends StatefulWidget {
   final UserPreference initialPreference;
 
@@ -55,8 +54,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final pref = widget.initialPreference;
     _nameController = TextEditingController(text: pref.name);
     _ageController = TextEditingController(text: pref.ageYear.toString());
-    _ageMonthController =
-        TextEditingController(text: pref.ageMonth?.toString() ?? '0');
+    _ageMonthController = TextEditingController(
+      text: pref.ageMonth?.toString() ?? '0',
+    );
     _heightController = TextEditingController(text: pref.heightCm.toString());
     _weightController = TextEditingController(text: pref.weightKg.toString());
     _hphtController = TextEditingController(text: pref.hpht ?? '');
@@ -489,7 +489,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
 
     return Scaffold(
-      resizeToAvoidBottomInset: false, // Mencegah header melengkung rusak saat keyboard muncul
+      resizeToAvoidBottomInset:
+          false, // Mencegah header melengkung rusak saat keyboard muncul
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
@@ -497,9 +498,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: AppStyles.pinkGradient,
-          ),
+          decoration: BoxDecoration(gradient: AppStyles.pinkGradient),
         ),
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -512,407 +511,435 @@ class _EditProfilePageState extends State<EditProfilePage> {
           return SingleChildScrollView(
             child: Column(
               children: [
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: AppStyles.pinkGradient,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-              ),
-              padding: const EdgeInsets.only(bottom: 30, left: 20, right: 20),
-              child: const Text(
-                'Perbarui data diri Bunda untuk mendapatkan rekomendasi yang tepat',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            // Avatar Section
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 10.0,
-              ),
-              child: Column(
-                children: [
-                  const Text(
-                    'Foto Profil',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: AppStyles.pinkGradient,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: Stack(
-                      children: [
-                        Builder(
-                          builder: (context) {
-                            final hasLocalImage =
-                                _avatarImage != null ||
-                                _avatarImageBytes != null;
-                            final hasRemoteImage =
-                                _avatarUrl != null && _avatarUrl!.isNotEmpty;
-
-                            // Construct final remote URL if path is relative
-                            String? finalRemoteUrl;
-                            if (hasRemoteImage) {
-                              if (_avatarUrl!.startsWith('http')) {
-                                finalRemoteUrl = _avatarUrl;
-                              } else {
-                                finalRemoteUrl =
-                                    '${ApiConstants.baseUrl}$_avatarUrl';
-                              }
-                            }
-
-                            return CircleAvatar(
-                              radius: 60,
-                              backgroundColor: Colors.pink[100],
-                              backgroundImage: _avatarImage != null
-                                  ? FileImage(_avatarImage!)
-                                  : _avatarImageBytes != null
-                                  ? MemoryImage(_avatarImageBytes!)
-                                  : hasRemoteImage
-                                  ? CachedNetworkImageProvider(finalRemoteUrl!)
-                                  : null,
-                              onBackgroundImageError:
-                                  (hasLocalImage || hasRemoteImage)
-                                  ? (exception, stackTrace) {
-                                      debugPrint(
-                                        'Error loading avatar preview: $exception',
-                                      );
-                                    }
-                                  : null,
-                              child: !hasLocalImage && !hasRemoteImage
-                                  ? Text(
-                                      _nameController.text.isNotEmpty
-                                          ? _nameController.text[0]
-                                                .toUpperCase()
-                                          : 'B',
-                                      style: const TextStyle(
-                                        fontSize: 36,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.pink,
-                                      ),
-                                    )
-                                  : null,
-                            );
-                          },
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: _showImageSourceDialog,
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.pink[400],
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2,
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  padding: const EdgeInsets.only(
+                    bottom: 30,
+                    left: 20,
+                    right: 20,
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Ketuk ikon kamera untuk mengubah foto profil',
-                    style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                  child: const Text(
+                    'Perbarui data diri Bunda untuk mendapatkan rekomendasi yang tepat',
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildSectionTitle('Informasi Dasar'),
-                    _buildDropdown(),
-
-                    _buildTextField(
-                      controller: _nameController,
-                      label: nameLabel,
-                      hint: 'Masukkan nama',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Nama tidak boleh kosong';
-                        }
-                        return null;
-                      },
-                    ),
-                    _buildTextField(
-                      controller: _ageController,
-                      label: ageLabel,
-                      hint: 'Masukkan usia',
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Usia tidak boleh kosong';
-                        }
-                        final age = int.tryParse(value);
-                        if (age == null || age < 0) {
-                          return 'Usia harus berupa angka positif';
-                        }
-                        // Special validation for batita: max 2 years
-                        if (_selectedRole == 'ANAK_BATITA' && age > 2) {
-                          return 'Usia anak batita maksimal 2 tahun';
-                        }
-                        // Special validation for mothers
-                        if (_selectedRole == 'IBU_HAMIL') {
-                          if (age < 19) return 'Usia ibu hamil minimal 19 tahun';
-                          if (age > 45) return 'Usia ibu hamil maksimal 45 tahun';
-                        } else if (_selectedRole == 'IBU_MENYUSUI') {
-                          if (age < 15) return 'Usia ibu menyusui minimal 15 tahun';
-                          if (age > 65) return 'Usia ibu menyusui maksimal 65 tahun';
-                        }
-                        return null;
-                      },
-                    ),
-                    if (_selectedRole == 'ANAK_BATITA')
-                      _buildTextField(
-                        controller: _ageMonthController,
-                        label: 'Usia Anak (bulan)',
-                        hint: 'Masukkan usia dalam bulan',
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Usia bulan tidak boleh kosong';
-                          }
-                          final months = int.tryParse(value);
-                          if (months == null || months < 0) {
-                            return 'Usia bulan harus berupa angka positif';
-                          }
-                          return null;
-                        },
+                ),
+                // Avatar Section
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20.0,
+                    vertical: 10.0,
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Foto Profil',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
                       ),
-                    _buildTextField(
-                      controller: _heightController,
-                      label: heightLabel,
-                      hint: 'Masukkan tinggi badan',
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Tinggi badan tidak boleh kosong';
-                        }
-                        final height = double.tryParse(value);
-                        if (height == null || height <= 0) {
-                          return 'Tinggi badan harus berupa angka positif';
-                        }
-                        // Khusus untuk batita
-                        if (_selectedRole == 'ANAK_BATITA') {
-                          if (height < 45) return 'Tinggi badan anak batita minimal 45 cm';
-                          if (height > 100) return 'Tinggi badan anak batita maksimal 100 cm';
-                        }
-                        // Khusus untuk ibu hamil dan ibu menyusui
-                        if (_selectedRole == 'IBU_HAMIL' || _selectedRole == 'IBU_MENYUSUI') {
-                          if (height < 140) return 'Tinggi badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} minimal 140 cm';
-                          if (height > 180) return 'Tinggi badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} maksimal 180 cm';
-                        }
-                        return null;
-                      },
-                    ),
-                    _buildTextField(
-                      controller: _weightController,
-                      label: weightLabel,
-                      hint: 'Masukkan berat badan',
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Berat badan tidak boleh kosong';
-                        }
-                        final weight = double.tryParse(value);
-                        if (weight == null || weight <= 0) {
-                          return 'Berat badan harus berupa angka positif';
-                        }
-                        // Khusus untuk batita
-                        if (_selectedRole == 'ANAK_BATITA') {
-                          if (weight < 4) return 'Berat badan anak batita minimal 4 kg';
-                          if (weight > 16) return 'Berat badan anak batita maksimal 16 kg';
-                        }
-                        // Khusus untuk ibu hamil dan ibu menyusui
-                        if (_selectedRole == 'IBU_HAMIL' || _selectedRole == 'IBU_MENYUSUI') {
-                          if (weight < 35) return 'Berat badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} minimal 35 kg';
-                          if (weight > 120) return 'Berat badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} maksimal 120 kg';
-                        }
-                        return null;
-                      },
-                    ),
-
-                    if (_selectedRole == 'IBU_HAMIL') ...[
                       const SizedBox(height: 16),
-                      _buildSectionTitle('Informasi Kehamilan'),
-                      _buildTextField(
-                        controller: _hphtController,
-                        label: 'HPHT (Hari Pertama Haid Terakhir)',
-                        hint: 'YYYY-MM-DD',
-                        readOnly: true,
-                        onTap: () => _selectDate(context),
-                        suffixIcon: const Icon(Icons.calendar_today),
-                        helperText: 'Otomatis menghitung usia kandungan',
-                        validator: (value) {
-                          if (_selectedRole == 'IBU_HAMIL' &&
-                              (value == null || value.isEmpty)) {
-                            return 'HPHT tidak boleh kosong';
-                          }
-                          return null;
-                        },
-                      ),
-                      _buildTextField(
-                        controller: _lilaController,
-                        label: 'LiLA (cm)',
-                        hint: 'Masukkan LiLA',
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (_selectedRole == 'IBU_HAMIL') {
-                            if (value == null || value.isEmpty) {
-                              return 'LiLA ibu hamil wajib diisi';
-                            }
-                            final lila = double.tryParse(value);
-                            if (lila == null || lila <= 0) {
-                              return 'LiLA harus berupa angka positif';
-                            }
-                            if (lila < 15) return 'LiLA ibu hamil minimal 15 cm';
-                            if (lila > 50) return 'LiLA ibu hamil maksimal 50 cm';
-                          }
-                          return null;
-                        },
-                      ),
-                    ],
-                    if (_selectedRole == 'IBU_MENYUSUI') ...[
-                      const SizedBox(height: 16),
-                      _buildSectionTitle('Informasi Menyusui'),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: DropdownButtonFormField<String>(
-                          initialValue: _selectedLactationPhase,
-                          decoration: InputDecoration(
-                            labelText: 'Fase Menyusui',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
+                      Center(
+                        child: Stack(
+                          children: [
+                            Builder(
+                              builder: (context) {
+                                final hasLocalImage =
+                                    _avatarImage != null ||
+                                    _avatarImageBytes != null;
+                                final hasRemoteImage =
+                                    _avatarUrl != null &&
+                                    _avatarUrl!.isNotEmpty;
+
+                                // Construct final remote URL if path is relative
+                                String? finalRemoteUrl;
+                                if (hasRemoteImage) {
+                                  if (_avatarUrl!.startsWith('http')) {
+                                    finalRemoteUrl = _avatarUrl;
+                                  } else {
+                                    finalRemoteUrl =
+                                        '${ApiConstants.baseUrl}$_avatarUrl';
+                                  }
+                                }
+
+                                return CircleAvatar(
+                                  radius: 60,
+                                  backgroundColor: Colors.pink[100],
+                                  backgroundImage: _avatarImage != null
+                                      ? FileImage(_avatarImage!)
+                                      : _avatarImageBytes != null
+                                      ? MemoryImage(_avatarImageBytes!)
+                                      : hasRemoteImage
+                                      ? CachedNetworkImageProvider(
+                                          finalRemoteUrl!,
+                                        )
+                                      : null,
+                                  onBackgroundImageError:
+                                      (hasLocalImage || hasRemoteImage)
+                                      ? (exception, stackTrace) {
+                                          debugPrint(
+                                            'Error loading avatar preview: $exception',
+                                          );
+                                        }
+                                      : null,
+                                  child: !hasLocalImage && !hasRemoteImage
+                                      ? Text(
+                                          _nameController.text.isNotEmpty
+                                              ? _nameController.text[0]
+                                                    .toUpperCase()
+                                              : 'B',
+                                          style: const TextStyle(
+                                            fontSize: 36,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.pink,
+                                          ),
+                                        )
+                                      : null,
+                                );
+                              },
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: Colors.grey[300]!),
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey[50],
-                          ),
-                          items: const [
-                            DropdownMenuItem(
-                              value: '0-6',
-                              child: Text('6 Bulan Pertama'),
-                            ),
-                            DropdownMenuItem(
-                              value: '6-12',
-                              child: Text('6 Bulan Kedua'),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: _showImageSourceDialog,
+                                child: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.pink[400],
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: const Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedLactationPhase = value;
-                            });
-                          },
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Ketuk ikon kamera untuk mengubah foto profil',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSectionTitle('Informasi Dasar'),
+                        _buildDropdown(),
+
+                        _buildTextField(
+                          controller: _nameController,
+                          label: nameLabel,
+                          hint: 'Masukkan nama',
                           validator: (value) {
-                            if (_selectedRole == 'IBU_MENYUSUI' &&
-                                (value == null || value.isEmpty)) {
-                              return 'Fase menyusui wajib dipilih';
+                            if (value == null || value.isEmpty) {
+                              return 'Nama tidak boleh kosong';
                             }
                             return null;
                           },
                         ),
-                      ),
-                    ],
+                        _buildTextField(
+                          controller: _ageController,
+                          label: ageLabel,
+                          hint: 'Masukkan usia',
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Usia tidak boleh kosong';
+                            }
+                            final age = int.tryParse(value);
+                            if (age == null || age < 0) {
+                              return 'Usia harus berupa angka positif';
+                            }
+                            // Special validation for batita: max 2 years
+                            if (_selectedRole == 'ANAK_BATITA' && age > 2) {
+                              return 'Usia anak batita maksimal 2 tahun';
+                            }
+                            // Special validation for mothers
+                            if (_selectedRole == 'IBU_HAMIL') {
+                              if (age < 19)
+                                return 'Usia ibu hamil minimal 19 tahun';
+                              if (age > 45)
+                                return 'Usia ibu hamil maksimal 45 tahun';
+                            } else if (_selectedRole == 'IBU_MENYUSUI') {
+                              if (age < 15)
+                                return 'Usia ibu menyusui minimal 15 tahun';
+                              if (age > 65)
+                                return 'Usia ibu menyusui maksimal 65 tahun';
+                            }
+                            return null;
+                          },
+                        ),
+                        if (_selectedRole == 'ANAK_BATITA')
+                          _buildTextField(
+                            controller: _ageMonthController,
+                            label: 'Usia Anak (bulan)',
+                            hint: 'Masukkan usia dalam bulan',
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Usia bulan tidak boleh kosong';
+                              }
+                              final months = int.tryParse(value);
+                              if (months == null || months < 0) {
+                                return 'Usia bulan harus berupa angka positif';
+                              }
+                              return null;
+                            },
+                          ),
+                        _buildTextField(
+                          controller: _heightController,
+                          label: heightLabel,
+                          hint: 'Masukkan tinggi badan',
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Tinggi badan tidak boleh kosong';
+                            }
+                            final height = double.tryParse(value);
+                            if (height == null || height <= 0) {
+                              return 'Tinggi badan harus berupa angka positif';
+                            }
+                            // Khusus untuk batita
+                            if (_selectedRole == 'ANAK_BATITA') {
+                              if (height < 45)
+                                return 'Tinggi badan anak batita minimal 45 cm';
+                              if (height > 100)
+                                return 'Tinggi badan anak batita maksimal 100 cm';
+                            }
+                            // Khusus untuk ibu hamil dan ibu menyusui
+                            if (_selectedRole == 'IBU_HAMIL' ||
+                                _selectedRole == 'IBU_MENYUSUI') {
+                              if (height < 140)
+                                return 'Tinggi badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} minimal 140 cm';
+                              if (height > 180)
+                                return 'Tinggi badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} maksimal 180 cm';
+                            }
+                            return null;
+                          },
+                        ),
+                        _buildTextField(
+                          controller: _weightController,
+                          label: weightLabel,
+                          hint: 'Masukkan berat badan',
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Berat badan tidak boleh kosong';
+                            }
+                            final weight = double.tryParse(value);
+                            if (weight == null || weight <= 0) {
+                              return 'Berat badan harus berupa angka positif';
+                            }
+                            // Khusus untuk batita
+                            if (_selectedRole == 'ANAK_BATITA') {
+                              if (weight < 4)
+                                return 'Berat badan anak batita minimal 4 kg';
+                              if (weight > 16)
+                                return 'Berat badan anak batita maksimal 16 kg';
+                            }
+                            // Khusus untuk ibu hamil dan ibu menyusui
+                            if (_selectedRole == 'IBU_HAMIL' ||
+                                _selectedRole == 'IBU_MENYUSUI') {
+                              if (weight < 35)
+                                return 'Berat badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} minimal 35 kg';
+                              if (weight > 120)
+                                return 'Berat badan ibu ${_selectedRole == 'IBU_HAMIL' ? 'hamil' : 'menyusui'} maksimal 120 kg';
+                            }
+                            return null;
+                          },
+                        ),
 
-                    // ANAK_BATITA doesn't have extra fields beyond age/height/weight in backend
-                    const SizedBox(height: 24),
-                    _buildSectionTitle('Preferensi Makanan'),
-                    _buildTagInput(
-                      label: 'Alergi Makanan',
-                      tags: _allergens,
-                      color: Colors.red[100]!,
-                      textColor: Colors.red[700]!,
-                      onAdd: (val) => setState(() => _allergens.add(val)),
-                      onRemove: (val) => setState(() => _allergens.remove(val)),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildTagInput(
-                      label: 'Pantangan Makanan',
-                      tags: _foodProhibitions,
-                      color: Colors.orange[100]!,
-                      textColor: Colors.orange[800]!,
-                      onAdd: (val) =>
-                          setState(() => _foodProhibitions.add(val)),
-                      onRemove: (val) =>
-                          setState(() => _foodProhibitions.remove(val)),
-                    ),
-
-                    const SizedBox(height: 40),
-                    Consumer<UserPreferenceProvider>(
-                      builder: (context, provider, child) {
-                        return SizedBox(
-                          width: double.infinity,
-                          height: 55,
-                          child: ElevatedButton(
-                            onPressed: provider.isLoading ? null : _saveProfile,
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15),
+                        if (_selectedRole == 'IBU_HAMIL') ...[
+                          const SizedBox(height: 16),
+                          _buildSectionTitle('Informasi Kehamilan'),
+                          _buildTextField(
+                            controller: _hphtController,
+                            label: 'HPHT (Hari Pertama Haid Terakhir)',
+                            hint: 'YYYY-MM-DD',
+                            readOnly: true,
+                            onTap: () => _selectDate(context),
+                            suffixIcon: const Icon(Icons.calendar_today),
+                            helperText: 'Otomatis menghitung usia kandungan',
+                            validator: (value) {
+                              if (_selectedRole == 'IBU_HAMIL' &&
+                                  (value == null || value.isEmpty)) {
+                                return 'HPHT tidak boleh kosong';
+                              }
+                              return null;
+                            },
+                          ),
+                          _buildTextField(
+                            controller: _lilaController,
+                            label: 'LiLA (cm)',
+                            hint: 'Masukkan LiLA',
+                            keyboardType: TextInputType.number,
+                            validator: (value) {
+                              if (_selectedRole == 'IBU_HAMIL') {
+                                if (value == null || value.isEmpty) {
+                                  return 'LiLA ibu hamil wajib diisi';
+                                }
+                                final lila = double.tryParse(value);
+                                if (lila == null || lila <= 0) {
+                                  return 'LiLA harus berupa angka positif';
+                                }
+                                if (lila < 15)
+                                  return 'LiLA ibu hamil minimal 15 cm';
+                                if (lila > 50)
+                                  return 'LiLA ibu hamil maksimal 50 cm';
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                        if (_selectedRole == 'IBU_MENYUSUI') ...[
+                          const SizedBox(height: 16),
+                          _buildSectionTitle('Informasi Menyusui'),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: DropdownButtonFormField<String>(
+                              initialValue: _selectedLactationPhase,
+                              decoration: InputDecoration(
+                                labelText: 'Fase Menyusui',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey[300]!,
+                                  ),
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey[50],
                               ),
-                              elevation: 2,
-                            ),
-                            child: Ink(
-                              decoration: BoxDecoration(
-                                gradient: AppStyles.pinkGradient,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: provider.isLoading
-                                    ? const CircularProgressIndicator(
-                                        color: Colors.white,
-                                      )
-                                    : const Text(
-                                        'SIMPAN PERUBAHAN',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                              ),
+                              items: const [
+                                DropdownMenuItem(
+                                  value: '0-6',
+                                  child: Text('6 Bulan Pertama'),
+                                ),
+                                DropdownMenuItem(
+                                  value: '6-12',
+                                  child: Text('6 Bulan Kedua'),
+                                ),
+                              ],
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedLactationPhase = value;
+                                });
+                              },
+                              validator: (value) {
+                                if (_selectedRole == 'IBU_MENYUSUI' &&
+                                    (value == null || value.isEmpty)) {
+                                  return 'Fase menyusui wajib dipilih';
+                                }
+                                return null;
+                              },
                             ),
                           ),
-                        );
-                      },
+                        ],
+
+                        // ANAK_BATITA doesn't have extra fields beyond age/height/weight in backend
+                        const SizedBox(height: 24),
+                        _buildSectionTitle('Preferensi Makanan'),
+                        _buildTagInput(
+                          label: 'Alergi Makanan',
+                          tags: _allergens,
+                          color: Colors.red[100]!,
+                          textColor: Colors.red[700]!,
+                          onAdd: (val) => setState(() => _allergens.add(val)),
+                          onRemove: (val) =>
+                              setState(() => _allergens.remove(val)),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildTagInput(
+                          label: 'Pantangan Makanan',
+                          tags: _foodProhibitions,
+                          color: Colors.orange[100]!,
+                          textColor: Colors.orange[800]!,
+                          onAdd: (val) =>
+                              setState(() => _foodProhibitions.add(val)),
+                          onRemove: (val) =>
+                              setState(() => _foodProhibitions.remove(val)),
+                        ),
+
+                        const SizedBox(height: 40),
+                        Consumer<UserPreferenceProvider>(
+                          builder: (context, provider, child) {
+                            return SizedBox(
+                              width: double.infinity,
+                              height: 55,
+                              child: ElevatedButton(
+                                onPressed: provider.isLoading
+                                    ? null
+                                    : _saveProfile,
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  elevation: 2,
+                                ),
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    gradient: AppStyles.pinkGradient,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: provider.isLoading
+                                        ? const CircularProgressIndicator(
+                                            color: Colors.white,
+                                          )
+                                        : const Text(
+                                            'SIMPAN PERUBAHAN',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      );
-    },
-  ),
-);
+          );
+        },
+      ),
+    );
   }
 }

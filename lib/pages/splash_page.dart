@@ -7,7 +7,8 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Menyamakan dengan Native Splash (launch_background.xml)
+      backgroundColor: Colors
+          .white, // Menyamakan dengan Native Splash (launch_background.xml)
       body: SizedBox(
         width: double.infinity,
         height: double.infinity,
@@ -15,10 +16,7 @@ class SplashPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'lib/assets/images/logo_bundacare.png',
-                width: 150,
-              ),
+              Image.asset('lib/assets/images/logo_bundacare.png', width: 150),
               const SizedBox(height: 20),
               Text(
                 'Bunda Care',

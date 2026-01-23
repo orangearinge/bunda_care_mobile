@@ -39,8 +39,8 @@ class UserPreference {
       heightCm: (json['height_cm'] as num?)?.toInt() ?? 0,
       weightKg: (json['weight_kg'] as num?)?.toDouble() ?? 0.0,
       ageYear: (json['age_year'] as num?)?.toInt() ?? 0,
-      ageMonth: json['age_month'] != null 
-          ? int.tryParse(json['age_month'].toString()) 
+      ageMonth: json['age_month'] != null
+          ? int.tryParse(json['age_month'].toString())
           : null,
       lilaCm: (json['lila_cm'] as num?)?.toDouble(),
       lactationPhase: json['lactation_phase'] as String?,

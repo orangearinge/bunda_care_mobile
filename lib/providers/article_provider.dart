@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import '../models/article.dart';
 import '../models/api_error.dart';
@@ -43,7 +42,7 @@ class ArticleProvider with ChangeNotifier {
         page: page,
         forceRefresh: refresh,
       );
-      
+
       if (refresh) {
         _articles = response.items;
       } else {

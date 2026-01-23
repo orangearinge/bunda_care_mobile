@@ -22,8 +22,8 @@ class MealLog {
       isConsumed: json['is_consumed'] ?? false,
       imageUrl: json['image_url'],
       nutrition: MealLogNutrition.fromJson(json['total'] ?? {}),
-      createdAt: json['created_at'] != null 
-          ? DateTime.tryParse(json['created_at']) 
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'])
           : null,
     );
   }
