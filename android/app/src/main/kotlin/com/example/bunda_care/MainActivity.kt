@@ -12,9 +12,11 @@ import io.flutter.plugin.common.MethodChannel
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.Calendar
+import android.util.Log
 
 class MainActivity : FlutterActivity() {
 
+    private val TAG = "BundaCare_Alarm"
     private val CHANNEL = "com.example.bunda_care/meal_notifications"
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -30,9 +32,11 @@ class MainActivity : FlutterActivity() {
             when (call.method) {
                 "scheduleMealAlarms" -> {
                     try {
+                        Log.d(TAG, "MethodChannel: scheduleMealAlarms called")
                         scheduleAllMealAlarms()
                         result.success("Alarms scheduled successfully")
                     } catch (e: Exception) {
+                        Log.e(TAG, "Schedule error: ${e.message}")
                         result.error("SCHEDULE_ERROR", e.message, null)
                     }
                 }
@@ -48,12 +52,17 @@ class MainActivity : FlutterActivity() {
                 "syncMealSchedules" -> {
                     try {
                         val schedulesJson = call.argument<String>("schedules") ?: "[]"
-                        sharedPreferences.edit().putString("schedules", schedulesJson).apply()
+                        Log.d(TAG, "MethodChannel: syncMealSchedules called with ${schedulesJson.length} chars")
+                        
+                        // Use commit() to ensure it's written before scheduling
+                        val success = sharedPreferences.edit().putString("schedules", schedulesJson).commit()
+                        Log.d(TAG, "Sync to SharedPreferences: $success")
 
                         // Re-schedule all alarms after sync
                         scheduleAllMealAlarms()
                         result.success("Meal schedules synced successfully")
                     } catch (e: Exception) {
+                        Log.e(TAG, "Sync error: ${e.message}")
                         result.error("SYNC_ERROR", e.message, null)
                     }
                 }
@@ -74,28 +83,32 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun scheduleAllMealAlarms() {
+        Log.d(TAG, "scheduleAllMealAlarms: started")
         // Cancel all existing alarms first
         cancelAllMealAlarms()
 
         // Load meal schedules from SharedPreferences
         val schedulesJson = sharedPreferences.getString("schedules", "[]") ?: "[]"
+        Log.d(TAG, "Loading schedules from prefs: $schedulesJson")
 
         try {
             val schedules = JSONArray(schedulesJson)
+            Log.d(TAG, "Found ${schedules.length()} schedules to set")
 
             for (i in 0 until schedules.length()) {
                 val schedule = schedules.getJSONObject(i)
                 val mealId = schedule.getInt("id")
-                val mealType = schedule.getString("meal_type")
                 val hour = schedule.getInt("hour")
                 val minute = schedule.getInt("minute")
                 val isEnabled = schedule.getBoolean("is_enabled")
 
+                Log.d(TAG, "Checking schedule $mealId: $hour:$minute (enabled=$isEnabled)")
                 if (isEnabled) {
                     scheduleMealAlarm(mealId, hour, minute)
                 }
             }
         } catch (e: Exception) {
+            Log.e(TAG, "JSON/Scheduling error: ${e.message}")
             e.printStackTrace()
         }
     }
@@ -104,7 +117,10 @@ class MainActivity : FlutterActivity() {
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent(this, MealNotificationReceiver::class.java).apply {
+            action = "com.example.bunda_care.ACTION_MEAL_NOTIFICATION"
             putExtra("meal_id", mealId)
+            putExtra("hour", hour)
+            putExtra("minute", minute)
         }
 
         val pendingIntent = PendingIntent.getBroadcast(
@@ -114,24 +130,42 @@ class MainActivity : FlutterActivity() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
+        val now = Calendar.getInstance()
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)
-
-            // If the time has already passed today, schedule for tomorrow
-            if (timeInMillis <= System.currentTimeMillis()) {
-                add(Calendar.DAY_OF_MONTH, 1)
-            }
+            set(Calendar.MILLISECOND, 0)
+        }
+    
+        // Only move to tomorrow if the time is ACTUALLY in the past.
+        if (calendar.before(now)) {
+            Log.d(TAG, "Time $hour:$minute has passed today, scheduling for tomorrow")
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        } else {
+            Log.d(TAG, "Time $hour:$minute is future, scheduling for today")
         }
 
-        // Use setRepeating for daily alarms
-        alarmManager.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY, // Repeat every day
-            pendingIntent
-        )
+        Log.d(TAG, "Setting exact alarm for meal $mealId at ${calendar.time}")
+
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    pendingIntent
+                )
+            } else {
+                alarmManager.setExact(
+                    AlarmManager.RTC_WAKEUP,
+                    calendar.timeInMillis,
+                    pendingIntent
+                )
+            }
+            Log.d(TAG, "Alarm set successfully for $mealId")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to set alarm for $mealId: ${e.message}")
+        }
     }
 
     private fun cancelMealAlarm(mealId: Int) {

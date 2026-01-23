@@ -95,12 +95,12 @@ class NotificationService {
   }) async {
     try {
       // For now, just show notification immediately for testing
-      // The scheduling will be implemented properly later
+      // The actual scheduling is handled natively via Android AlarmManager
       await showNotification(id: id, title: title, body: body);
       AppLogger.i('Notification shown immediately for ID: $id (scheduled for: $scheduledTime)');
 
-      // TODO: Implement proper scheduling later
-      // The zonedSchedule has timezone issues that need to be resolved
+      // NOTE: Real scheduling is handled by MainActivity.kt and MealNotificationReceiver.kt
+      // using AlarmManager for exact timing execution.
 
     } catch (e) {
       AppLogger.e('Failed to show notification: $e');
