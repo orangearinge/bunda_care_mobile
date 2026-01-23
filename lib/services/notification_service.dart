@@ -19,7 +19,7 @@ class NotificationService {
 
     // Initialize settings
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/launcher_icon');
 
     const DarwinInitializationSettings initializationSettingsIOS =
         DarwinInitializationSettings();
@@ -72,7 +72,7 @@ class NotificationService {
         channelDescription: 'Notifications for meal times',
         importance: Importance.high,
         priority: Priority.high,
-        icon: '@mipmap/ic_launcher',
+        icon: '@mipmap/launcher_icon',
         playSound: true,
         enableVibration: true,
       ),

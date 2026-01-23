@@ -169,11 +169,17 @@ class MealNotificationReceiver : BroadcastReceiver() {
         // Get meal type and message
         val mealType = schedule.getString("meal_type")
         val customMessage = schedule.optString("custom_message", "")
-        val message = if (customMessage.isNotEmpty()) customMessage else getDefaultMessage(mealType)
+        
+        // Fix: Detect If message is empty or literal "null" string
+        val message = if (customMessage.isNotEmpty() && customMessage != "null") {
+            customMessage
+        } else {
+            getDefaultMessage(mealType)
+        }
 
         // Create notification
         val notification = NotificationCompat.Builder(context, "meal_channel")
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.mipmap.launcher_icon) // Updated to use Bunda Care icon
             .setContentTitle("🍽️ Pengingat Makan")
             .setContentText(message)
             .setStyle(NotificationCompat.BigTextStyle().bigText(message))
