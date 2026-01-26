@@ -247,19 +247,10 @@ For support and questions:
 
 ## 🗺️ Roadmap
 
-### Upcoming Features
-- [ ] Offline mode support
-- [ ] Multi-language support
-- [ ] Wear OS integration
-- [ ] Advanced analytics dashboard
-- [ ] Community features
-- [ ] Telemedicine integration
-
 ### Improvements
 - [ ] Performance optimization
 - [ ] Enhanced UI/UX
-- [ ] Additional educational content
-- [ ] Integration with health wearables
+- [ ] Additional educationalcontents
 
 ---
 
