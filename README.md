@@ -162,11 +162,7 @@ flutter build ios --release
 ## 📱 Platform Support
 
 - ✅ Android (API Level 21+)
-- ✅ iOS (iOS 11.0+)
 - ✅ Web (Limited features)
-- 🔄 Windows (In Development)
-- 🔄 macOS (In Development)
-- 🔄 Linux (In Development)
 
 ## 🔐 Security Features
 
