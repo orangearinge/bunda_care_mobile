@@ -85,7 +85,7 @@ class _RegistrationFormPageState extends State<RegistrationFormPage> {
                 _buildRoleButton(
                   context: context,
                   role: 'AnakBatita',
-                  label: 'Anak Batita (0-24 bulan)',
+                  label: 'Anak Batita',
                   icon: Icons.baby_changing_station,
                   color: Colors.cyan.shade400,
                 ),
