@@ -45,7 +45,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final List<Map<String, String>> _roles = [
     {'value': 'IBU_HAMIL', 'label': 'Ibu Hamil'},
     {'value': 'IBU_MENYUSUI', 'label': 'Ibu Menyusui'},
-    {'value': 'ANAK_BATITA', 'label': 'Anak Batita (0-24 bulan)'},
+    {'value': 'ANAK_BATITA', 'label': 'Anak Batita'},
   ];
 
   @override
