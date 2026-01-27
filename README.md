@@ -162,11 +162,7 @@ flutter build ios --release
 ## 📱 Platform Support
 
 - ✅ Android (API Level 21+)
-- ✅ iOS (iOS 11.0+)
 - ✅ Web (Limited features)
-- 🔄 Windows (In Development)
-- 🔄 macOS (In Development)
-- 🔄 Linux (In Development)
 
 ## 🔐 Security Features
 
@@ -247,19 +243,10 @@ For support and questions:
 
 ## 🗺️ Roadmap
 
-### Upcoming Features
-- [ ] Offline mode support
-- [ ] Multi-language support
-- [ ] Wear OS integration
-- [ ] Advanced analytics dashboard
-- [ ] Community features
-- [ ] Telemedicine integration
-
 ### Improvements
 - [ ] Performance optimization
 - [ ] Enhanced UI/UX
-- [ ] Additional educational content
-- [ ] Integration with health wearables
+- [ ] Additional educationalcontents
 
 ---
 
