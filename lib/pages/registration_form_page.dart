@@ -77,7 +77,7 @@ class _RegistrationFormPageState extends State<RegistrationFormPage> {
                   role: 'IbuMenyusui',
                   label: 'Ibu Menyusui',
                   icon: Icons.child_care,
-                  color: Colors.purple.shade400,
+                  color: Colors.pink.shade400,
                 ),
                 const SizedBox(height: 20),
 
@@ -85,9 +85,9 @@ class _RegistrationFormPageState extends State<RegistrationFormPage> {
                 _buildRoleButton(
                   context: context,
                   role: 'AnakBatita',
-                  label: 'Anak Batita',
+                  label: 'Anak Baduta',
                   icon: Icons.baby_changing_station,
-                  color: Colors.cyan.shade400,
+                  color: Colors.pink.shade400,
                 ),
               ],
             ),
