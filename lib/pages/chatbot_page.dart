@@ -159,7 +159,7 @@ class _ChatbotPageState extends State<ChatbotPage> {
           ),
           const SizedBox(height: 20),
           Text(
-            'Chat Konsultasi Gizi',
+            'Chatbot Gizi',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,

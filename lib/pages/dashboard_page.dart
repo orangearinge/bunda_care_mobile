@@ -124,7 +124,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Halo, Bunda 👋",
+                                            "Halo, Bunda",
                                             style: GoogleFonts.poppins(
                                               fontSize: 16,
                                               color: Colors.grey[600],
@@ -292,7 +292,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text(
-                                    "Pilihan Untuk Bunda",
+                                    "Rekomendasi Makanan",
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,

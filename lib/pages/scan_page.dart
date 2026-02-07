@@ -178,11 +178,6 @@ class _ScanPageState extends State<ScanPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                FaIcon(
-                                  FontAwesomeIcons.appleWhole,
-                                  size: 40,
-                                  color: Colors.pink[200],
-                                ),
                                 const SizedBox(width: 15),
                                 FaIcon(
                                   FontAwesomeIcons.carrot,

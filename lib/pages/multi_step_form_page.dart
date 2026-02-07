@@ -162,7 +162,7 @@ class _MultiStepFormPageState extends State<MultiStepFormPage> {
     return _buildFormTemplate(
       step: step,
       title: "Langkah 4: Pantangan & Alergi",
-      titleColor: Colors.orange[700]!,
+      titleColor: primaryPink,
       fields: [
         _buildTextField(
           "Pantangan Makanan (pisahkan dengan koma)",
